@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_realm/models/task_reminder.dart';
-import 'package:flutter_realm/widgets/custom_dropdown_with_dividers.dart';
-import 'package:flutter_realm/widgets/text_checkbox_tile.dart';
-import 'package:flutter_realm/widgets/custom_bordered_textfield.dart';
+import 'package:flutter_realm/widgets/shared/custom_dropdown_with_dividers.dart';
+import 'package:flutter_realm/widgets/shared/text_checkbox_tile.dart';
+import 'package:flutter_realm/widgets/shared/custom_bordered_textfield.dart';
 import 'package:flutter_realm/presentation/theme/app_typography.dart';
 import 'package:flutter_realm/presentation/theme/app_typography_ext.dart';
 import 'package:flutter_realm/presentation/theme/space.dart';
