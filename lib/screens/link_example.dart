@@ -23,7 +23,7 @@ class _LinkPageState extends State<LinkPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Link'),
+        title: Text('Link Dialog'),
       ),
       body: Center(
         child: Column(

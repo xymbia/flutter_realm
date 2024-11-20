@@ -3,6 +3,7 @@ import 'package:flutter_realm/screens/calendar_viewer_example.dart';
 import 'package:flutter_realm/screens/color_grid_example.dart';
 import 'package:flutter_realm/screens/docked_calendar_example.dart';
 import 'package:flutter_realm/screens/link_example.dart';
+import 'package:flutter_realm/screens/switch_tile_example.dart';
 import 'package:flutter_realm/screens/reminder_example.dart';
 
 void main() {
@@ -74,7 +75,7 @@ class MyHomePage extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.touch_app),
-              title: const Text('Reminder'),
+              title: const Text('Reminder Dialog'),
               trailing: const Icon(Icons.arrow_forward),
               onTap: () {
                 Navigator.push(
@@ -85,12 +86,24 @@ class MyHomePage extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.touch_app),
-              title: const Text('Link'),
+              title: const Text('Link Dialog'),
               trailing: const Icon(Icons.arrow_forward),
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const LinkPage()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.touch_app),
+              title: const Text('Switch Tile'),
+              trailing: const Icon(Icons.arrow_forward),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const SwitchTilePage()),
                 );
               },
             ),

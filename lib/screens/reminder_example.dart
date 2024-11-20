@@ -23,7 +23,7 @@ class _ReminderPageState extends State<ReminderPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Reminder'),
+        title: Text('Reminder Dialog'),
       ),
       body: Center(
         child: Column(
