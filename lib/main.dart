@@ -5,6 +5,7 @@ import 'package:flutter_realm/screens/docked_calendar_example.dart';
 import 'package:flutter_realm/screens/link_example.dart';
 import 'package:flutter_realm/screens/switch_tile_example.dart';
 import 'package:flutter_realm/screens/reminder_example.dart';
+import 'package:flutter_realm/screens/textfield_with_action_example.dart';
 
 void main() {
   runApp(const MyApp());
@@ -104,6 +105,18 @@ class MyHomePage extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                       builder: (context) => const SwitchTilePage()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.touch_app),
+              title: const Text('Text Field With Action'),
+              trailing: const Icon(Icons.arrow_forward),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const TextFieldPage()),
                 );
               },
             ),
