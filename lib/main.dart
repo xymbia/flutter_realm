@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_realm/screens/calendar_viewer.dart';
+import 'package:flutter_realm/screens/color_grid.dart';
 import 'package:flutter_realm/screens/docked_calendar.dart';
+import 'package:flutter_realm/screens/reminder.dart';
 
 void main() {
   runApp(const MyApp());
@@ -54,6 +56,30 @@ class MyHomePage extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                       builder: (context) => const CalendarViewerPage()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.touch_app),
+              title: const Text('Color Grid'),
+              trailing: const Icon(Icons.arrow_forward),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ColorGridPage()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.touch_app),
+              title: const Text('Reminder'),
+              trailing: const Icon(Icons.arrow_forward),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ReminderPage()),
                 );
               },
             ),
