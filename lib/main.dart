@@ -26,17 +26,6 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Scrollable List Example',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: ScrollableListPage(),
-    );
-  }
-}
-
-class ScrollableListPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Widget Library'),
