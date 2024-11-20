@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_realm/screens/calendar_viewer.dart';
-import 'package:flutter_realm/screens/color_grid.dart';
-import 'package:flutter_realm/screens/docked_calendar.dart';
-import 'package:flutter_realm/screens/reminder.dart';
+import 'package:flutter_realm/screens/calendar_viewer_example.dart';
+import 'package:flutter_realm/screens/color_grid_example.dart';
+import 'package:flutter_realm/screens/docked_calendar_example.dart';
+import 'package:flutter_realm/screens/link_example.dart';
+import 'package:flutter_realm/screens/reminder_example.dart';
 
 void main() {
   runApp(const MyApp());
@@ -80,6 +81,18 @@ class MyHomePage extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                       builder: (context) => const ReminderPage()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.touch_app),
+              title: const Text('Link'),
+              trailing: const Icon(Icons.arrow_forward),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const LinkPage()),
                 );
               },
             ),
