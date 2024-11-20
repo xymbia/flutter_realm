@@ -11,7 +11,7 @@ Welcome to **Flutter Realm**! This repository serves as a testing ground for Flu
 - **Code Quality**: Writing clean, maintainable, and efficient code that aligns with best practices.
 - **Collaboration**: Using GitHub workflows to make PRs, follow coding standards, and adhere to version control etiquette.
 
-## Project Structure
+## Project Structure (Needs to be Updated)
 
 The project is based on **Gregertw’s ActingWeb FirstApp** and has been modified to provide a framework for candidates to contribute their work easily.
 
@@ -76,6 +76,10 @@ This section is specifically for developers aiming to showcase their skills in t
 1. **Integration**: Each widget should be encapsulated and integrate with the app’s theme.
 2. **Functionality**: Widgets should ideally be interactive and demonstrate specific functionality (e.g., form inputs, animations, etc.).
 3. **Responsiveness**: Ensure widgets render well on both Android and iOS across various screen sizes.
+
+### SOLID Principles
+
+Each widget should follow the SOLID patterns as outlined in Wiki -> [Flutter Solid Principles for Widgets](https://github.com/xymbia/flutter_realm/wiki/SOLID-Principles)
 
 ## Evaluation Criteria
 
