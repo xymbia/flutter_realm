@@ -79,8 +79,7 @@ class MyHomePage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => const ReminderPage()),
+                  MaterialPageRoute(builder: (context) => const ReminderPage()),
                 );
               },
             ),
@@ -91,8 +90,7 @@ class MyHomePage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => const LinkPage()),
+                  MaterialPageRoute(builder: (context) => const LinkPage()),
                 );
               },
             ),
