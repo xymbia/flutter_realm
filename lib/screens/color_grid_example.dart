@@ -13,7 +13,7 @@ class ColorGridPage extends StatefulWidget {
 }
 
 class _ColorGridPageState extends State<ColorGridPage> {
-  int selectedColorIndex = 1;
+  String? selectedColor;
 
   @override
   Widget build(BuildContext context) {
@@ -28,16 +28,16 @@ class _ColorGridPageState extends State<ColorGridPage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ColorGridWidget(
-              highlightedIndex: selectedColorIndex,
-              onColorSelected: (index) {
+            ColorGrid(
+              value: selectedColor,
+              onChanged: (value) {
                 setState(() {
-                  selectedColorIndex = index;
+                  selectedColor = value;
                 });
               },
             ),
             Text(
-              'Selected Color: $selectedColorIndex',
+              'Selected Color: $selectedColor',
               style: TextStyle(fontSize: 20),
             )
           ],
