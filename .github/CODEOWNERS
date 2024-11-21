@@ -1,0 +1,9 @@
+# These owners will be the default owners for everything in
+# the repo. Unless a later match takes precedence,
+# below owner(s) will be requested for
+# review when someone opens a pull request.
+* @usman-ahmed99 @Abbasi193
+
+# To protect a repository fully against unauthorized changes, 
+# lets define an owner for the CODEOWNERS file itself. 
+/.github/CODEOWNERS @atifmajid
