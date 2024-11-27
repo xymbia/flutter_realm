@@ -6,7 +6,7 @@ import 'package:flutter_realm/presentation/theme/configs.dart';
 
 class CustomBorderedTextField extends StatelessWidget {
   const CustomBorderedTextField({
-    Key? key,
+    super.key,
     required TextEditingController controller,
     required Function(String) onChanged,
     FocusNode? focusNode,
@@ -14,8 +14,7 @@ class CustomBorderedTextField extends StatelessWidget {
   })  : _controller = controller,
         _focusNode = focusNode,
         _isEnabled = isEnabled,
-        _onChanged = onChanged,
-        super(key: key);
+        _onChanged = onChanged;
 
   final TextEditingController _controller;
   final FocusNode? _focusNode;

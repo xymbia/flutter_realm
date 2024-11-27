@@ -22,7 +22,7 @@ showCalendarViewer(
             onPressed: () {
               Navigator.of(context).pop();
             },
-            child: Text('Close'),
+            child: const Text('Close'),
           ),
         ],
         actionsPadding: EdgeInsets.only(bottom: 8.h, right: 16.w),
@@ -36,7 +36,7 @@ class CalendarView extends StatefulWidget {
   final DateTime yearDate;
   final List<DateTime> selectedDates;
 
-  CalendarView({
+  const CalendarView({super.key, 
     required this.yearDate,
     required this.selectedDates,
   });
@@ -68,7 +68,7 @@ class _CalendarViewState extends State<CalendarView> {
                 });
               },
             ),
-            Header(),
+            const Header(),
             Space.y1
           ],
         ),
@@ -87,7 +87,7 @@ class YearView extends StatelessWidget {
   final DateTime yearDate;
   final List<DateTime> selectedDates;
 
-  YearView({
+  const YearView({super.key, 
     required this.yearDate,
     required this.selectedDates,
   });
@@ -95,7 +95,7 @@ class YearView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Container(
+      child: SizedBox(
         width: MediaQuery.of(context).size.width,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -114,7 +114,7 @@ class MonthView extends StatelessWidget {
   final DateTime monthDate;
   final List<DateTime> selectedDates;
 
-  MonthView({
+  const MonthView({super.key, 
     required this.monthDate,
     required this.selectedDates,
   });
@@ -165,11 +165,11 @@ class MonthView extends StatelessWidget {
 
 class WeekView extends StatelessWidget {
   const WeekView({
-    Key? key,
+    super.key,
     required this.weekStartDate,
     required this.currentMonth,
     required this.selectedDates,
-  }) : super(key: key);
+  });
 
   final DateTime weekStartDate;
   final int currentMonth;
@@ -213,7 +213,7 @@ Widget _dateText({
       shape: BoxShape.circle,
       color: (isToday ? colorScheme.primary : Colors.transparent),
     ),
-    child: Container(
+    child: SizedBox(
       width: 25.w,
       child: Center(
         child: Text(
@@ -269,9 +269,8 @@ class YearNavigator extends StatelessWidget {
   final void Function(DateTime) onChanged;
 
   const YearNavigator(
-      {Key? key, required DateTime yearDate, required this.onChanged})
-      : _selectedYearDate = yearDate,
-        super(key: key);
+      {super.key, required DateTime yearDate, required this.onChanged})
+      : _selectedYearDate = yearDate;
 
   @override
   Widget build(BuildContext context) {
@@ -284,7 +283,7 @@ class YearNavigator extends StatelessWidget {
           onPressed: () {
             onChanged(DateTime(_selectedYearDate.year - 1));
           },
-          child: Icon(Icons.arrow_left),
+          child: const Icon(Icons.arrow_left),
         ),
         Text('${_selectedYearDate.year}',
             style: AppText.labelLargeSemiBold
@@ -293,7 +292,7 @@ class YearNavigator extends StatelessWidget {
           onPressed: () {
             onChanged(DateTime(_selectedYearDate.year + 1));
           },
-          child: Icon(Icons.arrow_right),
+          child: const Icon(Icons.arrow_right),
         ),
       ],
     );
@@ -302,8 +301,8 @@ class YearNavigator extends StatelessWidget {
 
 class Header extends StatelessWidget {
   const Header({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

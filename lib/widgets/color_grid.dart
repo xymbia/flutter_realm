@@ -4,7 +4,7 @@ class ColorGrid extends StatefulWidget {
   final String? value;
   final ValueChanged<String> onChanged;
 
-  ColorGrid({required this.value, required this.onChanged});
+  const ColorGrid({super.key, required this.value, required this.onChanged});
 
   @override
   _ColorGridState createState() => _ColorGridState();
@@ -30,14 +30,14 @@ class _ColorGridState extends State<ColorGrid> {
           child: Container(
             height: 32,
             width: 32,
-            margin: EdgeInsets.all(4.0),
+            margin: const EdgeInsets.all(4.0),
             decoration: BoxDecoration(
               color: Color(
                   int.parse(colorHexes[index].substring(1, 7), radix: 16) +
                       0xFF000000),
               border: Border.all(
                 color: selectedIndex == index
-                    ? Color(0xFFB3C2E5)
+                    ? const Color(0xFFB3C2E5)
                     : Colors.transparent,
                 width: 5.0,
               ),

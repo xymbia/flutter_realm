@@ -23,7 +23,7 @@ class _LinkPageState extends State<LinkPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Link Dialog'),
+        title: const Text('Link Dialog'),
       ),
       body: Center(
         child: Column(
@@ -43,11 +43,11 @@ class _LinkPageState extends State<LinkPage> {
                       );
                     });
               },
-              child: Text('Create Link'),
+              child: const Text('Create Link'),
             ),
             Text(
               'Current Link: $newLink',
-              style: TextStyle(fontSize: 20),
+              style: const TextStyle(fontSize: 20),
             )
           ],
         ),

@@ -6,11 +6,11 @@ class TextCheckboxWidget extends StatelessWidget {
   final void Function(bool?)? onChanged;
 
   const TextCheckboxWidget({
-    Key? key,
+    super.key,
     required this.text,
     required this.isChecked,
     this.onChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

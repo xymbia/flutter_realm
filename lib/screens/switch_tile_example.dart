@@ -22,7 +22,7 @@ class _SwitchTilePageState extends State<SwitchTilePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('SwitchTile'),
+        title: const Text('SwitchTile'),
       ),
       body: Center(
         child: Column(
@@ -40,7 +40,7 @@ class _SwitchTilePageState extends State<SwitchTilePage> {
             ),
             Text(
               'Current Switch value: $switchValue',
-              style: TextStyle(fontSize: 20),
+              style: const TextStyle(fontSize: 20),
             )
           ],
         ),

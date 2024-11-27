@@ -34,7 +34,7 @@ class _DockerdCalendarPageState extends State<DockerdCalendarPage> {
     ScreenUtil.init(context, designSize: const Size(390, 848));
     return Scaffold(
       appBar: AppBar(
-        title: Text('Dockerd Calendar'),
+        title: const Text('Dockerd Calendar'),
       ),
       body: Center(
         child: Column(
@@ -44,12 +44,12 @@ class _DockerdCalendarPageState extends State<DockerdCalendarPage> {
               _selectedDate == null
                   ? 'No date selected'
                   : 'Selected Date: ${DateFormat('MMMM d, yyyy').format(_selectedDate!)}',
-              style: TextStyle(fontSize: 20),
+              style: const TextStyle(fontSize: 20),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () => _selectDate(context),
-              child: Text('Select Date'),
+              child: const Text('Select Date'),
             ),
           ],
         ),

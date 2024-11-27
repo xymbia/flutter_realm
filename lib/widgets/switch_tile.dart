@@ -5,7 +5,7 @@ import 'package:flutter_realm/presentation/theme/app_typography_ext.dart';
 import 'package:flutter_realm/presentation/theme/space.dart';
 
 class SwitchTile extends StatefulWidget {
-  const SwitchTile({
+  const SwitchTile({super.key, 
     required this.value,
     required this.title,
     this.subtitle,
@@ -44,7 +44,7 @@ class _SwitchTileState extends State<SwitchTile> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return ListTile(
-      visualDensity: VisualDensity(horizontal: 2, vertical: 1),
+      visualDensity: const VisualDensity(horizontal: 2, vertical: 1),
       contentPadding: Space.hf(18),
       onTap: widget.onTap,
       leading: Icon(

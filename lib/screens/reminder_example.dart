@@ -23,7 +23,7 @@ class _ReminderPageState extends State<ReminderPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Reminder Dialog'),
+        title: const Text('Reminder Dialog'),
       ),
       body: Center(
         child: Column(
@@ -46,11 +46,11 @@ class _ReminderPageState extends State<ReminderPage> {
                       );
                     });
               },
-              child: Text('Create Reminder'),
+              child: const Text('Create Reminder'),
             ),
             Text(
               'Current Reminder: $newReminder',
-              style: TextStyle(fontSize: 20),
+              style: const TextStyle(fontSize: 20),
             )
           ],
         ),

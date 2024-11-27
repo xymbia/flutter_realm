@@ -22,7 +22,7 @@ class _ColorGridPageState extends State<ColorGridPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Color Grid'),
+        title: const Text('Color Grid'),
       ),
       body: Center(
         child: Column(
@@ -38,7 +38,7 @@ class _ColorGridPageState extends State<ColorGridPage> {
             ),
             Text(
               'Selected Color: $selectedColor',
-              style: TextStyle(fontSize: 20),
+              style: const TextStyle(fontSize: 20),
             )
           ],
         ),
@@ -46,3 +46,6 @@ class _ColorGridPageState extends State<ColorGridPage> {
     );
   }
 }
+
+
+// ColorGrid ColorGrid({required String? value, required void Function(String) onChanged})

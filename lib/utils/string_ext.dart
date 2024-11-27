@@ -1,6 +1,6 @@
 extension StringExtension on String {
   String capitalize() {
-    return "${this[0].toUpperCase()}${this.substring(1).toLowerCase()}";
+    return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
   }
 
   String abbreviateNumber(int value) {
@@ -19,10 +19,10 @@ extension StringExtension on String {
   (bool isLengthValid, bool hasUpperCase, bool hasNumber, bool hasUniqueWord)
       get validatePassword {
     return (
-      this.length >= 8,
-      this.contains(RegExp(r'[A-Z]')),
-      this.contains(RegExp(r'[0-9]')),
-      this.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))
+      length >= 8,
+      contains(RegExp(r'[A-Z]')),
+      contains(RegExp(r'[0-9]')),
+      contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))
     );
   }
 

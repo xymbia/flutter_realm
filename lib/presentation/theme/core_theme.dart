@@ -9,7 +9,7 @@ final materialTheme =
 final themeLight = materialTheme.light().copyWith(
       splashColor: Colors.transparent,
       iconTheme: const IconThemeData(color: Color(0xff8E918F)),
-      iconButtonTheme: IconButtonThemeData(style: ButtonStyle()),
+      iconButtonTheme: const IconButtonThemeData(style: ButtonStyle()),
       pageTransitionsTheme: const PageTransitionsTheme(
         builders: {
           TargetPlatform.android: OpenUpwardsPageTransitionsBuilder(),
@@ -21,7 +21,7 @@ final themeLight = materialTheme.light().copyWith(
 final themeDark = materialTheme.dark().copyWith(
       splashColor: Colors.transparent,
       iconTheme: const IconThemeData(color: Color(0xff8E918F)),
-      iconButtonTheme: IconButtonThemeData(style: ButtonStyle()),
+      iconButtonTheme: const IconButtonThemeData(style: ButtonStyle()),
       pageTransitionsTheme: const PageTransitionsTheme(
         builders: {
           TargetPlatform.android: OpenUpwardsPageTransitionsBuilder(),

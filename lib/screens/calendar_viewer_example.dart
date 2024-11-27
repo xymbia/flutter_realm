@@ -19,7 +19,7 @@ class CalendarViewerPage extends StatelessWidget {
     );
     return Scaffold(
       appBar: AppBar(
-        title: Text('Calendar Viewer'),
+        title: const Text('Calendar Viewer'),
       ),
       body: Center(
         child: Column(
@@ -29,7 +29,7 @@ class CalendarViewerPage extends StatelessWidget {
               onPressed: () {
                 showCalendarViewer(context, DateTime.now(), dateList);
               },
-              child: Text('View Calendar'),
+              child: const Text('View Calendar'),
             ),
           ],
         ),
@@ -37,3 +37,5 @@ class CalendarViewerPage extends StatelessWidget {
     );
   }
 }
+
+

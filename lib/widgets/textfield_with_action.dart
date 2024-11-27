@@ -22,7 +22,7 @@ class TextFieldWithActionTile extends StatefulWidget {
   final TextInputType? keyboardType;
 
   const TextFieldWithActionTile({
-    Key? key,
+    super.key,
     this.focusNode,
     required this.hintText,
     required this.onCompleted,
@@ -33,7 +33,7 @@ class TextFieldWithActionTile extends StatefulWidget {
     this.keyboardType,
     this.maxLength,
     this.leading,
-  }) : super(key: key);
+  });
 
   @override
   TextFieldWithActionTileState createState() => TextFieldWithActionTileState();

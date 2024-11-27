@@ -7,10 +7,10 @@ import 'package:flutter_realm/utils/string_ext.dart';
 
 class LinkDialog extends StatefulWidget {
   const LinkDialog({
-    Key? key,
+    super.key,
     required this.onSubmitted,
     this.title = 'Edit Link',
-  }) : super(key: key);
+  });
 
   final String title;
   final Function(TaskLink) onSubmitted;
@@ -20,8 +20,8 @@ class LinkDialog extends StatefulWidget {
 }
 
 class LinkDialogState extends State<LinkDialog> {
-  TextEditingController _textController = TextEditingController();
-  TextEditingController _urlController = TextEditingController();
+  final TextEditingController _textController = TextEditingController();
+  final TextEditingController _urlController = TextEditingController();
 
   bool _isValid = true;
 

@@ -144,7 +144,7 @@ class _DockedCalendarContentState extends State<DockedCalendarContent> {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('Cancel'),
+                child: const Text('Cancel'),
               ),
               TextButton(
                 onPressed: () {
@@ -153,7 +153,7 @@ class _DockedCalendarContentState extends State<DockedCalendarContent> {
                       ? widget.onChanged(_selectedDate!)
                       : null;
                 },
-                child: Text('Ok'),
+                child: const Text('Ok'),
               ),
             ],
           )
@@ -249,7 +249,7 @@ class MonthView extends StatelessWidget {
   final DateTime firstDate;
   final DateTime lastDate;
 
-  MonthView({
+  const MonthView({super.key, 
     required this.monthDate,
     required this.selectedDate,
     required this.onChanged,
@@ -280,7 +280,7 @@ class MonthView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Space.yf(16),
-        Header(),
+        const Header(),
         Space.yf(12),
         ...List.generate(
             getNumberOfWeeksInMonth(monthDate.year, monthDate.month), (index) {
@@ -300,14 +300,14 @@ class MonthView extends StatelessWidget {
 
 class WeekView extends StatelessWidget {
   const WeekView({
-    Key? key,
+    super.key,
     required this.weekStartDate,
     required this.currentMonth,
     this.selectedDate,
     required this.onChanged,
     required this.firstDate,
     required this.lastDate,
-  }) : super(key: key);
+  });
 
   final DateTime weekStartDate;
   final int currentMonth;
@@ -391,6 +391,11 @@ Widget _dateText({
   bool isOutOfRange =
       date != null && (date.isBefore(firstDate) || date.isAfter(lastDate));
   return GestureDetector(
+    onTap: isOutOfRange
+        ? null
+        : () {
+            if (date != null) onTap(date);
+          },
     child: Container(
       padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
@@ -401,7 +406,7 @@ Widget _dateText({
           style: BorderStyle.solid,
         ),
       ),
-      child: Container(
+      child: SizedBox(
         width: 25.w,
         child: Center(
           child: Opacity(
@@ -419,18 +424,13 @@ Widget _dateText({
         ),
       ),
     ),
-    onTap: isOutOfRange
-        ? null
-        : () {
-            if (date != null) onTap(date);
-          },
   );
 }
 
 class Header extends StatelessWidget {
   const Header({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -444,7 +444,7 @@ class Header extends StatelessWidget {
             Space.y,
             Container(
               padding: EdgeInsets.all(4.w),
-              child: Container(
+              child: SizedBox(
                 width: 25.w,
                 child: Center(
                   child: Text(
@@ -469,7 +469,7 @@ class YearSelector extends StatelessWidget {
   final DateTime lastDate;
   final void Function(int) onChanged;
 
-  YearSelector({
+  const YearSelector({super.key, 
     required this.selectedYear,
     required this.firstDate,
     required this.lastDate,
@@ -487,7 +487,7 @@ class YearSelector extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
-          icon: Icon(Icons.chevron_left),
+          icon: const Icon(Icons.chevron_left),
           onPressed: selectedYear == firstDate.year
               ? null
               : () {
@@ -495,7 +495,7 @@ class YearSelector extends StatelessWidget {
                 },
         ),
         DropdownButton<int>(
-          underline: SizedBox.shrink(),
+          underline: const SizedBox.shrink(),
           menuMaxHeight: 400.h,
           isDense: true,
           value: selectedYear,
@@ -514,7 +514,7 @@ class YearSelector extends StatelessWidget {
           },
         ),
         IconButton(
-          icon: Icon(Icons.chevron_right),
+          icon: const Icon(Icons.chevron_right),
           onPressed: selectedYear == lastDate.year
               ? null
               : () {
@@ -534,7 +534,7 @@ class MonthSelector extends StatelessWidget {
   final void Function(int) onChanged;
   final void Function({required bool incrementYear}) onYearChanged;
 
-  MonthSelector({
+  MonthSelector({super.key, 
     required this.selectedMonth,
     required this.selectedYear,
     required this.firstDate,
@@ -565,7 +565,7 @@ class MonthSelector extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
-          icon: Icon(Icons.chevron_left),
+          icon: const Icon(Icons.chevron_left),
           onPressed: (selectedYear == firstDate.year && selectedMonth == 1)
               ? null
               : () {
@@ -574,12 +574,11 @@ class MonthSelector extends StatelessWidget {
                     onYearChanged(incrementYear: false);
                     temp = 12;
                   }
-                  ;
                   onChanged(temp);
                 },
         ),
         DropdownButton<int>(
-          underline: SizedBox.shrink(),
+          underline: const SizedBox.shrink(),
           menuMaxHeight: 400.h,
           isDense: true,
           value: selectedMonth,
@@ -598,7 +597,7 @@ class MonthSelector extends StatelessWidget {
           },
         ),
         IconButton(
-          icon: Icon(Icons.chevron_right),
+          icon: const Icon(Icons.chevron_right),
           onPressed: (selectedYear == lastDate.year && selectedMonth == 12)
               ? null
               : () {

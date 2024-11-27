@@ -6,7 +6,7 @@ import 'package:flutter_realm/presentation/theme/configs.dart';
 
 class CustomDropDownWithDividers extends StatefulWidget {
   const CustomDropDownWithDividers({
-    Key? key,
+    super.key,
     this.width = 80,
     this.dividersAfter = const [],
     this.isEnabled = true,
@@ -15,8 +15,7 @@ class CustomDropDownWithDividers extends StatefulWidget {
     required void Function(String) onChanged,
   })  : _value = value,
         _items = items,
-        _onChanged = onChanged,
-        super(key: key);
+        _onChanged = onChanged;
 
   final double width;
   final String _value;
@@ -67,7 +66,7 @@ class _CustomDropDownWithDividersState
           borderRadius: UIProps.radiusS,
         ),
         child: DropdownButton2(
-          underline: SizedBox.shrink(),
+          underline: const SizedBox.shrink(),
           isExpanded: true,
           autofocus: false,
           value: _value,
@@ -75,7 +74,7 @@ class _CustomDropDownWithDividersState
             int index = widget._items.indexWhere((element) => element == value);
             _onChanged(index);
           },
-          menuItemStyleData: MenuItemStyleData(
+          menuItemStyleData: const MenuItemStyleData(
             padding: EdgeInsets.zero,
           ),
           selectedItemBuilder: (context) {

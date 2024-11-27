@@ -22,7 +22,7 @@ class _TextFieldPageState extends State<TextFieldPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('TextField With Button'),
+        title: const Text('TextField With Button'),
       ),
       body: Center(
         child: Column(
@@ -39,7 +39,7 @@ class _TextFieldPageState extends State<TextFieldPage> {
                 }),
             Text(
               'Current text field value: $textFieldValue',
-              style: TextStyle(fontSize: 20),
+              style: const TextStyle(fontSize: 20),
             )
           ],
         ),
