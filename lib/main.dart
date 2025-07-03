@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_realm/screens/calendar_viewer_example.dart';
 import 'package:flutter_realm/screens/color_grid_example.dart';
+import 'package:flutter_realm/screens/date_picker_example.dart';
 import 'package:flutter_realm/screens/docked_calendar_example.dart';
 import 'package:flutter_realm/screens/link_example.dart';
 import 'package:flutter_realm/screens/switch_tile_example.dart';
@@ -124,13 +125,13 @@ class MyHomePage extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.touch_app),
-              title: const Text('Text Field With Action'),
+              title: const Text('Date Picker'),
               trailing: const Icon(Icons.arrow_forward),
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const TextFieldPage()),
+                      builder: (context) => const DatePickerPage()),
                 );
               },
             ),

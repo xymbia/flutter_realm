@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -17,7 +19,7 @@ int getMonthFirstDayOffset(int year, int month, int firstDayOfWeekIndex) {
 
 /// Get short month format for the given locale.
 DateFormat getLocaleShortMonthFormat(Locale locale) {
-  final String localeName = Intl.canonicalizedLocale(locale.toString());
+  final String localeName = Platform.localeName;
   var monthFormat = DateFormat.MMM();
   if (DateFormat.localeExists(localeName)) {
     monthFormat = DateFormat.MMM(localeName);
