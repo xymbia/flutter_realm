@@ -122,6 +122,18 @@ class MyHomePage extends StatelessWidget {
                 );
               },
             ),
+            ListTile(
+              leading: const Icon(Icons.touch_app),
+              title: const Text('Text Field With Action'),
+              trailing: const Icon(Icons.arrow_forward),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const TextFieldPage()),
+                );
+              },
+            ),
           ],
         ),
       ),

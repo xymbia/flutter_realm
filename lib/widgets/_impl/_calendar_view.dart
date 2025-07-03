@@ -1,9 +1,4 @@
-
-
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-
-import '../../models/date_picker_widget_config.dart';
+part of '../date_picker_widget.dart';
 
 T? _ambiguate<T>(T? value) => value;
 

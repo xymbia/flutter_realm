@@ -1,9 +1,4 @@
-
-
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-
-import '../../models/date_picker_widget_config.dart';
+part of '../date_picker_widget.dart';
 
 /// Displays the days of a given month and allows choosing a day.
 ///

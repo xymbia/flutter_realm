@@ -1,9 +1,4 @@
-
-
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-
-import '../../models/date_picker_widget_config.dart';
+part of '../date_picker_widget.dart';
 
 /// Displays a scrollable calendar grid that allows a user to select dates
 class _CalendarScrollView extends StatefulWidget {
