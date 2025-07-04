@@ -111,14 +111,14 @@ class _DatePickerModeToggleButtonState
       height: (widget.config.controlsHeight ?? _subHeaderHeight),
       child: Row(
         children: <Widget>[
-          if (widget.mode == DatePickerWidgetMode.day &&
-              widget.config.centerAlignModePicker == true)
-            // Give space for the prev/next month buttons that are underneath this row
-            SizedBox(width: datePickerOffsetPadding),
-          ..._buildModePickerButtons(),
-          if (widget.mode == DatePickerWidgetMode.day)
-            // Give space for the prev/next month buttons that are underneath this row
-            SizedBox(width: datePickerOffsetPadding),
+          // if (widget.mode == DatePickerWidgetMode.day &&
+          //     widget.config.centerAlignModePicker == true)
+          //   // Give space for the prev/next month buttons that are underneath this row
+          //   SizedBox(width: datePickerOffsetPadding),
+          // ..._buildModePickerButtons(),
+          // if (widget.mode == DatePickerWidgetMode.day)
+          //   // Give space for the prev/next month buttons that are underneath this row
+          //   SizedBox(width: datePickerOffsetPadding),
         ],
       ),
     );
