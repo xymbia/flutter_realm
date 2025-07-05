@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../models/date_picker_widget_config.dart';
 import '../utils/date_util.dart';
+import '../utils/font_helper.dart';
 import '../widgets/date_picker_widget.dart';
 
 class DatePickerPage extends StatefulWidget {
@@ -33,7 +34,8 @@ class _SwitchTilePageState extends State<DatePickerPage> {
       color: Colors.black87,
       fontWeight: FontWeight.bold,
     ),
-    firstDayOfWeek: 0, // 0 = Sunday, 1 = Monday, etc.
+    firstDayOfWeek: 0,
+    // 0 = Sunday, 1 = Monday, etc.
     controlsHeight: 50,
     dayMaxWidth: 25,
     animateToDisplayedMonthDate: false,
@@ -116,75 +118,80 @@ class _SwitchTilePageState extends State<DatePickerPage> {
 
   Widget _buildSingleDatePickerWithValue() {
     return Card(
-      elevation: 2,
+      elevation: 4,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      color: const Color(0xFFF7F8FA),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
         children: [
           // Header section
-          const Text("Select Date",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-              )),
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+            child: Text('Select Date',
+                style: Font.apply(FontStyle.regular, FontSize.h5)),
+          ),
+          const Divider(height: 1, color: Color(0xFFEDEEF0)),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Month Dropdown
-                  DropdownButton<String>(
-                    value: selectedMonth,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        selectedMonth = newValue!;
-                      });
-                    },
-                    items: months.map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                    icon: const Icon(Icons.arrow_drop_down),
-                    style: const TextStyle(color: Colors.black),
-                    underline: Container(
-                      height: 1,
-                      color: Colors.black12,
+                  InkWell(
+                    splashColor: Colors.white,
+                    onTap: () {},
+                    hoverColor: Colors.yellow,
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors
+                            .transparent, // material color will cover this
+                      ),
+                      child: Row(
+                        children: [
+                          Text(selectedMonth,
+                              style:
+                                  Font.apply(FontStyle.regular, FontSize.h6)),
+                          Icon(
+                            Icons.keyboard_arrow_down,
+                            color: Colors.black54,
+                            size: 24.sp,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  const SizedBox(width: 16),
-
-                  // Year Dropdown
-                  DropdownButton<int>(
-                    value: selectedYear,
-                    onChanged: (int? newValue) {
-                      setState(() {
-                        selectedYear = newValue!;
-                      });
-                    },
-                    items: years.map<DropdownMenuItem<int>>((int value) {
-                      return DropdownMenuItem<int>(
-                        value: value,
-                        child: Text(value.toString()),
-                      );
-                    }).toList(),
-                    icon: Icon(Icons.arrow_drop_down),
-                    style: TextStyle(color: Colors.black),
-                    underline: Container(
-                      height: 1,
-                      color: Colors.black12,
+                  InkWell(
+                    splashColor: Colors.white,
+                    onTap: () {},
+                    hoverColor: Colors.yellow,
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors
+                            .transparent, // material color will cover this
+                      ),
+                      child: Row(
+                        children: [
+                          Text(selectedYear.toString(),
+                              style:
+                                  Font.apply(FontStyle.regular, FontSize.h6)),
+                          Icon(
+                            Icons.keyboard_arrow_down,
+                            color: Colors.black54,
+                            size: 24.sp,
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
+                  )
                 ],
               ),
             ),
           ),
-          const Divider(height: 1),
 
           // Body section
           Padding(
@@ -197,23 +204,42 @@ class _SwitchTilePageState extends State<DatePickerPage> {
                   () => _singleDatePickerValueWithDefaultValue = dates),
             ),
           ),
-          Divider(height: 1),
-
-          // Footer section
+          const Divider(height: 1, color: Color(0xFFEDEEF0)),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                OutlinedButton(
+                IconButton(
+                  iconSize: 24,
+                  icon: const Icon(Icons.refresh),
                   onPressed: () {
-                    Navigator.pop(context);
+                    // ...
                   },
-                  child: Text('Cancel'),
                 ),
-                ElevatedButton(
-                  onPressed: () {},
-                  child: Text('Save'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    MaterialButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text('Cancel',
+                          style: Font.apply(FontStyle.regular, FontSize.h6,
+                              color: const Color(0xFF393B40))),
+                    ),
+                    const Padding(padding: EdgeInsets.only(right: 8.0)),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFE0E1E4),
+                        foregroundColor: const Color(0xFFE0E1E4),
+                      ),
+                      onPressed: () {},
+                      child: Text('Save',
+                          style: Font.apply(FontStyle.regular, FontSize.h6,
+                              color: const Color(0xFF393B40))),
+                    ),
+                  ],
                 ),
               ],
             ),
