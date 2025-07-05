@@ -9,29 +9,29 @@ import '../models/date_picker_widget_config.dart';
 import '../utils/date_util.dart';
 import '../utils/font_helper.dart';
 
-part '../widgets/_impl/_calendar_scroll_view.dart';
-part '../widgets/_impl/_calendar_view.dart';
-part '../widgets/_impl/_date_picker_mode_toggle_button.dart';
-part '../widgets/_impl/_day_picker.dart';
-part '../widgets/_impl/_focus_date.dart';
-part '../widgets/_impl/_month_picker.dart';
-part '../widgets/_impl/year_picker.dart';
+part '../widgets/date_picker_impl/_calendar_scroll_view.dart';
+part '../widgets/date_picker_impl/_calendar_view.dart';
+part '../widgets/date_picker_impl/_date_picker_mode_toggle_button.dart';
+part '../widgets/date_picker_impl/_day_picker.dart';
+part '../widgets/date_picker_impl/_focus_date.dart';
+part '../widgets/date_picker_impl/_month_picker.dart';
+part '../widgets/date_picker_impl/year_picker.dart';
 
 const Duration _monthScrollDuration = Duration(milliseconds: 200);
 
 const double _dayPickerRowHeight = 42.0;
 const int _maxDayPickerRowCount = 6; // A 31 day month that starts on Saturday.
-const double _monthPickerHorizontalPadding = 8.0;
+const double _monthPickerHorizontalPadding = 0.0;
 
-const int _yearPickerColumnCount = 3;
-const double _yearPickerPadding = 16.0;
-const double _yearPickerRowHeight = 52.0;
-const double _yearPickerRowSpacing = 8.0;
+const int _yearPickerColumnCount = 4;
+const double _yearPickerPadding = 0.0;
+const double _yearPickerRowHeight = 85.0;
+const double _yearPickerRowSpacing = 0.0;
 
-const int _monthPickerColumnCount = 3;
-const double _monthPickerPadding = 16.0;
-const double _monthPickerRowHeight = 52.0;
-const double _monthPickerRowSpacing = 8.0;
+const int _monthPickerColumnCount = 4;
+const double _monthPickerPadding = 0.0;
+const double _monthPickerRowHeight = 85.0;
+const double _monthPickerRowSpacing = 0.0;
 
 const double _subHeaderHeight = 52.0;
 const double _monthNavButtonsWidth = 108.0;
@@ -312,13 +312,16 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
   Widget _buildPicker() {
     switch (_mode) {
       case DatePickerWidgetMode.day:
-        return _CalendarView(
-          config: widget.config,
-          key: _dayPickerKey,
-          initialMonth: _currentDisplayedMonthDate,
-          selectedDates: _selectedDates,
-          onChanged: _handleDayChanged,
-          onDisplayedMonthChanged: _handleDisplayedMonthDateChanged,
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: _CalendarView(
+            config: widget.config,
+            key: _dayPickerKey,
+            initialMonth: _currentDisplayedMonthDate,
+            selectedDates: _selectedDates,
+            onChanged: _handleDayChanged,
+            onDisplayedMonthChanged: _handleDisplayedMonthDateChanged,
+          ),
         );
       case DatePickerWidgetMode.month:
         return Padding(
@@ -334,8 +337,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
         );
       case DatePickerWidgetMode.year:
         return Padding(
-          padding: EdgeInsets.only(
-              top: widget.config.controlsHeight ?? _subHeaderHeight),
+          padding: const EdgeInsets.all(16.0),
           child: YearPicker(
             config: widget.config,
             key: _yearPickerKey,

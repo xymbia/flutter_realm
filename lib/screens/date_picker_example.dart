@@ -131,89 +131,81 @@ class _SwitchTilePageState extends State<DatePickerPage> {
         children: [
           // Header section
           Padding(
-            padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+            padding: const EdgeInsets.only(top: 16.0, bottom: 20.0),
             child: Text('Select Date',
-                style: Font.apply(FontStyle.regular, FontSize.h4)),
+                style: Font.apply(FontStyle.medium, FontSize.h4)),
           ),
           const Divider(height: 1, color: Color(0xFFEDEEF0)),
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  InkWell(
-                    splashColor: Colors.white,
-                    onTap: () {
-                      setState(() {
-                        mode = DatePickerWidgetMode.month;
-                      });
-                    },
-                    hoverColor: Colors.yellow,
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors
-                            .transparent, // material color will cover this
-                      ),
-                      child: Row(
-                        children: [
-                          Text(selectedMonth,
-                              style:
-                                  Font.apply(FontStyle.regular, FontSize.h6)),
-                          Icon(
-                            Icons.keyboard_arrow_down,
-                            color: Colors.black54,
-                            size: 24.sp,
-                          ),
-                        ],
-                      ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                InkWell(
+                  splashColor: Colors.white,
+                  onTap: () {
+                    setState(() {
+                      mode = DatePickerWidgetMode.month;
+                    });
+                  },
+                  hoverColor: Colors.yellow,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color:
+                          Colors.transparent, // material color will cover this
+                    ),
+                    child: Row(
+                      children: [
+                        Text(selectedMonth,
+                            style: Font.apply(FontStyle.regular, FontSize.h6)),
+                        Icon(
+                          Icons.keyboard_arrow_down,
+                          color: Colors.black54,
+                          size: 24.sp,
+                        ),
+                      ],
                     ),
                   ),
-                  InkWell(
-                    splashColor: Colors.white,
-                    onTap: () {
-                      setState(() {
-                        mode = DatePickerWidgetMode.year;
-                      });
-                    },
-                    hoverColor: Colors.yellow,
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors
-                            .transparent, // material color will cover this
-                      ),
-                      child: Row(
-                        children: [
-                          Text(selectedYear.toString(),
-                              style:
-                                  Font.apply(FontStyle.regular, FontSize.h6)),
-                          Icon(
-                            Icons.keyboard_arrow_down,
-                            color: Colors.black54,
-                            size: 24.sp,
-                          ),
-                        ],
-                      ),
+                ),
+                InkWell(
+                  splashColor: Colors.white,
+                  onTap: () {
+                    setState(() {
+                      mode = DatePickerWidgetMode.year;
+                    });
+                  },
+                  hoverColor: Colors.yellow,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color:
+                          Colors.transparent, // material color will cover this
                     ),
-                  )
-                ],
-              ),
+                    child: Row(
+                      children: [
+                        Text(selectedYear.toString(),
+                            style: Font.apply(FontStyle.regular, FontSize.h6)),
+                        Icon(
+                          Icons.keyboard_arrow_down,
+                          color: Colors.black54,
+                          size: 24.sp,
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              ],
             ),
           ),
 
           // Body section
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: DatePickerWidget(
-              displayedMonthDate: _singleDatePickerValueWithDefaultValue.first,
-              config: config,
-              value: _singleDatePickerValueWithDefaultValue,
-              onValueChanged: (dates) => setState(
-                  () => _singleDatePickerValueWithDefaultValue = dates),
-            ),
+          DatePickerWidget(
+            displayedMonthDate: _singleDatePickerValueWithDefaultValue.first,
+            config: config,
+            value: _singleDatePickerValueWithDefaultValue,
+            onValueChanged: (dates) =>
+                setState(() => _singleDatePickerValueWithDefaultValue = dates),
           ),
           const Divider(height: 1, color: Color(0xFFEDEEF0)),
           Padding(
@@ -240,16 +232,18 @@ class _SwitchTilePageState extends State<DatePickerPage> {
                               color: const Color(0xFF393B40))),
                     ),
                     const Padding(padding: EdgeInsets.only(right: 8.0)),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFE0E1E4),
-                        foregroundColor: const Color(0xFFE0E1E4),
-                      ),
-                      onPressed: () {},
-                      child: Text('Save',
-                          style: Font.apply(FontStyle.regular, FontSize.h6,
-                              color: const Color(0xFF393B40))),
-                    ),
+                    SizedBox(
+                        height: 50.0,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFE0E1E4),
+                            foregroundColor: const Color(0xFFE0E1E4),
+                          ),
+                          onPressed: () {},
+                          child: Text('Save',
+                              style: Font.apply(FontStyle.regular, FontSize.h6,
+                                  color: const Color(0xFF393B40))),
+                        )),
                   ],
                 ),
               ],

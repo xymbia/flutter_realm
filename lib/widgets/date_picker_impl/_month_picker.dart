@@ -86,8 +86,8 @@ class _MonthPickerState extends State<_MonthPicker> {
     final bool isCurrentMonth =
         widget.initialMonth.year == widget.config.currentDate.year &&
             widget.config.currentDate.month == month;
-    const double decorationHeight = 36.0;
-    const double decorationWidth = 72.0;
+    const double decorationHeight = 85.0;
+    const double decorationWidth = 85.0;
 
     final bool isSelected = widget.selectedDates.isNotEmpty &&
         widget.selectedDates.any((date) =>
@@ -116,7 +116,7 @@ class _MonthPickerState extends State<_MonthPicker> {
 
     final Color textColor;
     if (isSelected) {
-      textColor = colorScheme.onPrimary;
+      textColor = colorScheme.onSurface.withValues(alpha: 0.87);
     } else if (!isMonthSelectable) {
       textColor = colorScheme.onSurface.withValues(alpha: 0.38);
     } else if (isCurrentMonth) {
@@ -138,17 +138,15 @@ class _MonthPickerState extends State<_MonthPicker> {
     BoxDecoration? decoration;
     if (isSelected) {
       decoration = BoxDecoration(
-        color: widget.config.selectedDayHighlightColor ?? colorScheme.primary,
-        borderRadius: widget.config.monthBorderRadius ??
-            BorderRadius.circular(decorationHeight / 2),
+          borderRadius: BorderRadius.circular(decorationHeight/2),
+          border: Border.all(width: 1, color: const Color(0xFFACB1BF)),
       );
     } else if (isCurrentMonth && isMonthSelectable) {
       decoration = BoxDecoration(
         border: Border.all(
           color: widget.config.selectedDayHighlightColor ?? colorScheme.primary,
         ),
-        borderRadius: widget.config.monthBorderRadius ??
-            BorderRadius.circular(decorationHeight / 2),
+        borderRadius: BorderRadius.circular(decorationHeight),
       );
     }
 
@@ -160,20 +158,18 @@ class _MonthPickerState extends State<_MonthPicker> {
           isDisabled: !isMonthSelectable,
           isCurrentMonth: isCurrentMonth,
         ) ??
-        Center(
-          child: Container(
-            decoration: decoration,
-            height: decorationHeight,
-            width: decorationWidth,
-            child: Center(
-              child: Semantics(
-                selected: isSelected,
-                button: true,
-                child: Text(
-                  getLocaleShortMonthFormat(_locale)
-                      .format(DateTime(widget.initialMonth.year, month)),
-                  style: itemStyle,
-                ),
+        Container(
+          decoration: decoration,
+          height: decorationHeight,
+          width: decorationWidth,
+          child: Center(
+            child: Semantics(
+              selected: isSelected,
+              button: true,
+              child: Text(
+                getLocaleShortMonthFormat(_locale)
+                    .format(DateTime(widget.initialMonth.year, month)),
+                style: itemStyle,
               ),
             ),
           ),
@@ -205,11 +201,6 @@ class _MonthPickerState extends State<_MonthPicker> {
     assert(debugCheckHasMaterial(context));
     return Column(
       children: <Widget>[
-        Divider(
-          color: widget.config.hideMonthPickerDividers == true
-              ? Colors.transparent
-              : null,
-        ),
         Expanded(
           child: GridView.builder(
             controller: _scrollController,
@@ -219,12 +210,7 @@ class _MonthPickerState extends State<_MonthPicker> {
             padding:
                 const EdgeInsets.symmetric(horizontal: _monthPickerPadding),
           ),
-        ),
-        Divider(
-          color: widget.config.hideMonthPickerDividers == true
-              ? Colors.transparent
-              : null,
-        ),
+        )
       ],
     );
   }

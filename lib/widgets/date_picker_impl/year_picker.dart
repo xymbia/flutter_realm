@@ -96,12 +96,12 @@ class _YearPickerState extends State<YearPicker> {
     final isDisabled = (year < widget.config.firstDate.year ||
             year > widget.config.lastDate.year) ||
         !yearSelectableFromPredicate;
-    const double decorationHeight = 36.0;
-    const double decorationWidth = 72.0;
+    const double decorationHeight = 85.0;
+    const double decorationWidth = 85.0;
 
     final Color textColor;
     if (isSelected) {
-      textColor = colorScheme.onPrimary;
+      textColor = colorScheme.onSurface.withValues(alpha: 0.87);
     } else if (isDisabled) {
       textColor = colorScheme.onSurface.withValues(alpha: 0.38);
     } else if (isCurrentYear) {
@@ -122,9 +122,8 @@ class _YearPickerState extends State<YearPicker> {
     BoxDecoration? decoration;
     if (isSelected) {
       decoration = BoxDecoration(
-        color: widget.config.selectedDayHighlightColor ?? colorScheme.primary,
-        borderRadius: widget.config.yearBorderRadius ??
-            BorderRadius.circular(decorationHeight / 2),
+        borderRadius: BorderRadius.circular(decorationHeight/2),
+        border: Border.all(width: 1, color: const Color(0xFFACB1BF)),
       );
     } else if (isCurrentYear && !isDisabled) {
       decoration = BoxDecoration(
@@ -191,11 +190,6 @@ class _YearPickerState extends State<YearPicker> {
     assert(debugCheckHasMaterial(context));
     return Column(
       children: <Widget>[
-        Divider(
-          color: widget.config.hideYearPickerDividers == true
-              ? Colors.transparent
-              : null,
-        ),
         Expanded(
           child: GridView.builder(
             controller: _scrollController,
@@ -205,12 +199,7 @@ class _YearPickerState extends State<YearPicker> {
             itemCount: math.max(_itemCount, minYears),
             padding: const EdgeInsets.symmetric(horizontal: _yearPickerPadding),
           ),
-        ),
-        Divider(
-          color: widget.config.hideYearPickerDividers == true
-              ? Colors.transparent
-              : null,
-        ),
+        )
       ],
     );
   }
