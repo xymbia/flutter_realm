@@ -295,23 +295,88 @@ class _CalendarViewState extends State<_CalendarView> {
     return widget.config.selectableDayPredicate?.call(date) ?? true;
   }
 
+  List<Widget> _dayHeaders(
+      TextStyle? headerStyle, MaterialLocalizations localizations) {
+    final List<Widget> result = <Widget>[];
+    final weekdays =
+        widget.config.weekdayLabels ?? localizations.narrowWeekdays;
+    final firstDayOfWeek =
+        widget.config.firstDayOfWeek ?? localizations.firstDayOfWeekIndex;
+    assert(firstDayOfWeek >= 0 && firstDayOfWeek <= 6,
+        'firstDayOfWeek must between 0 and 6');
+    for (int i = firstDayOfWeek; true; i = (i + 1) % 7) {
+      final String weekday = weekdays[i];
+      result.add(ExcludeSemantics(
+        child: widget.config.weekdayLabelBuilder?.call(weekday: i) ??
+            Center(
+              child: Text(
+                weekday,
+                style: widget.config.weekdayLabelTextStyle ?? headerStyle,
+              ),
+            ),
+      ));
+      if (i == (firstDayOfWeek - 1) % 7) break;
+    }
+    return result;
+  }
+
   Widget _buildItems(BuildContext context, int index) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final MaterialLocalizations localizations =
+        MaterialLocalizations.of(context);
+    final TextTheme textTheme = Theme.of(context).textTheme;
+    final TextStyle? headerStyle = textTheme.bodySmall?.apply(
+      color: colorScheme.onSurface.withValues(alpha: 0.60),
+    );
+    final List<Widget> dayItems = _dayHeaders(headerStyle, localizations);
     final DateTime month =
         DateUtils.addMonthsToMonthDate(widget.config.firstDate, index);
-    return _DayPicker(
-      key: ValueKey<DateTime>(month),
-      selectedDates: widget.selectedDates.whereType<DateTime>().toList(),
-      onChanged: _handleDateSelected,
-      config: widget.config,
-      displayedMonth: month,
-      dayRowsCount: widget.config.dynamicCalendarRows == true
-          ? getDayRowsCount(
-              month.year,
-              month.month,
-              widget.config.firstDayOfWeek ??
-                  _localizations.firstDayOfWeekIndex,
-            )
-          : _maxDayPickerRowCount,
+    return Stack(
+      children: [
+        GridView.custom(
+          padding: EdgeInsets.zero,
+          physics: const ClampingScrollPhysics(),
+          gridDelegate: _DayPickerGridDelegate(
+            config: widget.config,
+            dayRowsCount: widget.config.dynamicCalendarRows == true
+                ? getDayRowsCount(
+                    month.year,
+                    month.month,
+                    widget.config.firstDayOfWeek ??
+                        _localizations.firstDayOfWeekIndex,
+                  )
+                : _maxDayPickerRowCount,
+          ),
+          childrenDelegate: SliverChildListDelegate(
+            dayItems,
+            addRepaintBoundaries: false,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 50.0, left: 10.0),
+          child: Text(
+              "${getMonthAbbreviation(month.month)} ${month.year.toString()}",
+              style: Font.apply(FontStyle.regular, FontSize.h6)),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 80.0),
+          child: _DayPicker(
+            key: ValueKey<DateTime>(month),
+            selectedDates: widget.selectedDates.whereType<DateTime>().toList(),
+            onChanged: _handleDateSelected,
+            config: widget.config,
+            displayedMonth: month,
+            dayRowsCount: widget.config.dynamicCalendarRows == true
+                ? getDayRowsCount(
+                    month.year,
+                    month.month,
+                    widget.config.firstDayOfWeek ??
+                        _localizations.firstDayOfWeekIndex,
+                  )
+                : _maxDayPickerRowCount,
+          ),
+        ),
+      ],
     );
   }
 
@@ -330,41 +395,41 @@ class _CalendarViewState extends State<_CalendarView> {
           //   height: (widget.config.controlsHeight ?? _subHeaderHeight),
           //   child: Row(
           //     children: <Widget>[
-          //       //if (widget.config.centerAlignModePicker != true) const Spacer(),
-          //       // if (widget.config.hideLastMonthIcon != true)
-          //       //   IconButton(
-          //       //     splashRadius: widget.config.dayMaxWidth != null
-          //       //         ? widget.config.dayMaxWidth! * 2 / 3
-          //       //         : null,
-          //       //     icon: widget.config.lastMonthIcon ??
-          //       //         Icon(widget.config.dayModeScrollDirection ==
-          //       //                 Axis.vertical
-          //       //             ? Icons.keyboard_arrow_up
-          //       //             : Icons.chevron_left),
-          //       //     color: controlColor,
-          //       //     tooltip: _isDisplayingFirstMonth
-          //       //         ? null
-          //       //         : _localizations.previousMonthTooltip,
-          //       //     onPressed:
-          //       //         _isDisplayingFirstMonth ? null : _handlePreviousMonth,
-          //       //   ),
-          //       //if (widget.config.centerAlignModePicker == true) const Spacer(),
-          //       // if (widget.config.hideNextMonthIcon != true)
-          //       //   IconButton(
-          //       //     splashRadius: widget.config.dayMaxWidth != null
-          //       //         ? widget.config.dayMaxWidth! * 2 / 3
-          //       //         : null,
-          //       //     icon: widget.config.nextMonthIcon ??
-          //       //         Icon(widget.config.dayModeScrollDirection ==
-          //       //                 Axis.vertical
-          //       //             ? Icons.keyboard_arrow_down
-          //       //             : Icons.chevron_right),
-          //       //     color: controlColor,
-          //       //     tooltip: _isDisplayingLastMonth
-          //       //         ? null
-          //       //         : _localizations.nextMonthTooltip,
-          //       //     onPressed: _isDisplayingLastMonth ? null : _handleNextMonth,
-          //       //   ),
+          //       if (widget.config.centerAlignModePicker != true) const Spacer(),
+          //       if (widget.config.hideLastMonthIcon != true)
+          //         IconButton(
+          //           splashRadius: widget.config.dayMaxWidth != null
+          //               ? widget.config.dayMaxWidth! * 2 / 3
+          //               : null,
+          //           icon: widget.config.lastMonthIcon ??
+          //               Icon(widget.config.dayModeScrollDirection ==
+          //                       Axis.vertical
+          //                   ? Icons.keyboard_arrow_up
+          //                   : Icons.chevron_left),
+          //           color: controlColor,
+          //           tooltip: _isDisplayingFirstMonth
+          //               ? null
+          //               : _localizations.previousMonthTooltip,
+          //           onPressed:
+          //               _isDisplayingFirstMonth ? null : _handlePreviousMonth,
+          //         ),
+          //       if (widget.config.centerAlignModePicker == true) const Spacer(),
+          //       if (widget.config.hideNextMonthIcon != true)
+          //         IconButton(
+          //           splashRadius: widget.config.dayMaxWidth != null
+          //               ? widget.config.dayMaxWidth! * 2 / 3
+          //               : null,
+          //           icon: widget.config.nextMonthIcon ??
+          //               Icon(widget.config.dayModeScrollDirection ==
+          //                       Axis.vertical
+          //                   ? Icons.keyboard_arrow_down
+          //                   : Icons.chevron_right),
+          //           color: controlColor,
+          //           tooltip: _isDisplayingLastMonth
+          //               ? null
+          //               : _localizations.nextMonthTooltip,
+          //           onPressed: _isDisplayingLastMonth ? null : _handleNextMonth,
+          //         ),
           //     ],
           //   ),
           // ),

@@ -51,3 +51,48 @@ int getDayRowsCount(int year, int month, int firstDayOfWeekIndex) {
   final int remainingDays = totalDays - (7 - monthFirstDayOffset);
   return (remainingDays / 7).ceil() + 1;
 }
+
+const List<String> monthNames = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
+];
+
+const List<String> monthAbbreviations = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec'
+];
+
+/// Returns full month name from month number (1-12)
+String getMonthName(int monthNumber) {
+  if (monthNumber >= 1 && monthNumber <= 12) {
+    return monthNames[monthNumber - 1];
+  }
+  throw ArgumentError('Month number must be between 1 and 12');
+}
+
+String getMonthAbbreviation(int monthNumber) {
+  if (monthNumber >= 1 && monthNumber <= 12) {
+    return monthAbbreviations[monthNumber - 1];
+  }
+  throw ArgumentError('Month number must be between 1 and 12');
+}

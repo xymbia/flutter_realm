@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_realm/presentation/theme/app.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -18,60 +20,7 @@ class DatePickerPage extends StatefulWidget {
 
 class _SwitchTilePageState extends State<DatePickerPage> {
   bool switchValue = true;
-
-  final config = DatePickerWidgetConfig(
-    calendarViewMode: DatePickerWidgetMode.day,
-    hideMonthPickerDividers: true,
-    hideScrollViewMonthWeekHeader: true,
-    hideScrollViewTopHeader: true,
-    selectedDayHighlightColor: Colors.grey,
-    selectedDayTextStyle: const TextStyle(
-      color: Colors.black54,
-      fontWeight: FontWeight.normal,
-    ),
-    weekdayLabels: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-    weekdayLabelTextStyle: const TextStyle(
-      color: Colors.black87,
-      fontWeight: FontWeight.bold,
-    ),
-    firstDayOfWeek: 0,
-    // 0 = Sunday, 1 = Monday, etc.
-    controlsHeight: 50,
-    dayMaxWidth: 25,
-    animateToDisplayedMonthDate: false,
-    controlsTextStyle: const TextStyle(
-      color: Colors.black,
-      fontSize: 15,
-      fontWeight: FontWeight.bold,
-    ),
-    dayTextStyle: const TextStyle(
-      color: Colors.black54,
-      fontWeight: FontWeight.normal,
-    ),
-    disabledDayTextStyle: const TextStyle(
-      color: Colors.grey,
-    ),
-    centerAlignModePicker: false,
-    useAbbrLabelForMonthModePicker: true,
-    modePickersGap: 0,
-    modePickerTextHandler: ({required monthDate, isMonthPicker}) {
-      if (isMonthPicker ?? false) {
-        // Custom month picker text
-        return '${getLocaleShortMonthFormat(const Locale('en')).format(monthDate)} C';
-      }
-
-      return null;
-    },
-    firstDate: DateTime(DateTime.now().year - 2, DateTime.now().month - 1,
-        DateTime.now().day - 5),
-    lastDate: DateTime(DateTime.now().year + 3, DateTime.now().month + 2,
-        DateTime.now().day + 10),
-    selectableDayPredicate: (day) =>
-        !day
-            .difference(DateTime.now().add(const Duration(days: 3)))
-            .isNegative &&
-        day.isBefore(DateTime.now().add(const Duration(days: 30))),
-  );
+  DatePickerWidgetMode mode = DatePickerWidgetMode.day;
 
   String selectedMonth = "March";
   int selectedYear = 2025;
@@ -117,6 +66,60 @@ class _SwitchTilePageState extends State<DatePickerPage> {
   ];
 
   Widget _buildSingleDatePickerWithValue() {
+    final config = DatePickerWidgetConfig(
+      calendarViewMode: mode,
+      hideMonthPickerDividers: false,
+      hideScrollViewMonthWeekHeader: false,
+      hideScrollViewTopHeader: false,
+      selectedDayHighlightColor: Colors.grey,
+      selectedDayTextStyle: const TextStyle(
+        color: Colors.black54,
+        fontWeight: FontWeight.normal,
+      ),
+      weekdayLabels: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+      weekdayLabelTextStyle: const TextStyle(
+        color: Colors.black87,
+        fontWeight: FontWeight.bold,
+      ),
+      firstDayOfWeek: 0,
+      // 0 = Sunday, 1 = Monday, etc.
+      controlsHeight: 50,
+      dayMaxWidth: 50,
+      dayBorderRadius: BorderRadius.circular(8),
+      animateToDisplayedMonthDate: false,
+      controlsTextStyle: const TextStyle(
+        color: Colors.black,
+        fontSize: 15,
+        fontWeight: FontWeight.bold,
+      ),
+      dayTextStyle: const TextStyle(
+        color: Colors.black54,
+        fontWeight: FontWeight.normal,
+      ),
+      disabledDayTextStyle: const TextStyle(
+        color: Colors.grey,
+      ),
+      centerAlignModePicker: true,
+      useAbbrLabelForMonthModePicker: true,
+      modePickersGap: 0,
+      modePickerTextHandler: ({required monthDate, isMonthPicker}) {
+        if (isMonthPicker ?? false) {
+          // Custom month picker text
+          return '${getLocaleShortMonthFormat(const Locale('en')).format(monthDate)} C';
+        }
+
+        return null;
+      },
+      firstDate: DateTime(DateTime.now().year - 2, DateTime.now().month - 1,
+          DateTime.now().day - 5),
+      lastDate: DateTime(DateTime.now().year + 3, DateTime.now().month + 2,
+          DateTime.now().day + 10),
+      selectableDayPredicate: (day) =>
+          !day
+              .difference(DateTime.now().add(const Duration(days: 3)))
+              .isNegative &&
+          day.isBefore(DateTime.now().add(const Duration(days: 30))),
+    );
     return Card(
       elevation: 4,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -130,7 +133,7 @@ class _SwitchTilePageState extends State<DatePickerPage> {
           Padding(
             padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
             child: Text('Select Date',
-                style: Font.apply(FontStyle.regular, FontSize.h5)),
+                style: Font.apply(FontStyle.regular, FontSize.h4)),
           ),
           const Divider(height: 1, color: Color(0xFFEDEEF0)),
           Padding(
@@ -142,7 +145,11 @@ class _SwitchTilePageState extends State<DatePickerPage> {
                 children: [
                   InkWell(
                     splashColor: Colors.white,
-                    onTap: () {},
+                    onTap: () {
+                      setState(() {
+                        mode = DatePickerWidgetMode.month;
+                      });
+                    },
                     hoverColor: Colors.yellow,
                     child: Container(
                       decoration: const BoxDecoration(
@@ -166,7 +173,11 @@ class _SwitchTilePageState extends State<DatePickerPage> {
                   ),
                   InkWell(
                     splashColor: Colors.white,
-                    onTap: () {},
+                    onTap: () {
+                      setState(() {
+                        mode = DatePickerWidgetMode.year;
+                      });
+                    },
                     hoverColor: Colors.yellow,
                     child: Container(
                       decoration: const BoxDecoration(

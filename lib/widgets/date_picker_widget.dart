@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 
 import '../models/date_picker_widget_config.dart';
 import '../utils/date_util.dart';
+import '../utils/font_helper.dart';
 
 part '../widgets/_impl/_calendar_scroll_view.dart';
 part '../widgets/_impl/_calendar_view.dart';

@@ -140,7 +140,9 @@ class _DayPickerState extends State<_DayPicker> {
     final int dayOffset = getMonthFirstDayOffset(year, month,
         widget.config.firstDayOfWeek ?? localizations.firstDayOfWeekIndex);
 
-    final List<Widget> dayItems = _dayHeaders(headerStyle, localizations);
+    //final List<Widget> dayItems = _dayHeaders(headerStyle, localizations);
+    final List<Widget> dayItems = [];
+
     if (widget.config.calendarViewMode == DatePickerWidgetMode.scroll &&
         widget.config.hideScrollViewMonthWeekHeader == true) {
       dayItems.clear();
@@ -164,19 +166,15 @@ class _DayPickerState extends State<_DayPicker> {
             DateUtils.isSameDay(widget.config.currentDate, dayToBuild);
 
         BoxDecoration? decoration;
+
         Color dayColor = enabledDayColor;
         if (isSelectedDay) {
           // The selected day gets a circle background highlight, and a
           // contrasting text color.
           dayColor = selectedDayColor;
           decoration = BoxDecoration(
-            borderRadius: widget.config.dayBorderRadius,
-            color: widget.config.selectedDayHighlightColor ??
-                selectedDayBackground,
-            shape: widget.config.dayBorderRadius != null
-                ? BoxShape.rectangle
-                : BoxShape.circle,
-          );
+              borderRadius: BorderRadius.circular(50),
+              border: Border.all(width: 1, color: const Color(0xFF393B40)));
         } else if (isDisabled) {
           dayColor = disabledDayColor;
         } else if (isToday) {
@@ -447,7 +445,7 @@ class _DayPickerGridDelegate extends SliverGridDelegate {
       totalRowsCount -= 1;
     }
     var rowHeight = config?.dayMaxWidth != null
-        ? (config!.dayMaxWidth! + 2)
+        ? (config!.dayMaxWidth! + 4)
         : _dayPickerRowHeight;
     final double tileHeight = math.min(
       rowHeight,
