@@ -322,57 +322,118 @@ class _CalendarViewState extends State<_CalendarView> {
   Widget _buildItems(BuildContext context, int index) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final MaterialLocalizations localizations =
-        MaterialLocalizations.of(context);
+    MaterialLocalizations.of(context);
     final TextTheme textTheme = Theme.of(context).textTheme;
     final TextStyle? headerStyle = textTheme.bodySmall?.apply(
       color: colorScheme.onSurface.withValues(alpha: 0.60),
     );
     final List<Widget> dayItems = _dayHeaders(headerStyle, localizations);
     final DateTime month =
-        DateUtils.addMonthsToMonthDate(widget.config.firstDate, index);
-    return Stack(
+    DateUtils.addMonthsToMonthDate(widget.config.firstDate, index);
+
+    final nextMonth = DateUtils.addMonthsToMonthDate(month, 1);
+    final shouldShowNextMonth =
+        nextMonth.isBefore(widget.config.lastDate) ||
+            DateUtils.isSameMonth(nextMonth, widget.config.lastDate);
+
+    // Calculate dynamic heights based on row count
+    final firstMonthRows = widget.config.dynamicCalendarRows == true
+        ? getDayRowsCount(
+      month.year,
+      month.month,
+      widget.config.firstDayOfWeek ?? _localizations.firstDayOfWeekIndex,
+    )
+        : _maxDayPickerRowCount;
+
+    final secondMonthRows = widget.config.dynamicCalendarRows == true
+        ? getDayRowsCount(
+      nextMonth.year,
+      nextMonth.month,
+      widget.config.firstDayOfWeek ?? _localizations.firstDayOfWeekIndex,
+    )
+        : _maxDayPickerRowCount;
+
+    // Calculate heights (assuming ~50px per row)
+    final firstMonthHeight = (firstMonthRows * 50.0) + 20; // +20 for padding
+    final secondMonthHeight = (secondMonthRows * 50.0) + 20;
+
+    return Column(
       children: [
-        GridView.custom(
-          padding: EdgeInsets.zero,
-          physics: const ClampingScrollPhysics(),
-          gridDelegate: _DayPickerGridDelegate(
-            config: widget.config,
-            dayRowsCount: widget.config.dynamicCalendarRows == true
-                ? getDayRowsCount(
-                    month.year,
-                    month.month,
-                    widget.config.firstDayOfWeek ??
-                        _localizations.firstDayOfWeekIndex,
-                  )
-                : _maxDayPickerRowCount,
-          ),
-          childrenDelegate: SliverChildListDelegate(
-            dayItems,
-            addRepaintBoundaries: false,
+        // Fixed Day Headers (Non-scrollable)
+        Container(
+          height: 120,
+          child: GridView.custom(
+            padding: EdgeInsets.zero,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: _DayPickerGridDelegate(
+              config: widget.config,
+              dayRowsCount: firstMonthRows,
+            ),
+            childrenDelegate: SliverChildListDelegate(
+              dayItems,
+              addRepaintBoundaries: false,
+            ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.only(top: 50.0, left: 10.0),
-          child: Text(
-              "${getMonthAbbreviation(month.month)} ${month.year.toString()}",
-              style: Font.apply(FontStyle.medium, FontSize.h6)),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 80.0),
-          child: _DayPicker(
-            key: ValueKey<DateTime>(month),
-            selectedDates: widget.selectedDates.whereType<DateTime>().toList(),
-            onChanged: _handleDateSelected,
-            config: widget.config,
-            displayedMonth: month,
-            dayRowsCount: widget.config.dynamicCalendarRows == true
-                ? getDayRowsCount(
-                    month.year,
-                    month.month,
-                    widget.config.firstDayOfWeek ??
-                        _localizations.firstDayOfWeekIndex,
-                  )
-                : _maxDayPickerRowCount,
+
+        // Scrollable Calendar Section with dynamic heights
+        Expanded(
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // First month title
+                Padding(
+                  padding: const EdgeInsets.only(left: 10.0, top: 8.0, bottom: 8.0),
+                  child: Text(
+                    "${getMonthAbbreviation(month.month)} ${month.year.toString()}",
+                    style: Font.apply(FontStyle.medium, FontSize.h6),
+                  ),
+                ),
+
+                // First month calendar with dynamic height
+                SizedBox(
+                  height: firstMonthHeight,
+                  child: _DayPicker(
+                    key: ValueKey<DateTime>(month),
+                    selectedDates: widget.selectedDates.whereType<DateTime>().toList(),
+                    onChanged: _handleDateSelected,
+                    config: widget.config,
+                    displayedMonth: month,
+                    dayRowsCount: firstMonthRows,
+                  ),
+                ),
+
+                // Second month section (only if should show)
+                if (shouldShowNextMonth) ...[
+                  // Second month title
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10.0, top: 16.0, bottom: 8.0),
+                    child: Text(
+                      "${getMonthAbbreviation(nextMonth.month)} ${nextMonth.year.toString()}",
+                      style: Font.apply(FontStyle.medium, FontSize.h6),
+                    ),
+                  ),
+
+                  // Second month calendar with dynamic height
+                  SizedBox(
+                    height: secondMonthHeight,
+                    child: _DayPicker(
+                      key: ValueKey<DateTime>(nextMonth),
+                      selectedDates: [],
+                      onChanged: _handleDateSelected,
+                      config: widget.config,
+                      displayedMonth: nextMonth,
+                      dayRowsCount: secondMonthRows,
+                    ),
+                  ),
+                ],
+
+                // Bottom padding for better UX
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ],

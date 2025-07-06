@@ -10,11 +10,17 @@ import '../utils/date_util.dart';
 import '../utils/font_helper.dart';
 
 part '../widgets/date_picker_impl/_calendar_scroll_view.dart';
+
 part '../widgets/date_picker_impl/_calendar_view.dart';
+
 part '../widgets/date_picker_impl/_date_picker_mode_toggle_button.dart';
+
 part '../widgets/date_picker_impl/_day_picker.dart';
+
 part '../widgets/date_picker_impl/_focus_date.dart';
+
 part '../widgets/date_picker_impl/_month_picker.dart';
+
 part '../widgets/date_picker_impl/year_picker.dart';
 
 const Duration _monthScrollDuration = Duration(milliseconds: 200);
@@ -53,8 +59,7 @@ class DatePickerWidget extends StatefulWidget {
           'Error: single date picker only allows maximum one initial date');
     }
 
-    if (config.calendarType == DatePickerWidgetType.range &&
-        value.length > 1) {
+    if (config.calendarType == DatePickerWidgetType.range && value.length > 1) {
       final isRangePickerValueValid = value[0] == null
           ? (value[1] != null ? invalid : valid)
           : (value[1] != null
@@ -312,6 +317,13 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
   Widget _buildPicker() {
     switch (_mode) {
       case DatePickerWidgetMode.day:
+        // Calculate next month, ensuring it doesn't exceed lastDate
+        final nextMonth =
+            DateUtils.addMonthsToMonthDate(_currentDisplayedMonthDate, 1);
+        final shouldShowNextMonth =
+            nextMonth.isBefore(widget.config.lastDate) ||
+                DateUtils.isSameMonth(nextMonth, widget.config.lastDate);
+
         return Padding(
           padding: const EdgeInsets.all(16.0),
           child: _CalendarView(
@@ -321,6 +333,36 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
             selectedDates: _selectedDates,
             onChanged: _handleDayChanged,
             onDisplayedMonthChanged: _handleDisplayedMonthDateChanged,
+          ),
+        );
+
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              // Current month
+              _CalendarView(
+                config: widget.config,
+                key: _dayPickerKey,
+                initialMonth: _currentDisplayedMonthDate,
+                selectedDates: _selectedDates,
+                onChanged: _handleDayChanged,
+                onDisplayedMonthChanged: _handleDisplayedMonthDateChanged,
+              ),
+              if (shouldShowNextMonth) ...[
+                const SizedBox(height: 16.0),
+                // Next month
+                _CalendarView(
+                  config: widget.config,
+                  key: ValueKey(
+                      'next_month_${_currentDisplayedMonthDate.millisecondsSinceEpoch}'),
+                  initialMonth: nextMonth,
+                  selectedDates: _selectedDates,
+                  onChanged: _handleDayChanged,
+                  onDisplayedMonthChanged: _handleDisplayedMonthDateChanged,
+                ),
+              ],
+            ],
           ),
         );
       case DatePickerWidgetMode.month:
@@ -366,18 +408,65 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
     assert(debugCheckHasMaterial(context));
     assert(debugCheckHasMaterialLocalizations(context));
     assert(debugCheckHasDirectionality(context));
-    final dayRowsCount = widget.config.dynamicCalendarRows == true
-        ? getDayRowsCount(
-            _currentDisplayedMonthDate.year,
-            _currentDisplayedMonthDate.month,
-            widget.config.firstDayOfWeek ?? _localizations.firstDayOfWeekIndex,
-          )
-        : _maxDayPickerRowCount;
-    final totalRowsCount = dayRowsCount + 1;
-    final rowHeight = widget.config.dayMaxWidth != null
-        ? (widget.config.dayMaxWidth! + 2)
-        : _dayPickerRowHeight;
-    final maxContentHeight = rowHeight * totalRowsCount;
+
+    // Calculate height based on mode
+    double maxContentHeight;
+    if (_mode == DatePickerWidgetMode.day) {
+      // For day mode, we show two months in a column, so double the height
+      final dayRowsCount = widget.config.dynamicCalendarRows == true
+          ? getDayRowsCount(
+              _currentDisplayedMonthDate.year,
+              _currentDisplayedMonthDate.month,
+              widget.config.firstDayOfWeek ??
+                  _localizations.firstDayOfWeekIndex,
+            )
+          : _maxDayPickerRowCount;
+      final totalRowsCount = dayRowsCount + 1;
+      final rowHeight = widget.config.dayMaxWidth != null
+          ? (widget.config.dayMaxWidth! + 2)
+          : _dayPickerRowHeight;
+      final singleMonthHeight = rowHeight * totalRowsCount;
+
+      // Calculate next month height as well
+      final nextMonth =
+          DateUtils.addMonthsToMonthDate(_currentDisplayedMonthDate, 1);
+      final shouldShowNextMonth = nextMonth.isBefore(widget.config.lastDate) ||
+          DateUtils.isSameMonth(nextMonth, widget.config.lastDate);
+
+      if (shouldShowNextMonth) {
+        final nextMonthDayRowsCount = widget.config.dynamicCalendarRows == true
+            ? getDayRowsCount(
+                nextMonth.year,
+                nextMonth.month,
+                widget.config.firstDayOfWeek ??
+                    _localizations.firstDayOfWeekIndex,
+              )
+            : _maxDayPickerRowCount;
+        final nextMonthTotalRowsCount = nextMonthDayRowsCount + 1;
+        final nextMonthHeight = rowHeight * nextMonthTotalRowsCount;
+
+        maxContentHeight = singleMonthHeight +
+            16.0 +
+            nextMonthHeight; // 16.0 is the SizedBox height
+      } else {
+        maxContentHeight = singleMonthHeight;
+      }
+    } else {
+      // For other modes, use the original calculation
+      final dayRowsCount = widget.config.dynamicCalendarRows == true
+          ? getDayRowsCount(
+              _currentDisplayedMonthDate.year,
+              _currentDisplayedMonthDate.month,
+              widget.config.firstDayOfWeek ??
+                  _localizations.firstDayOfWeekIndex,
+            )
+          : _maxDayPickerRowCount;
+      final totalRowsCount = dayRowsCount + 1;
+      final rowHeight = widget.config.dayMaxWidth != null
+          ? (widget.config.dayMaxWidth! + 2)
+          : _dayPickerRowHeight;
+      maxContentHeight = rowHeight * totalRowsCount;
+    }
 
     return widget.config.calendarViewMode == DatePickerWidgetMode.scroll
         ? _buildPicker()
