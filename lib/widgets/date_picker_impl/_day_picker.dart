@@ -71,49 +71,6 @@ class _DayPickerState extends State<_DayPicker> {
     super.dispose();
   }
 
-  /// Builds widgets showing abbreviated days of week. The first widget in the
-  /// returned list corresponds to the first day of week for the current locale.
-  ///
-  /// Examples:
-  ///
-  /// ```
-  /// ┌ Sunday is the first day of week in the US (en_US)
-  /// |
-  /// S M T W T F S  <-- the returned list contains these widgets
-  /// _ _ _ _ _ 1 2
-  /// 3 4 5 6 7 8 9
-  ///
-  /// ┌ But it's Monday in the UK (en_GB)
-  /// |
-  /// M T W T F S S  <-- the returned list contains these widgets
-  /// _ _ _ _ 1 2 3
-  /// 4 5 6 7 8 9 10
-  /// ```
-  List<Widget> _dayHeaders(
-      TextStyle? headerStyle, MaterialLocalizations localizations) {
-    final List<Widget> result = <Widget>[];
-    final weekdays =
-        widget.config.weekdayLabels ?? localizations.narrowWeekdays;
-    final firstDayOfWeek =
-        widget.config.firstDayOfWeek ?? localizations.firstDayOfWeekIndex;
-    assert(firstDayOfWeek >= 0 && firstDayOfWeek <= 6,
-        'firstDayOfWeek must between 0 and 6');
-    for (int i = firstDayOfWeek; true; i = (i + 1) % 7) {
-      final String weekday = weekdays[i];
-      result.add(ExcludeSemantics(
-        child: widget.config.weekdayLabelBuilder?.call(weekday: i) ??
-            Center(
-              child: Text(
-                weekday,
-                style: widget.config.weekdayLabelTextStyle ?? headerStyle,
-              ),
-            ),
-      ));
-      if (i == (firstDayOfWeek - 1) % 7) break;
-    }
-    return result;
-  }
-
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
@@ -171,23 +128,35 @@ class _DayPickerState extends State<_DayPicker> {
         if (isSelectedDay) {
           // The selected day gets a circle background highlight, and a
           // contrasting text color.
+          if (isToday) {
+            // If today is also selected, use black background with white text
+            dayColor = Colors.white;
+            decoration = BoxDecoration(
+              borderRadius: BorderRadius.circular(50),
+              color: Colors.black, // Black background for today's date
+              border: Border.all(width: 2, color: const Color(0xFF393B40)), // Add border to show it's selected
+              shape: widget.config.dayBorderRadius != null
+                  ? BoxShape.rectangle
+                  : BoxShape.circle,
+            );
+          } else {
+            // Regular selected day styling
+            dayColor = Colors.white; // White text on black background
+            decoration = BoxDecoration(
+              borderRadius: BorderRadius.circular(50),
+              color: const Color(0xFF393B40),
+              border: Border.all(width: 3, color: const Color(0xFF393B40)), // Different border color
+            );
+          }
+        } else if (isDisabled) {
+          dayColor = disabledDayColor;
+        }
+        if (isToday) {
+          // The current day gets a black background highlight
           dayColor = selectedDayColor;
           decoration = BoxDecoration(
               borderRadius: BorderRadius.circular(50),
               border: Border.all(width: 1, color: const Color(0xFF393B40)));
-        } else if (isDisabled) {
-          dayColor = disabledDayColor;
-        } else if (isToday) {
-          // The current day gets a different text color and a circle stroke
-          // border.
-          dayColor = widget.config.selectedDayHighlightColor ?? todayColor;
-          decoration = BoxDecoration(
-            borderRadius: widget.config.dayBorderRadius,
-            border: Border.all(color: dayColor),
-            shape: widget.config.dayBorderRadius != null
-                ? BoxShape.rectangle
-                : BoxShape.circle,
-          );
         }
 
         var customDayTextStyle =
@@ -195,7 +164,9 @@ class _DayPickerState extends State<_DayPicker> {
                 widget.config.dayTextStyle;
 
         if (isToday && widget.config.todayTextStyle != null) {
-          customDayTextStyle = widget.config.todayTextStyle;
+          customDayTextStyle = widget.config.todayTextStyle?.copyWith(
+            color: isSelectedDay ? Colors.white : dayColor, // Use white if selected, otherwise use calculated dayColor
+          );
         }
 
         if (isDisabled) {
@@ -231,6 +202,7 @@ class _DayPickerState extends State<_DayPicker> {
         if (isSelectedDay) {
           customDayTextStyle = widget.config.selectedDayTextStyle;
         }
+
 
         final dayTextStyle =
             customDayTextStyle ?? dayStyle.apply(color: dayColor);

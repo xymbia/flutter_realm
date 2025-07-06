@@ -91,9 +91,12 @@ class _MonthPickerState extends State<_MonthPicker> {
 
     final bool isSelected = widget.selectedDates.isNotEmpty &&
         widget.selectedDates.any((date) =>
-            date != null &&
+        date != null &&
             widget.initialMonth.year == date.year &&
             date.month == month);
+
+    final bool isCurrentlyDisplayedMonth = widget.initialMonth.month == month;
+
     var isMonthSelectable =
         widget.initialMonth.year >= widget.config.firstDate.year &&
             widget.initialMonth.year <= widget.config.lastDate.year;
@@ -115,7 +118,7 @@ class _MonthPickerState extends State<_MonthPicker> {
     isMonthSelectable = isMonthSelectable && monthSelectableFromPredicate;
 
     final Color textColor;
-    if (isSelected) {
+    if (isSelected || isCurrentlyDisplayedMonth) {
       textColor = colorScheme.onSurface.withValues(alpha: 0.87);
     } else if (!isMonthSelectable) {
       textColor = colorScheme.onSurface.withValues(alpha: 0.38);
@@ -131,30 +134,40 @@ class _MonthPickerState extends State<_MonthPicker> {
     if (!isMonthSelectable) {
       itemStyle = widget.config.disabledMonthTextStyle ?? itemStyle;
     }
-    if (isSelected) {
+    if (isSelected || isCurrentlyDisplayedMonth) {
       itemStyle = widget.config.selectedMonthTextStyle ?? itemStyle;
     }
 
+    // Different styling for different states
     BoxDecoration? decoration;
-    if (isSelected) {
+    /*if (isSelected) {
+      // Selected month gets solid border
       decoration = BoxDecoration(
-          borderRadius: BorderRadius.circular(decorationHeight/2),
-          border: Border.all(width: 1, color: const Color(0xFFACB1BF)),
+        borderRadius: BorderRadius.circular(decorationHeight/2),
+        border: Border.all(width: 2, color: colorScheme.primary),
+        color: colorScheme.primary.withValues(alpha: 0.1),
       );
-    } else if (isCurrentMonth && isMonthSelectable) {
+    } else */if (isCurrentlyDisplayedMonth) {
+      // Currently displayed month gets dashed border or different style
+      decoration = BoxDecoration(
+        borderRadius: BorderRadius.circular(decorationHeight/2),
+        border: Border.all(width: 1, color: const Color(0xFFACB1BF), style: BorderStyle.solid),
+      );
+    } /*else if (isCurrentMonth && isMonthSelectable) {
+      // Today's month gets its own style
       decoration = BoxDecoration(
         border: Border.all(
           color: widget.config.selectedDayHighlightColor ?? colorScheme.primary,
         ),
         borderRadius: BorderRadius.circular(decorationHeight),
       );
-    }
+    }*/
 
     Widget monthItem = widget.config.monthBuilder?.call(
           month: month,
           textStyle: itemStyle,
           decoration: decoration,
-          isSelected: isSelected,
+          isSelected: isSelected || isCurrentlyDisplayedMonth,
           isDisabled: !isMonthSelectable,
           isCurrentMonth: isCurrentMonth,
         ) ??
@@ -164,7 +177,7 @@ class _MonthPickerState extends State<_MonthPicker> {
           width: decorationWidth,
           child: Center(
             child: Semantics(
-              selected: isSelected,
+              selected: isSelected || isCurrentlyDisplayedMonth,
               button: true,
               child: Text(
                 getLocaleShortMonthFormat(_locale)

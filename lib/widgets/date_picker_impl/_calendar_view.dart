@@ -354,8 +354,8 @@ class _CalendarViewState extends State<_CalendarView> {
         : _maxDayPickerRowCount;
 
     // Calculate heights (assuming ~50px per row)
-    final firstMonthHeight = (firstMonthRows * 50.0) + 20; // +20 for padding
-    final secondMonthHeight = (secondMonthRows * 50.0) + 20;
+    final firstMonthHeight = (firstMonthRows * 60.0); // +20 for padding
+    final secondMonthHeight = (secondMonthRows * 60.0);
 
     return Column(
       children: [

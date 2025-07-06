@@ -49,6 +49,8 @@ class DatePickerWidget extends StatefulWidget {
     this.onValueChanged,
     this.displayedMonthDate,
     this.onDisplayedMonthChanged,
+    this.onMonthSelected,
+    this.onYearSelected,
     Key? key,
   }) : super(key: key) {
     const valid = true;
@@ -87,6 +89,12 @@ class DatePickerWidget extends StatefulWidget {
 
   /// Called when the displayed month changed
   final ValueChanged<DateTime>? onDisplayedMonthChanged;
+
+  /// Called when a month is selected from the month picker
+  final ValueChanged<DateTime>? onMonthSelected;
+
+  /// Called when a year is selected from the year picker
+  final ValueChanged<DateTime>? onYearSelected;
 
   @override
   State<DatePickerWidget> createState() => _DatePickerWidgetState();
@@ -236,6 +244,8 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
       _mode = DatePickerWidgetMode.day;
       _handleDisplayedMonthDateChanged(value);
     });
+    // Notify parent about the selected month
+    widget.onMonthSelected?.call(value);
   }
 
   void _handleYearChanged(DateTime value) {
@@ -251,6 +261,8 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
       _mode = DatePickerWidgetMode.day;
       _handleDisplayedMonthDateChanged(value, fromYearPicker: true);
     });
+    // Notify parent about the selected year
+    widget.onYearSelected?.call(value);
   }
 
   void _handleDayChanged(DateTime value) {
@@ -333,36 +345,6 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
             selectedDates: _selectedDates,
             onChanged: _handleDayChanged,
             onDisplayedMonthChanged: _handleDisplayedMonthDateChanged,
-          ),
-        );
-
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              // Current month
-              _CalendarView(
-                config: widget.config,
-                key: _dayPickerKey,
-                initialMonth: _currentDisplayedMonthDate,
-                selectedDates: _selectedDates,
-                onChanged: _handleDayChanged,
-                onDisplayedMonthChanged: _handleDisplayedMonthDateChanged,
-              ),
-              if (shouldShowNextMonth) ...[
-                const SizedBox(height: 16.0),
-                // Next month
-                _CalendarView(
-                  config: widget.config,
-                  key: ValueKey(
-                      'next_month_${_currentDisplayedMonthDate.millisecondsSinceEpoch}'),
-                  initialMonth: nextMonth,
-                  selectedDates: _selectedDates,
-                  onChanged: _handleDayChanged,
-                  onDisplayedMonthChanged: _handleDisplayedMonthDateChanged,
-                ),
-              ],
-            ],
           ),
         );
       case DatePickerWidgetMode.month:

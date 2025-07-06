@@ -91,6 +91,8 @@ class _YearPickerState extends State<YearPicker> {
     final int year = widget.config.firstDate.year + index - offset;
     final bool isSelected = widget.selectedDates.any((d) => d?.year == year);
     final bool isCurrentYear = year == widget.config.currentDate.year;
+    // Consider the currently displayed year as selected
+    final bool isCurrentlyDisplayedYear = year == widget.initialMonth.year;
     final yearSelectableFromPredicate =
         widget.config.selectableYearPredicate?.call(year) ?? true;
     final isDisabled = (year < widget.config.firstDate.year ||
@@ -100,7 +102,7 @@ class _YearPickerState extends State<YearPicker> {
     const double decorationWidth = 85.0;
 
     final Color textColor;
-    if (isSelected) {
+    if (isSelected || isCurrentlyDisplayedYear) {
       textColor = colorScheme.onSurface.withValues(alpha: 0.87);
     } else if (isDisabled) {
       textColor = colorScheme.onSurface.withValues(alpha: 0.38);
@@ -115,12 +117,18 @@ class _YearPickerState extends State<YearPicker> {
     if (isDisabled) {
       itemStyle = widget.config.disabledYearTextStyle ?? itemStyle;
     }
-    if (isSelected) {
+    if (isSelected || isCurrentlyDisplayedYear) {
       itemStyle = widget.config.selectedYearTextStyle ?? itemStyle;
     }
 
     BoxDecoration? decoration;
-    if (isSelected) {
+    if (isCurrentlyDisplayedYear) {
+      decoration = BoxDecoration(
+        borderRadius: BorderRadius.circular(decorationHeight/2),
+        border: Border.all(width: 1, color: const Color(0xFFACB1BF)),
+      );
+    }
+    /*if (isSelected || isCurrentlyDisplayedYear) {
       decoration = BoxDecoration(
         borderRadius: BorderRadius.circular(decorationHeight/2),
         border: Border.all(width: 1, color: const Color(0xFFACB1BF)),
@@ -133,7 +141,7 @@ class _YearPickerState extends State<YearPicker> {
         borderRadius: widget.config.yearBorderRadius ??
             BorderRadius.circular(decorationHeight / 2),
       );
-    }
+    }*/
 
     Widget yearItem = widget.config.yearBuilder?.call(
           year: year,
@@ -150,7 +158,7 @@ class _YearPickerState extends State<YearPicker> {
             width: decorationWidth,
             child: Center(
               child: Semantics(
-                selected: isSelected,
+                selected: isSelected || isCurrentlyDisplayedYear,
                 button: true,
                 child: Text(
                   year.toString(),

@@ -22,27 +22,30 @@ class _SwitchTilePageState extends State<DatePickerPage> {
   bool switchValue = true;
   DatePickerWidgetMode mode = DatePickerWidgetMode.day;
 
-  String selectedMonth = "March";
-  int selectedYear = 2025;
-
-  // List of months
-  final List<String> months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December"
-  ];
+  String selectedMonth = "";
+  int selectedYear = 0;
 
   // List of years (can be customized)
   final List<int> years = List.generate(10, (index) => 2025 - index);
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize with the displayed month date
+    final displayedDate = _singleDatePickerValueWithDefaultValue.first ?? DateTime.now();
+    
+    // Get current month
+    final currentMonth = monthAbbreviations[displayedDate.month - 1]; // months is 0-indexed, DateTime.month is 1-indexed
+    
+    // Get next month
+    final nextMonthDate = DateTime(displayedDate.year, displayedDate.month + 1);
+    final nextMonth = monthAbbreviations[nextMonthDate.month - 1];
+    
+    // Display both months
+    selectedMonth = '$currentMonth - $nextMonth';
+    selectedYear = displayedDate.year;
+    _currentDisplayedMonthDate = displayedDate;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,6 +66,43 @@ class _SwitchTilePageState extends State<DatePickerPage> {
     DateTime.now().add(const Duration(days: 1)),
   ];
 
+  // Track the currently displayed month date
+  DateTime? _currentDisplayedMonthDate;
+
+  void _handleDisplayedMonthChanged(DateTime date) {
+    setState(() {
+      // Get current month
+      final currentMonth = monthAbbreviations[date.month - 1]; // months is 0-indexed, DateTime.month is 1-indexed
+      
+      // Get next month
+      final nextMonthDate = DateTime(date.year, date.month + 1);
+      final nextMonth = monthAbbreviations[nextMonthDate.month - 1];
+      
+      // Display both months
+      selectedMonth = '$currentMonth - $nextMonth';
+      selectedYear = date.year;
+      _currentDisplayedMonthDate = date;
+    });
+  }
+
+  void _handleMonthSelected(DateTime date) {
+    setState(() {
+      _currentDisplayedMonthDate = date;
+      
+      // Update selectedMonth to show both current and next month
+      final currentMonth = monthAbbreviations[date.month - 1];
+      final nextMonthDate = DateTime(date.year, date.month + 1);
+      final nextMonth = monthAbbreviations[nextMonthDate.month - 1];
+      selectedMonth = '$currentMonth - $nextMonth';
+    });
+  }
+
+  void _handleYearSelected(DateTime date) {
+    setState(() {
+      _currentDisplayedMonthDate = date;
+    });
+  }
+
   Widget _buildSingleDatePickerWithValue() {
     final config = DatePickerWidgetConfig(
       calendarViewMode: mode,
@@ -71,7 +111,7 @@ class _SwitchTilePageState extends State<DatePickerPage> {
       hideScrollViewTopHeader: false,
       selectedDayHighlightColor: Colors.grey,
       selectedDayTextStyle: const TextStyle(
-        color: Colors.black54,
+        color: Colors.white,
         fontWeight: FontWeight.normal,
       ),
       weekdayLabels: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
@@ -114,9 +154,9 @@ class _SwitchTilePageState extends State<DatePickerPage> {
           DateTime.now().day + 10),
       selectableDayPredicate: (day) =>
           !day
-              .difference(DateTime.now().add(const Duration(days: 3)))
+              .difference(DateTime.now().add(const Duration(days: -1)))
               .isNegative &&
-          day.isBefore(DateTime.now().add(const Duration(days: 30))),
+          day.isBefore(DateTime.now().add(const Duration(days: 60))),
     );
     return SizedBox(
       height: 0.8.sh,
@@ -174,6 +214,8 @@ class _SwitchTilePageState extends State<DatePickerPage> {
                       setState(() {
                         mode = DatePickerWidgetMode.year;
                       });
+                      // Ensure the year picker shows the currently selected year
+                      print('Switching to year picker mode for year: $selectedYear');
                     },
                     hoverColor: Colors.yellow,
                     child: Container(
@@ -203,11 +245,14 @@ class _SwitchTilePageState extends State<DatePickerPage> {
             SizedBox(
               height: 0.55.sh,
               child: DatePickerWidget(
-                displayedMonthDate: _singleDatePickerValueWithDefaultValue.first,
+                displayedMonthDate: _currentDisplayedMonthDate ?? _singleDatePickerValueWithDefaultValue.first,
                 config: config,
                 value: _singleDatePickerValueWithDefaultValue,
                 onValueChanged: (dates) =>
                     setState(() => _singleDatePickerValueWithDefaultValue = dates),
+                onDisplayedMonthChanged: _handleDisplayedMonthChanged,
+                onMonthSelected: _handleMonthSelected,
+                onYearSelected: _handleYearSelected,
               ),
             ),
             const Divider(height: 1, color: Color(0xFFEDEEF0)),
