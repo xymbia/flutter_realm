@@ -25,8 +25,8 @@ part '../widgets/date_picker_impl/year_picker.dart';
 
 const Duration _monthScrollDuration = Duration(milliseconds: 200);
 
-const double _dayPickerRowHeight = 42.0;
-const int _maxDayPickerRowCount = 6; // A 31 day month that starts on Saturday.
+const double _dayPickerRowHeight = 40.0;
+const int _maxDayPickerRowCount = 5; // A 31 day month that starts on Saturday.
 const double _monthPickerHorizontalPadding = 0.0;
 
 const int _yearPickerColumnCount = 4;
@@ -39,8 +39,8 @@ const double _monthPickerPadding = 0.0;
 const double _monthPickerRowHeight = 85.0;
 const double _monthPickerRowSpacing = 0.0;
 
-const double _subHeaderHeight = 52.0;
-const double _monthNavButtonsWidth = 108.0;
+const double _subHeaderHeight = 0.0;
+const double _monthNavButtonsWidth = 0.0;
 
 class DatePickerWidget extends StatefulWidget {
   DatePickerWidget({

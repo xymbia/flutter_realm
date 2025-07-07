@@ -106,9 +106,9 @@ class _SwitchTilePageState extends State<DatePickerPage> {
   Widget _buildSingleDatePickerWithValue() {
     final config = DatePickerWidgetConfig(
       calendarViewMode: mode,
-      hideMonthPickerDividers: false,
-      hideScrollViewMonthWeekHeader: false,
-      hideScrollViewTopHeader: false,
+      hideMonthPickerDividers: true,
+      hideScrollViewMonthWeekHeader: true,
+      hideScrollViewTopHeader: true,
       selectedDayHighlightColor: Colors.grey,
       selectedDayTextStyle: const TextStyle(
         color: Colors.white,

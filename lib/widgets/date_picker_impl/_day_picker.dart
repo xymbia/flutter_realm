@@ -411,11 +411,11 @@ class _DayPickerGridDelegate extends SliverGridDelegate {
   SliverGridLayout getLayout(SliverConstraints constraints) {
     const int columnCount = DateTime.daysPerWeek;
     final double tileWidth = constraints.crossAxisExtent / columnCount;
-    var totalRowsCount = dayRowsCount + 1;
-    if (config?.calendarViewMode == DatePickerWidgetMode.scroll &&
-        config?.hideScrollViewMonthWeekHeader == true) {
-      totalRowsCount -= 1;
-    }
+    var totalRowsCount = dayRowsCount;
+    // if (config?.calendarViewMode == DatePickerWidgetMode.scroll &&
+    //     config?.hideScrollViewMonthWeekHeader == true) {
+    //   totalRowsCount -= 1;
+    // }
     var rowHeight = config?.dayMaxWidth != null
         ? (config!.dayMaxWidth! + 4)
         : _dayPickerRowHeight;

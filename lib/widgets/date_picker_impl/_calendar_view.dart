@@ -358,20 +358,25 @@ class _CalendarViewState extends State<_CalendarView> {
     final secondMonthHeight = (secondMonthRows * 60.0);
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         // Fixed Day Headers (Non-scrollable)
-        Container(
-          height: 120,
-          child: GridView.custom(
-            padding: EdgeInsets.zero,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: _DayPickerGridDelegate(
-              config: widget.config,
-              dayRowsCount: firstMonthRows,
-            ),
-            childrenDelegate: SliverChildListDelegate(
-              dayItems,
-              addRepaintBoundaries: false,
+        SizedBox(
+          height: 50,
+          child: Expanded(
+            child: GridView.custom(
+              padding: EdgeInsets.zero,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: _DayPickerGridDelegate(
+                config: widget.config,
+                dayRowsCount: 1,
+              ),
+              childrenDelegate: SliverChildListDelegate(
+                dayItems,
+                addRepaintBoundaries: false,
+              ),
             ),
           ),
         ),
@@ -382,6 +387,9 @@ class _CalendarViewState extends State<_CalendarView> {
             physics: const BouncingScrollPhysics(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 0,
               children: [
                 // First month title
                 Padding(
