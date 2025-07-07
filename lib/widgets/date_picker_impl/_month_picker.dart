@@ -147,13 +147,17 @@ class _MonthPickerState extends State<_MonthPicker> {
         border: Border.all(width: 2, color: colorScheme.primary),
         color: colorScheme.primary.withValues(alpha: 0.1),
       );
-    } else */if (isCurrentlyDisplayedMonth) {
+    } else */ /**/
+
+    if (isCurrentlyDisplayedMonth) {
       // Currently displayed month gets dashed border or different style
       decoration = BoxDecoration(
         borderRadius: BorderRadius.circular(decorationHeight/2),
         border: Border.all(width: 1, color: const Color(0xFFACB1BF), style: BorderStyle.solid),
       );
-    } /*else if (isCurrentMonth && isMonthSelectable) {
+    }
+
+    if (isCurrentMonth && isMonthSelectable) {
       // Today's month gets its own style
       decoration = BoxDecoration(
         border: Border.all(
@@ -161,7 +165,7 @@ class _MonthPickerState extends State<_MonthPicker> {
         ),
         borderRadius: BorderRadius.circular(decorationHeight),
       );
-    }*/
+    }
 
     Widget monthItem = widget.config.monthBuilder?.call(
           month: month,
