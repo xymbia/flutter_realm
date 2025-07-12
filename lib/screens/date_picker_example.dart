@@ -24,6 +24,12 @@ class _SwitchTilePageState extends State<DatePickerPage> {
 
   String selectedMonth = "";
   int selectedYear = 0;
+  bool isSingleDateMode = true;
+
+  List<DateTime?> _rangeDatePickerValueWithDefaultValue = [
+    DateTime(1999, 5, 6),
+    DateTime(1999, 5, 21),
+  ];
 
   // List of years (can be customized)
   final List<int> years = List.generate(10, (index) => 2025 - index);
@@ -32,15 +38,17 @@ class _SwitchTilePageState extends State<DatePickerPage> {
   void initState() {
     super.initState();
     // Initialize with the displayed month date
-    final displayedDate = _singleDatePickerValueWithDefaultValue.first ?? DateTime.now();
-    
+    final displayedDate =
+        _singleDatePickerValueWithDefaultValue.first ?? DateTime.now();
+
     // Get current month
-    final currentMonth = monthAbbreviations[displayedDate.month - 1]; // months is 0-indexed, DateTime.month is 1-indexed
-    
+    final currentMonth = monthAbbreviations[displayedDate.month -
+        1]; // months is 0-indexed, DateTime.month is 1-indexed
+
     // Get next month
     final nextMonthDate = DateTime(displayedDate.year, displayedDate.month + 1);
     final nextMonth = monthAbbreviations[nextMonthDate.month - 1];
-    
+
     // Display both months
     selectedMonth = '$currentMonth - $nextMonth';
     selectedYear = displayedDate.year;
@@ -58,7 +66,33 @@ class _SwitchTilePageState extends State<DatePickerPage> {
           title: const Text('DatePicker'),
         ),
         body: Center(
-          child: _buildSingleDatePickerWithValue(),
+          child: Column(
+            children: [
+              SizedBox(
+                width: 0.4.sw,
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                        child: Text(isSingleDateMode == true
+                            ? 'Single Mode'
+                            : 'Range Mode')),
+                    const SizedBox(width: 4),
+                    Switch(
+                      value: isSingleDateMode,
+                      onChanged: (bool value) {
+                        setState(() {
+                          isSingleDateMode = value;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              isSingleDateMode
+                  ? _buildSingleDatePickerWithValue()
+                  : _buildScrollRangeDatePickerWithValue(),
+            ],
+          ),
         ));
   }
 
@@ -72,12 +106,13 @@ class _SwitchTilePageState extends State<DatePickerPage> {
   void _handleDisplayedMonthChanged(DateTime date) {
     setState(() {
       // Get current month
-      final currentMonth = monthAbbreviations[date.month - 1]; // months is 0-indexed, DateTime.month is 1-indexed
-      
+      final currentMonth = monthAbbreviations[
+          date.month - 1]; // months is 0-indexed, DateTime.month is 1-indexed
+
       // Get next month
       final nextMonthDate = DateTime(date.year, date.month + 1);
       final nextMonth = monthAbbreviations[nextMonthDate.month - 1];
-      
+
       // Display both months
       selectedMonth = '$currentMonth - $nextMonth';
       selectedYear = date.year;
@@ -88,7 +123,7 @@ class _SwitchTilePageState extends State<DatePickerPage> {
   void _handleMonthSelected(DateTime date) {
     setState(() {
       _currentDisplayedMonthDate = date;
-      
+
       // Update selectedMonth to show both current and next month
       final currentMonth = monthAbbreviations[date.month - 1];
       final nextMonthDate = DateTime(date.year, date.month + 1);
@@ -139,15 +174,6 @@ class _SwitchTilePageState extends State<DatePickerPage> {
       ),
       centerAlignModePicker: true,
       useAbbrLabelForMonthModePicker: true,
-      modePickersGap: 0,
-      modePickerTextHandler: ({required monthDate, isMonthPicker}) {
-        if (isMonthPicker ?? false) {
-          // Custom month picker text
-          return '${getLocaleShortMonthFormat(const Locale('en')).format(monthDate)} C';
-        }
-
-        return null;
-      },
       firstDate: DateTime(DateTime.now().year - 2, DateTime.now().month - 1,
           DateTime.now().day - 5),
       lastDate: DateTime(DateTime.now().year + 3, DateTime.now().month + 2,
@@ -192,13 +218,14 @@ class _SwitchTilePageState extends State<DatePickerPage> {
                     child: Container(
                       decoration: const BoxDecoration(
                         shape: BoxShape.circle,
-                        color:
-                            Colors.transparent, // material color will cover this
+                        color: Colors
+                            .transparent, // material color will cover this
                       ),
                       child: Row(
                         children: [
                           Text(selectedMonth,
-                              style: Font.apply(FontStyle.regular, FontSize.h6)),
+                              style:
+                                  Font.apply(FontStyle.regular, FontSize.h6)),
                           Icon(
                             Icons.keyboard_arrow_down,
                             color: Colors.black54,
@@ -214,20 +241,19 @@ class _SwitchTilePageState extends State<DatePickerPage> {
                       setState(() {
                         mode = DatePickerWidgetMode.year;
                       });
-                      // Ensure the year picker shows the currently selected year
-                      print('Switching to year picker mode for year: $selectedYear');
                     },
                     hoverColor: Colors.yellow,
                     child: Container(
                       decoration: const BoxDecoration(
                         shape: BoxShape.circle,
-                        color:
-                            Colors.transparent, // material color will cover this
+                        color: Colors
+                            .transparent, // material color will cover this
                       ),
                       child: Row(
                         children: [
                           Text(selectedYear.toString(),
-                              style: Font.apply(FontStyle.regular, FontSize.h6)),
+                              style:
+                                  Font.apply(FontStyle.regular, FontSize.h6)),
                           Icon(
                             Icons.keyboard_arrow_down,
                             color: Colors.black54,
@@ -245,11 +271,12 @@ class _SwitchTilePageState extends State<DatePickerPage> {
             SizedBox(
               height: 0.55.sh,
               child: DatePickerWidget(
-                displayedMonthDate: _currentDisplayedMonthDate ?? _singleDatePickerValueWithDefaultValue.first,
+                displayedMonthDate: _currentDisplayedMonthDate ??
+                    _singleDatePickerValueWithDefaultValue.first,
                 config: config,
                 value: _singleDatePickerValueWithDefaultValue,
-                onValueChanged: (dates) =>
-                    setState(() => _singleDatePickerValueWithDefaultValue = dates),
+                onValueChanged: (dates) => setState(
+                    () => _singleDatePickerValueWithDefaultValue = dates),
                 onDisplayedMonthChanged: _handleDisplayedMonthChanged,
                 onMonthSelected: _handleMonthSelected,
                 onYearSelected: _handleYearSelected,
@@ -289,7 +316,8 @@ class _SwitchTilePageState extends State<DatePickerPage> {
                             ),
                             onPressed: () {},
                             child: Text('Save',
-                                style: Font.apply(FontStyle.regular, FontSize.h6,
+                                style: Font.apply(
+                                    FontStyle.regular, FontSize.h6,
                                     color: const Color(0xFF393B40))),
                           )),
                     ],
@@ -299,6 +327,88 @@ class _SwitchTilePageState extends State<DatePickerPage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildScrollRangeDatePickerWithValue() {
+    final config = DatePickerWidgetConfig(
+      centerAlignModePicker: true,
+      calendarType: DatePickerWidgetType.range,
+      calendarViewMode: DatePickerWidgetMode.scroll,
+      rangeBidirectional: true,
+      selectedDayHighlightColor: Colors.teal[800],
+      weekdayLabelTextStyle: const TextStyle(
+        color: Colors.black87,
+        fontWeight: FontWeight.bold,
+      ),
+      controlsTextStyle: const TextStyle(
+        color: Colors.black,
+        fontSize: 15,
+        fontWeight: FontWeight.bold,
+      ),
+      dynamicCalendarRows: true,
+      weekdayLabelBuilder: ({required weekday, isScrollViewTopHeader}) {
+        if (weekday == DateTime.wednesday && isScrollViewTopHeader != true) {
+          return const Center(
+            child: Text(
+              'W',
+              style: TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          );
+        }
+        return null;
+      },
+      modePickerTextHandler: ({required monthDate, isMonthPicker}) {
+        if (isMonthPicker ?? false) {
+          return '${getLocaleShortMonthFormat(const Locale('en')).format(monthDate)} New';
+        }
+
+        return null;
+      },
+      disabledDayTextStyle:
+          const TextStyle(color: Colors.grey, fontWeight: FontWeight.w400),
+      selectableDayPredicate: (day) {
+        if (_rangeDatePickerValueWithDefaultValue.isEmpty ||
+            _rangeDatePickerValueWithDefaultValue.length == 2) {
+          // exclude Wednesday
+          return day.weekday != DateTime.wednesday;
+        } else {
+          // Make sure range does not contain any Wednesday
+          final firstDate = _rangeDatePickerValueWithDefaultValue.first;
+          final range = [firstDate!, day]..sort();
+          for (var date = range.first;
+              date.compareTo(range.last) <= 0;
+              date = date.add(const Duration(days: 1))) {
+            if (date.weekday == DateTime.wednesday) {
+              return false;
+            }
+          }
+        }
+        return true;
+      },
+    );
+    return SizedBox(
+      width: 375,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SizedBox(height: 10),
+          const Text('Scroll Range Date Picker'),
+          SizedBox(
+            height: 800,
+            child: DatePickerWidget(
+              config: config,
+              value: _rangeDatePickerValueWithDefaultValue,
+              onValueChanged: (dates) =>
+                  setState(() => _rangeDatePickerValueWithDefaultValue = dates),
+            ),
+          ),
+          const SizedBox(height: 10),
+        ],
       ),
     );
   }
