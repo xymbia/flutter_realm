@@ -19,14 +19,13 @@ class DatePickerPage extends StatefulWidget {
 }
 
 class _SwitchTilePageState extends State<DatePickerPage> {
-  bool switchValue = true;
   DatePickerWidgetMode mode = DatePickerWidgetMode.day;
 
   String selectedMonth = "";
   int selectedYear = 0;
   bool isSingleDateMode = true;
 
-  List<DateTime?> _rangeDatePickerValueWithDefaultValue = [];
+  List<DateTime> _rangeDatePickerValueWithDefaultValue = [];
 
   @override
   void initState() {
@@ -75,6 +74,11 @@ class _SwitchTilePageState extends State<DatePickerPage> {
                       value: isSingleDateMode,
                       onChanged: (bool value) {
                         setState(() {
+                          if(value){
+                            mode = DatePickerWidgetMode.day;
+                          }else{
+                            mode = DatePickerWidgetMode.scroll;
+                          }
                           isSingleDateMode = value;
                         });
                       },
@@ -132,7 +136,7 @@ class _SwitchTilePageState extends State<DatePickerPage> {
     });
   }
 
-  Widget _buildCalendarLayout(Widget calendarWidget){
+  Widget _buildCalendarLayout(Widget calendarWidget) {
     return SizedBox(
       height: 0.8.sh,
       child: Card(
@@ -147,7 +151,8 @@ class _SwitchTilePageState extends State<DatePickerPage> {
             // Header section
             Padding(
               padding: const EdgeInsets.only(top: 16.0, bottom: 20.0),
-              child: Text(isSingleDateMode?'Select Date':'Select Start & End Date',
+              child: Text(
+                  _handleTitleText(),
                   style: Font.apply(FontStyle.medium, FontSize.h4)),
             ),
             const Divider(height: 1, color: Color(0xFFEDEEF0)),
@@ -174,7 +179,7 @@ class _SwitchTilePageState extends State<DatePickerPage> {
                         children: [
                           Text(selectedMonth,
                               style:
-                              Font.apply(FontStyle.regular, FontSize.h6)),
+                                  Font.apply(FontStyle.regular, FontSize.h6)),
                           Icon(
                             Icons.keyboard_arrow_down,
                             color: Colors.black54,
@@ -202,7 +207,7 @@ class _SwitchTilePageState extends State<DatePickerPage> {
                         children: [
                           Text(selectedYear.toString(),
                               style:
-                              Font.apply(FontStyle.regular, FontSize.h6)),
+                                  Font.apply(FontStyle.regular, FontSize.h6)),
                           Icon(
                             Icons.keyboard_arrow_down,
                             color: Colors.black54,
@@ -254,7 +259,44 @@ class _SwitchTilePageState extends State<DatePickerPage> {
                               backgroundColor: const Color(0xFFE0E1E4),
                               foregroundColor: const Color(0xFFE0E1E4),
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+
+                              switch(mode){
+                                case DatePickerWidgetMode.day:
+                                  log('Selected Date: ${_singleDatePickerValueWithDefaultValue.first}');
+                                  break;
+                                case DatePickerWidgetMode.month:
+                                  log('Selected Month: $selectedMonth');
+
+                                  if(isSingleDateMode){
+                                    setState(() {
+                                      mode = DatePickerWidgetMode.day;
+                                    });
+                                  }else{
+                                    setState(() {
+                                      mode = DatePickerWidgetMode.scroll;
+                                    });
+                                  }
+
+                                  break;
+                                case DatePickerWidgetMode.year:
+                                  log('Selected Year: $selectedYear');
+
+                                  if(isSingleDateMode){
+                                    setState(() {
+                                      mode = DatePickerWidgetMode.day;
+                                    });
+                                  }else{
+                                    setState(() {
+                                      mode = DatePickerWidgetMode.scroll;
+                                    });
+                                  }
+                                  break;
+                                case DatePickerWidgetMode.scroll:
+                                  log('Selected Year: $selectedYear');
+                                  break;
+                              }
+                            },
                             child: Text('Save',
                                 style: Font.apply(
                                     FontStyle.regular, FontSize.h6,
@@ -269,6 +311,20 @@ class _SwitchTilePageState extends State<DatePickerPage> {
         ),
       ),
     );
+  }
+
+  String _handleTitleText() {
+    switch (mode) {
+      case DatePickerWidgetMode.day:
+        return 'Select a date';
+      case DatePickerWidgetMode.month:
+        return 'Select a month';
+      case DatePickerWidgetMode.year:
+        return 'Select a year';
+      case DatePickerWidgetMode.scroll:
+        return _rangeDatePickerValueWithDefaultValue.length<=1 ? 'Select Start & End Date'
+        : formatDateRange(_rangeDatePickerValueWithDefaultValue);
+    }
   }
 
   Widget _buildSingleDatePickerWithValue() {
@@ -322,8 +378,8 @@ class _SwitchTilePageState extends State<DatePickerPage> {
           _singleDatePickerValueWithDefaultValue.first,
       config: config,
       value: _singleDatePickerValueWithDefaultValue,
-      onValueChanged: (dates) => setState(
-              () => _singleDatePickerValueWithDefaultValue = dates),
+      onValueChanged: (dates) =>
+          setState(() => _singleDatePickerValueWithDefaultValue = dates),
       onDisplayedMonthChanged: _handleDisplayedMonthChanged,
       onMonthSelected: _handleMonthSelected,
       onYearSelected: _handleYearSelected,
@@ -333,7 +389,7 @@ class _SwitchTilePageState extends State<DatePickerPage> {
   Widget _buildScrollRangeDatePickerWithValue() {
     final config = DatePickerWidgetConfig(
       calendarType: DatePickerWidgetType.range,
-      calendarViewMode: DatePickerWidgetMode.scroll,
+      calendarViewMode: mode,
       rangeBidirectional: true,
       selectedDayHighlightColor: Colors.teal[800],
       dynamicCalendarRows: true,
@@ -346,6 +402,9 @@ class _SwitchTilePageState extends State<DatePickerPage> {
       value: _rangeDatePickerValueWithDefaultValue,
       onValueChanged: (dates) =>
           setState(() => _rangeDatePickerValueWithDefaultValue = dates),
+      onDisplayedMonthChanged: _handleDisplayedMonthChanged,
+      onMonthSelected: _handleMonthSelected,
+      onYearSelected: _handleYearSelected,
     ));
   }
 }

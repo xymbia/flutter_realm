@@ -96,3 +96,23 @@ String getMonthAbbreviation(int monthNumber) {
   }
   throw ArgumentError('Month number must be between 1 and 12');
 }
+
+String formatDateRange(List<DateTime> dates) {
+  if (dates.isEmpty) return '';
+
+  // Sort dates just in case
+  dates.sort();
+
+  DateTime start = dates.first;
+  DateTime end = dates.last;
+
+  String startDay = DateFormat('d').format(start);
+  String startMonth = DateFormat('MMMM').format(start);
+
+  String endDay = DateFormat('d').format(end);
+  String endMonth = DateFormat('MMMM').format(end);
+
+  String year = DateFormat('y').format(end);
+
+  return "$startDay $startMonth - $endDay $endMonth, $year";
+}

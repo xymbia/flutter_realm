@@ -86,10 +86,6 @@ class _CalendarViewState extends State<_CalendarView> {
     super.didUpdateWidget(oldWidget);
     if (widget.initialMonth != oldWidget.initialMonth &&
         widget.initialMonth != _currentMonth) {
-      // We can't interrupt this widget build with a scroll, so do it next frame
-      // Add workaround to fix Flutter 3.0.0 compiler issue
-      // https://github.com/flutter/flutter/issues/103561#issuecomment-1125512962
-      // https://github.com/flutter/website/blob/3e6d87f13ad2a8dd9cf16081868cc3b3794abb90/src/development/tools/sdk/release-notes/release-notes-3.0.0.md#your-code
       _ambiguate(WidgetsBinding.instance)!.addPostFrameCallback(
         (Duration timeStamp) => _showMonth(widget.initialMonth,
             jump: widget.config.animateToDisplayedMonthDate != true),
@@ -151,26 +147,6 @@ class _CalendarViewState extends State<_CalendarView> {
       if (_isSelectable(newFocus)) return newFocus;
     }
     return null;
-  }
-
-  /// Navigate to the next month.
-  void _handleNextMonth() {
-    if (!_isDisplayingLastMonth) {
-      _pageController.nextPage(
-        duration: _monthScrollDuration,
-        curve: Curves.ease,
-      );
-    }
-  }
-
-  /// Navigate to the previous month.
-  void _handlePreviousMonth() {
-    if (!_isDisplayingFirstMonth) {
-      _pageController.previousPage(
-        duration: _monthScrollDuration,
-        curve: Curves.ease,
-      );
-    }
   }
 
   /// Navigate to the given month.
@@ -322,35 +298,34 @@ class _CalendarViewState extends State<_CalendarView> {
   Widget _buildItems(BuildContext context, int index) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final MaterialLocalizations localizations =
-    MaterialLocalizations.of(context);
+        MaterialLocalizations.of(context);
     final TextTheme textTheme = Theme.of(context).textTheme;
     final TextStyle? headerStyle = textTheme.bodySmall?.apply(
       color: colorScheme.onSurface.withValues(alpha: 0.60),
     );
     final List<Widget> dayItems = _dayHeaders(headerStyle, localizations);
     final DateTime month =
-    DateUtils.addMonthsToMonthDate(widget.config.firstDate, index);
+        DateUtils.addMonthsToMonthDate(widget.config.firstDate, index);
 
     final nextMonth = DateUtils.addMonthsToMonthDate(month, 1);
-    final shouldShowNextMonth =
-        nextMonth.isBefore(widget.config.lastDate) ||
-            DateUtils.isSameMonth(nextMonth, widget.config.lastDate);
+    final shouldShowNextMonth = nextMonth.isBefore(widget.config.lastDate) ||
+        DateUtils.isSameMonth(nextMonth, widget.config.lastDate);
 
     // Calculate dynamic heights based on row count
     final firstMonthRows = widget.config.dynamicCalendarRows == true
         ? getDayRowsCount(
-      month.year,
-      month.month,
-      widget.config.firstDayOfWeek ?? _localizations.firstDayOfWeekIndex,
-    )
+            month.year,
+            month.month,
+            widget.config.firstDayOfWeek ?? _localizations.firstDayOfWeekIndex,
+          )
         : _maxDayPickerRowCount;
 
     final secondMonthRows = widget.config.dynamicCalendarRows == true
         ? getDayRowsCount(
-      nextMonth.year,
-      nextMonth.month,
-      widget.config.firstDayOfWeek ?? _localizations.firstDayOfWeekIndex,
-    )
+            nextMonth.year,
+            nextMonth.month,
+            widget.config.firstDayOfWeek ?? _localizations.firstDayOfWeekIndex,
+          )
         : _maxDayPickerRowCount;
 
     // Calculate heights (assuming ~50px per row)
@@ -393,10 +368,11 @@ class _CalendarViewState extends State<_CalendarView> {
               children: [
                 // First month title
                 Padding(
-                  padding: const EdgeInsets.only(left: 10.0, top: 8.0, bottom: 8.0),
+                  padding:
+                      const EdgeInsets.only(left: 10.0, top: 8.0, bottom: 8.0),
                   child: Text(
                     "${getMonthAbbreviation(month.month)} ${month.year.toString()}",
-                    style: Font.apply(FontStyle.medium, FontSize.h6),
+                    style: Font.apply(FontStyle.bold, FontSize.h6),
                   ),
                 ),
 
@@ -405,7 +381,8 @@ class _CalendarViewState extends State<_CalendarView> {
                   height: firstMonthHeight,
                   child: _DayPicker(
                     key: ValueKey<DateTime>(month),
-                    selectedDates: widget.selectedDates.whereType<DateTime>().toList(),
+                    selectedDates:
+                        widget.selectedDates.whereType<DateTime>().toList(),
                     onChanged: _handleDateSelected,
                     config: widget.config,
                     displayedMonth: month,
@@ -417,10 +394,11 @@ class _CalendarViewState extends State<_CalendarView> {
                 if (shouldShowNextMonth) ...[
                   // Second month title
                   Padding(
-                    padding: const EdgeInsets.only(left: 10.0, top: 16.0, bottom: 8.0),
+                    padding: const EdgeInsets.only(
+                        left: 10.0, top: 16.0, bottom: 8.0),
                     child: Text(
                       "${getMonthAbbreviation(nextMonth.month)} ${nextMonth.year.toString()}",
-                      style: Font.apply(FontStyle.medium, FontSize.h6),
+                      style: Font.apply(FontStyle.bold, FontSize.h6),
                     ),
                   ),
 
@@ -450,9 +428,6 @@ class _CalendarViewState extends State<_CalendarView> {
 
   @override
   Widget build(BuildContext context) {
-    final Color controlColor =
-        Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.60);
-
     return Semantics(
       child: Column(
         children: <Widget>[
