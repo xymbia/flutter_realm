@@ -25,6 +25,11 @@ class _SwitchTilePageState extends State<DatePickerPage> {
   int selectedYear = 0;
   bool isSingleDateMode = true;
 
+  // State for month/year selection
+  String _tempSelectedMonth = "";
+  int _tempSelectedYear = 0;
+  bool _hasMonthYearChanges = false;
+
   List<DateTime> _rangeDatePickerValueWithDefaultValue = [];
 
   @override
@@ -46,6 +51,10 @@ class _SwitchTilePageState extends State<DatePickerPage> {
     selectedMonth = '$currentMonth - $nextMonth';
     selectedYear = displayedDate.year;
     _currentDisplayedMonthDate = displayedDate;
+    
+    // Initialize temp values
+    _tempSelectedMonth = selectedMonth;
+    _tempSelectedYear = selectedYear;
   }
 
   @override
@@ -116,6 +125,10 @@ class _SwitchTilePageState extends State<DatePickerPage> {
       selectedMonth = '$currentMonth - $nextMonth';
       selectedYear = date.year;
       _currentDisplayedMonthDate = date;
+      
+      // Update temp values to match
+      _tempSelectedMonth = selectedMonth;
+      _tempSelectedYear = selectedYear;
     });
   }
 
@@ -123,17 +136,58 @@ class _SwitchTilePageState extends State<DatePickerPage> {
     setState(() {
       _currentDisplayedMonthDate = date;
 
-      // Update selectedMonth to show both current and next month
+      // Update temp selectedMonth to show both current and next month
       final currentMonth = monthAbbreviations[date.month - 1];
       final nextMonthDate = DateTime(date.year, date.month + 1);
       final nextMonth = monthAbbreviations[nextMonthDate.month - 1];
-      selectedMonth = '$currentMonth - $nextMonth';
+      _tempSelectedMonth = '$currentMonth - $nextMonth';
+      _tempSelectedYear = date.year;
+      
+      // Check if there are changes
+      _hasMonthYearChanges = true;
     });
   }
 
   void _handleYearSelected(DateTime date) {
     setState(() {
       _currentDisplayedMonthDate = date;
+      _tempSelectedYear = date.year;
+      
+      // Check if there are changes
+      _hasMonthYearChanges = true;
+    });
+  }
+
+  /// Saves the month/year selection and resets the change flag
+  void _saveMonthYearSelection() {
+    setState(() {
+      selectedMonth = _tempSelectedMonth;
+      selectedYear = _tempSelectedYear;
+      _hasMonthYearChanges = false;
+      
+      // Switch back to day mode after saving
+      if (isSingleDateMode) {
+        mode = DatePickerWidgetMode.day;
+      } else {
+        mode = DatePickerWidgetMode.scroll;
+      }
+    });
+  }
+
+  /// Cancels the month/year selection and resets to original values
+  void _cancelMonthYearSelection() {
+    setState(() {
+      // Reset temp values to original
+      _tempSelectedMonth = selectedMonth;
+      _tempSelectedYear = selectedYear;
+      _hasMonthYearChanges = false;
+      
+      // Switch back to day mode after canceling
+      if (isSingleDateMode) {
+        mode = DatePickerWidgetMode.day;
+      } else {
+        mode = DatePickerWidgetMode.scroll;
+      }
     });
   }
 
@@ -305,7 +359,16 @@ class _SwitchTilePageState extends State<DatePickerPage> {
                     children: [
                       MaterialButton(
                         onPressed: () {
-                          Navigator.pop(context);
+                          switch (mode) {
+                            case DatePickerWidgetMode.month:
+                            case DatePickerWidgetMode.year:
+                              // Cancel month/year selection
+                              _cancelMonthYearSelection();
+                              break;
+                            default:
+                              Navigator.pop(context);
+                              break;
+                          }
                         },
                         child: Text('Cancel',
                             style: Font.apply(FontStyle.regular, FontSize.h6,
@@ -316,8 +379,12 @@ class _SwitchTilePageState extends State<DatePickerPage> {
                           height: 50.0,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFFE0E1E4),
-                              foregroundColor: const Color(0xFFE0E1E4),
+                              backgroundColor: (mode == DatePickerWidgetMode.month || mode == DatePickerWidgetMode.year) && _hasMonthYearChanges
+                                  ? Colors.black
+                                  : const Color(0xFFE0E1E4),
+                              foregroundColor: (mode == DatePickerWidgetMode.month || mode == DatePickerWidgetMode.year) && _hasMonthYearChanges
+                                  ? Colors.white
+                                  : const Color(0xFFE0E1E4),
                             ),
                             onPressed: () {
                               switch (mode) {
@@ -325,41 +392,22 @@ class _SwitchTilePageState extends State<DatePickerPage> {
                                   log('Selected Date: ${_singleDatePickerValueWithDefaultValue.first}');
                                   break;
                                 case DatePickerWidgetMode.month:
-                                  log('Selected Month: $selectedMonth');
-
-                                  if (isSingleDateMode) {
-                                    setState(() {
-                                      mode = DatePickerWidgetMode.day;
-                                    });
-                                  } else {
-                                    setState(() {
-                                      mode = DatePickerWidgetMode.scroll;
-                                    });
-                                  }
-
-                                  break;
                                 case DatePickerWidgetMode.year:
-                                  log('Selected Year: $selectedYear');
-
-                                  if (isSingleDateMode) {
-                                    setState(() {
-                                      mode = DatePickerWidgetMode.day;
-                                    });
-                                  } else {
-                                    setState(() {
-                                      mode = DatePickerWidgetMode.scroll;
-                                    });
-                                  }
+                                  // Save the month/year selection
+                                  _saveMonthYearSelection();
+                                  log('Saved ${mode == DatePickerWidgetMode.month ? 'Month' : 'Year'}: ${mode == DatePickerWidgetMode.month ? selectedMonth : selectedYear}');
                                   break;
                                 case DatePickerWidgetMode.scroll:
-                                  log('Selected Year: $selectedYear');
+                                  log('Selected Range: ${_rangeDatePickerValueWithDefaultValue.length} dates');
                                   break;
                               }
                             },
                             child: Text('Save',
                                 style: Font.apply(
                                     FontStyle.regular, FontSize.h6,
-                                    color: const Color(0xFF393B40))),
+                                    color: (mode == DatePickerWidgetMode.month || mode == DatePickerWidgetMode.year) && _hasMonthYearChanges
+                                        ? Colors.white
+                                        : const Color(0xFF393B40))),
                           )),
                     ],
                   ),
