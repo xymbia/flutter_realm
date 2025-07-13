@@ -349,8 +349,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
         );
       case DatePickerWidgetMode.month:
         return Padding(
-          padding: EdgeInsets.only(
-              top: widget.config.controlsHeight ?? _subHeaderHeight),
+          padding: const EdgeInsets.all(16.0),
           child: _MonthPicker(
             config: widget.config,
             key: _monthPickerKey,
@@ -371,8 +370,8 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
           ),
         );
       case DatePickerWidgetMode.scroll:
-        return Container(
-          constraints: widget.config.scrollViewConstraints,
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
           child: _CalendarScrollView(
             config: widget.config,
             key: _dayPickerKey,

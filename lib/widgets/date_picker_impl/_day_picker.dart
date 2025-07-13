@@ -133,8 +133,11 @@ class _DayPickerState extends State<_DayPicker> {
             dayColor = Colors.white;
             decoration = BoxDecoration(
               borderRadius: BorderRadius.circular(50),
-              color: Colors.black, // Black background for today's date
-              border: Border.all(width: 2, color: const Color(0xFF393B40)), // Add border to show it's selected
+              color: const Color(0xFF1A1B1D), // Black background for today's date
+              border: Border.all(
+                  width: 2,
+                  color: const Color(
+                      0xFF393B40)), // Add border to show it's selected
               shape: widget.config.dayBorderRadius != null
                   ? BoxShape.rectangle
                   : BoxShape.circle,
@@ -145,19 +148,15 @@ class _DayPickerState extends State<_DayPicker> {
             decoration = BoxDecoration(
               borderRadius: BorderRadius.circular(50),
               color: const Color(0xFF393B40),
-              border: Border.all(width: 3, color: const Color(0xFF393B40)), // Different border color
+              border: Border.all(
+                  width: 3,
+                  color: const Color(0xFF393B40)), // Different border color
             );
           }
         } else if (isDisabled) {
           dayColor = disabledDayColor;
         }
-        if (isToday) {
-          // The current day gets a black background highlight
-          dayColor = selectedDayColor;
-          decoration = BoxDecoration(
-              borderRadius: BorderRadius.circular(50),
-              border: Border.all(width: 1, color: const Color(0xFF393B40)));
-        }
+
 
         var customDayTextStyle =
             widget.config.dayTextStylePredicate?.call(date: dayToBuild) ??
@@ -165,7 +164,9 @@ class _DayPickerState extends State<_DayPicker> {
 
         if (isToday && widget.config.todayTextStyle != null) {
           customDayTextStyle = widget.config.todayTextStyle?.copyWith(
-            color: isSelectedDay ? Colors.white : dayColor, // Use white if selected, otherwise use calculated dayColor
+            color: isSelectedDay
+                ? Colors.white
+                : dayColor, // Use white if selected, otherwise use calculated dayColor
           );
         }
 
@@ -199,10 +200,31 @@ class _DayPickerState extends State<_DayPicker> {
           customDayTextStyle = widget.config.selectedRangeDayTextStyle;
         }
 
-        if (isSelectedDay) {
-          customDayTextStyle = widget.config.selectedDayTextStyle;
+        if (isToday) {
+          // The current day gets a black background highlight
+          if (widget.config.calendarType != DatePickerWidgetType.range ) {
+            dayColor = selectedDayColor;
+          }else{
+            customDayTextStyle = widget.config.selectedDayTextStyle
+                ?.copyWith(color: Colors.black54);
+          }
+          decoration = BoxDecoration(
+              borderRadius: BorderRadius.circular(50),
+              border: Border.all(width: 1, color: const Color(0xFF393B40)));
         }
 
+        if (isSelectedDay) {
+          customDayTextStyle = widget.config.selectedDayTextStyle
+                ?.copyWith(color: Colors.white);
+            decoration = BoxDecoration(
+              borderRadius: BorderRadius.circular(50),
+              color: const Color(0xFF1A1B1D), // Black background for today's date
+              border: Border.all(
+                  width: 2,
+                  color: const Color(
+                      0xFF393B40)),
+            );
+        }
 
         final dayTextStyle =
             customDayTextStyle ?? dayStyle.apply(color: dayColor);
@@ -259,9 +281,12 @@ class _DayPickerState extends State<_DayPicker> {
                       const Spacer(),
                       Expanded(
                         child: AspectRatio(
-                          aspectRatio: 0.5,
-                          child: Container(
-                            decoration: rangePickerIncludedDayDecoration,
+                          aspectRatio: 2.5,
+                          child: Padding(
+                            padding: const EdgeInsets.all(28.0),
+                            child: Container(
+                              decoration: rangePickerIncludedDayDecoration,
+                            ),
                           ),
                         ),
                       ),
@@ -274,36 +299,44 @@ class _DayPickerState extends State<_DayPicker> {
               alignment: AlignmentDirectional.center,
               children: [
                 rangePickerIncludedDayHighlight ??
-                    Row(children: [
-                      Expanded(
-                        child: AspectRatio(
-                          aspectRatio: 0.5,
-                          child: Container(
-                            decoration: rangePickerIncludedDayDecoration,
-                          ),
-                        ),
-                      ),
-                      const Spacer(),
-                    ]),
-                dayWidget,
+                    dayWidget,
               ],
             );
           } else {
             dayWidget = Stack(
               alignment: AlignmentDirectional.center,
               children: [
-                rangePickerIncludedDayHighlight ??
-                    Row(children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 6.0, right: 6.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
                       Expanded(
                         child: AspectRatio(
                           aspectRatio: 1,
                           child: Container(
-                            decoration: rangePickerIncludedDayDecoration,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              color: const Color(
+                                  0xFFE4E5E7), // Black background for today's date
+                              border: Border.all(
+                                  width: 2, color: const Color(0xFFE4E5E7)),
+                            ),
+                            child: Center(
+                              child: Text(
+                                localizations.formatDecimal(day),
+                                style: dayTextStyle,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ]),
-                dayWidget,
+                    ],
+                  ),
+                ),
+                // rangePickerIncludedDayHighlight ??
+                //
+                // dayWidget,
               ],
             );
           }
@@ -373,24 +406,27 @@ class _DayPickerState extends State<_DayPicker> {
     int day,
     TextStyle dayTextStyle,
   ) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Expanded(
-          child: AspectRatio(
-            aspectRatio: 1,
-            child: Container(
-              decoration: decoration,
-              child: Center(
-                child: Text(
-                  localizations.formatDecimal(day),
-                  style: dayTextStyle,
+    return Padding(
+      padding: const EdgeInsets.only(left: 6.0, right: 6.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            child: AspectRatio(
+              aspectRatio: 1,
+              child: Container(
+                decoration: decoration,
+                child: Center(
+                  child: Text(
+                    localizations.formatDecimal(day),
+                    style: dayTextStyle,
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
