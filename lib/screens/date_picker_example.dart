@@ -61,6 +61,7 @@ class _SwitchTilePageState extends State<DatePickerPage> {
         body: Center(
           child: Column(
             children: [
+              // Mode toggle section
               SizedBox(
                 width: 0.4.sw,
                 child: Row(
@@ -74,9 +75,9 @@ class _SwitchTilePageState extends State<DatePickerPage> {
                       value: isSingleDateMode,
                       onChanged: (bool value) {
                         setState(() {
-                          if(value){
+                          if (value) {
                             mode = DatePickerWidgetMode.day;
-                          }else{
+                          } else {
                             mode = DatePickerWidgetMode.scroll;
                           }
                           isSingleDateMode = value;
@@ -136,6 +137,66 @@ class _SwitchTilePageState extends State<DatePickerPage> {
     });
   }
 
+  /// Sets the current date selection programmatically
+  ///
+  /// [date] - The date to set as selected
+  /// [updateDisplayedMonth] - Whether to also update the displayed month to show the selected date's month
+  void setCurrentDateSelection(DateTime date,
+      {bool updateDisplayedMonth = true}) {
+    setState(() {
+      if (isSingleDateMode) {
+        // For single date mode, update the single date picker value
+        _singleDatePickerValueWithDefaultValue = [date];
+      } else {
+        // For range mode, add the date to the range or replace existing selection
+        if (_rangeDatePickerValueWithDefaultValue.isEmpty) {
+          _rangeDatePickerValueWithDefaultValue = [date];
+        } else if (_rangeDatePickerValueWithDefaultValue.length == 1) {
+          // If only start date is set, set this as end date
+          final startDate = _rangeDatePickerValueWithDefaultValue[0];
+          if (date.isAfter(startDate)) {
+            _rangeDatePickerValueWithDefaultValue = [startDate, date];
+          } else {
+            // If selected date is before start date, make it the new start date
+            _rangeDatePickerValueWithDefaultValue = [date, startDate];
+          }
+        } else {
+          // If both dates are set, replace with new selection
+          _rangeDatePickerValueWithDefaultValue = [date];
+        }
+      }
+
+      // Update displayed month if requested
+      if (updateDisplayedMonth) {
+        _currentDisplayedMonthDate = DateTime(date.year, date.month);
+
+        // Update the month/year display
+        final currentMonth = monthAbbreviations[date.month - 1];
+        final nextMonthDate = DateTime(date.year, date.month + 1);
+        final nextMonth = monthAbbreviations[nextMonthDate.month - 1];
+        selectedMonth = '$currentMonth - $nextMonth';
+        selectedYear = date.year;
+      }
+    });
+  }
+
+  /// Clears all date selections
+  void clearDateSelection() {
+    setState(() {
+      if (isSingleDateMode) {
+        _singleDatePickerValueWithDefaultValue = [];
+      } else {
+        _rangeDatePickerValueWithDefaultValue = [];
+      }
+    });
+  }
+
+  /// Sets today's date as the selected date
+  void setTodayAsSelected() {
+    clearDateSelection();
+    setCurrentDateSelection(DateTime.now());
+  }
+
   Widget _buildCalendarLayout(Widget calendarWidget) {
     return SizedBox(
       height: 0.8.sh,
@@ -151,8 +212,7 @@ class _SwitchTilePageState extends State<DatePickerPage> {
             // Header section
             Padding(
               padding: const EdgeInsets.only(top: 16.0, bottom: 20.0),
-              child: Text(
-                  _handleTitleText(),
+              child: Text(_handleTitleText(),
                   style: Font.apply(FontStyle.medium, FontSize.h4)),
             ),
             const Divider(height: 1, color: Color(0xFFEDEEF0)),
@@ -237,7 +297,7 @@ class _SwitchTilePageState extends State<DatePickerPage> {
                     iconSize: 24,
                     icon: const Icon(Icons.refresh),
                     onPressed: () {
-                      // ...
+                      setTodayAsSelected();
                     },
                   ),
                   Row(
@@ -260,19 +320,18 @@ class _SwitchTilePageState extends State<DatePickerPage> {
                               foregroundColor: const Color(0xFFE0E1E4),
                             ),
                             onPressed: () {
-
-                              switch(mode){
+                              switch (mode) {
                                 case DatePickerWidgetMode.day:
                                   log('Selected Date: ${_singleDatePickerValueWithDefaultValue.first}');
                                   break;
                                 case DatePickerWidgetMode.month:
                                   log('Selected Month: $selectedMonth');
 
-                                  if(isSingleDateMode){
+                                  if (isSingleDateMode) {
                                     setState(() {
                                       mode = DatePickerWidgetMode.day;
                                     });
-                                  }else{
+                                  } else {
                                     setState(() {
                                       mode = DatePickerWidgetMode.scroll;
                                     });
@@ -282,11 +341,11 @@ class _SwitchTilePageState extends State<DatePickerPage> {
                                 case DatePickerWidgetMode.year:
                                   log('Selected Year: $selectedYear');
 
-                                  if(isSingleDateMode){
+                                  if (isSingleDateMode) {
                                     setState(() {
                                       mode = DatePickerWidgetMode.day;
                                     });
-                                  }else{
+                                  } else {
                                     setState(() {
                                       mode = DatePickerWidgetMode.scroll;
                                     });
@@ -322,8 +381,9 @@ class _SwitchTilePageState extends State<DatePickerPage> {
       case DatePickerWidgetMode.year:
         return 'Select a year';
       case DatePickerWidgetMode.scroll:
-        return _rangeDatePickerValueWithDefaultValue.length<=1 ? 'Select Start & End Date'
-        : formatDateRange(_rangeDatePickerValueWithDefaultValue);
+        return _rangeDatePickerValueWithDefaultValue.length <= 1
+            ? 'Select Start & End Date'
+            : formatDateRange(_rangeDatePickerValueWithDefaultValue);
     }
   }
 

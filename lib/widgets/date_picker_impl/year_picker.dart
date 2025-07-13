@@ -128,12 +128,19 @@ class _YearPickerState extends State<YearPicker> {
         border: Border.all(width: 1, color: const Color(0xFFACB1BF)),
       );
     }
-    /*if (isSelected || isCurrentlyDisplayedYear) {
+
+    if (!isSelected && isCurrentlyDisplayedYear) {
+      // Currently displayed month gets dashed border or different style
+      itemStyle = itemStyle?.copyWith(color: Colors.white);
       decoration = BoxDecoration(
-        borderRadius: BorderRadius.circular(decorationHeight/2),
-        border: Border.all(width: 1, color: const Color(0xFFACB1BF)),
+        borderRadius: BorderRadius.circular(50),
+        color: const Color(0xFF1A1B1D), // Black background for today's date
+        border: Border.all(
+            width: 2,
+            color: const Color(
+                0xFF393B40)),
       );
-    } */
+    }
 
     if (isCurrentYear && !isDisabled) {
       decoration = BoxDecoration(

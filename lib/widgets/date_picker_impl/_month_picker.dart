@@ -140,20 +140,25 @@ class _MonthPickerState extends State<_MonthPicker> {
 
     // Different styling for different states
     BoxDecoration? decoration;
-    /*if (isSelected) {
-      // Selected month gets solid border
-      decoration = BoxDecoration(
-        borderRadius: BorderRadius.circular(decorationHeight/2),
-        border: Border.all(width: 2, color: colorScheme.primary),
-        color: colorScheme.primary.withValues(alpha: 0.1),
-      );
-    } else */ /**/
 
     if (isCurrentlyDisplayedMonth) {
       // Currently displayed month gets dashed border or different style
       decoration = BoxDecoration(
         borderRadius: BorderRadius.circular(decorationHeight/2),
         border: Border.all(width: 1, color: const Color(0xFFACB1BF), style: BorderStyle.solid),
+      );
+    }
+
+    if (!isSelected && isCurrentlyDisplayedMonth) {
+      // Currently displayed month gets dashed border or different style
+      itemStyle = itemStyle?.copyWith(color: Colors.white);
+      decoration = BoxDecoration(
+        borderRadius: BorderRadius.circular(50),
+        color: const Color(0xFF1A1B1D), // Black background for today's date
+        border: Border.all(
+            width: 2,
+            color: const Color(
+                0xFF393B40)),
       );
     }
 
