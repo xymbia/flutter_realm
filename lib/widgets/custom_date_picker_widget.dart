@@ -418,16 +418,13 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                             onPressed: () {
                               switch (mode) {
                                 case DatePickerWidgetMode.day:
-                                  log('Selected Date: ${_singleDatePickerValueWithDefaultValue.first}');
                                   break;
                                 case DatePickerWidgetMode.month:
                                 case DatePickerWidgetMode.year:
                                   // Save the month/year selection
                                   _saveMonthYearSelection();
-                                  log('Saved ${mode == DatePickerWidgetMode.month ? 'Month' : 'Year'}: ${mode == DatePickerWidgetMode.month ? selectedMonth : selectedYear}');
                                   break;
                                 case DatePickerWidgetMode.scroll:
-                                  log('Selected Range: ${_rangeDatePickerValueWithDefaultValue.length} dates');
                                   break;
                               }
                             },
