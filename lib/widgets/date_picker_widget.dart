@@ -337,13 +337,12 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
         return Padding(
           padding: const EdgeInsets.all(16.0),
           child: _CalendarView(
-            config: widget.config,
-            key: _dayPickerKey,
-            initialMonth: _currentDisplayedMonthDate,
-            selectedDates: _selectedDates,
-            onChanged: _handleDayChanged,
-            onDisplayedMonthChanged: _handleDisplayedMonthDateChanged,
-          ),
+              config: widget.config,
+              key: _dayPickerKey,
+              initialMonth: _currentDisplayedMonthDate,
+              selectedDates: _selectedDates,
+              onChanged: _handleDayChanged,
+              onDisplayedMonthChanged: _handleDisplayedMonthDateChanged),
         );
       case DatePickerWidgetMode.month:
         return Padding(

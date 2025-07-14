@@ -23,8 +23,7 @@ class CustomDatePickerWidget extends StatefulWidget {
   final double? controlsHeight;
   final void Function(DateTime)? onSingleDateSelected;
   final void Function(DateTime? start, DateTime? end)? onRangeSelected;
-  final String Function(DateTime, DateTime)? rangeLabelBuilder;
-  final String Function(DateTime, DateTime)? monthLabelBuilder;
+  final bool Function(DateTime)? selectableDayPredicate;
 
   const CustomDatePickerWidget({
     Key? key,
@@ -44,8 +43,7 @@ class CustomDatePickerWidget extends StatefulWidget {
     this.controlsHeight,
     this.onSingleDateSelected,
     this.onRangeSelected,
-    this.rangeLabelBuilder,
-    this.monthLabelBuilder,
+    this.selectableDayPredicate,
   }) : super(key: key);
 
   @override
@@ -71,10 +69,15 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
   void initState() {
     super.initState();
     isSingleDateMode = widget.initialSingleMode;
-    mode = isSingleDateMode ? DatePickerWidgetMode.day : DatePickerWidgetMode.scroll;
-    _singleDatePickerValueWithDefaultValue = [widget.initialSelectedDate ?? DateTime.now()];
+    mode = isSingleDateMode
+        ? DatePickerWidgetMode.day
+        : DatePickerWidgetMode.scroll;
+    _singleDatePickerValueWithDefaultValue = [
+      widget.initialSelectedDate ?? DateTime.now()
+    ];
     _rangeDatePickerValueWithDefaultValue = widget.initialSelectedRange ?? [];
-    final displayedDate = _singleDatePickerValueWithDefaultValue.first ?? DateTime.now();
+    final displayedDate =
+        _singleDatePickerValueWithDefaultValue.first ?? DateTime.now();
     _currentDisplayedMonthDate = displayedDate;
     _updateMonthLabel(displayedDate);
     selectedYear = displayedDate.year;
@@ -97,13 +100,24 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
     _tempSelectedYear = selectedYear;
   }
 
+  @override
+  void didUpdateWidget(covariant CustomDatePickerWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialSingleMode != widget.initialSingleMode) {
+      setState(() {
+        isSingleDateMode = widget.initialSingleMode;
+        mode = isSingleDateMode
+            ? DatePickerWidgetMode.day
+            : DatePickerWidgetMode.scroll;
+      });
+    }
+  }
+
   void _updateMonthLabel(DateTime date) {
     final currentMonth = monthAbbreviations[date.month - 1];
     final nextMonthDate = DateTime(date.year, date.month + 1);
     final nextMonth = monthAbbreviations[nextMonthDate.month - 1];
-    selectedMonth = widget.monthLabelBuilder != null
-        ? widget.monthLabelBuilder!(date, nextMonthDate)
-        : '$currentMonth - $nextMonth';
+    selectedMonth = '$currentMonth - $nextMonth';
 
     _tempSelectedMonth = '$currentMonth - $nextMonth';
     _tempSelectedYear = date.year;
@@ -143,18 +157,25 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
     setState(() {
       _singleDatePickerValueWithDefaultValue = dates;
     });
-    if (dates.isNotEmpty && dates.first != null && widget.onSingleDateSelected != null) {
+    if (dates.isNotEmpty &&
+        dates.first != null &&
+        widget.onSingleDateSelected != null) {
       widget.onSingleDateSelected!(dates.first!);
     }
   }
 
   void _onRangeDateChanged(List<DateTime?> dates) {
     setState(() {
-      _rangeDatePickerValueWithDefaultValue = dates.whereType<DateTime>().toList();
+      _rangeDatePickerValueWithDefaultValue =
+          dates.whereType<DateTime>().toList();
     });
     if (widget.onRangeSelected != null) {
-      final start = _rangeDatePickerValueWithDefaultValue.isNotEmpty ? _rangeDatePickerValueWithDefaultValue[0] : null;
-      final end = _rangeDatePickerValueWithDefaultValue.length > 1 ? _rangeDatePickerValueWithDefaultValue[1] : null;
+      final start = _rangeDatePickerValueWithDefaultValue.isNotEmpty
+          ? _rangeDatePickerValueWithDefaultValue.first
+          : null;
+      final end = _rangeDatePickerValueWithDefaultValue.length > 1
+          ? _rangeDatePickerValueWithDefaultValue.last
+          : null;
       widget.onRangeSelected!(start, end);
     }
   }
@@ -294,7 +315,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                         children: [
                           Text(selectedMonth,
                               style:
-                              Font.apply(FontStyle.regular, FontSize.h6)),
+                                  Font.apply(FontStyle.regular, FontSize.h6)),
                           Icon(
                             Icons.keyboard_arrow_down,
                             color: Colors.black54,
@@ -322,7 +343,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                         children: [
                           Text(selectedYear.toString(),
                               style:
-                              Font.apply(FontStyle.regular, FontSize.h6)),
+                                  Font.apply(FontStyle.regular, FontSize.h6)),
                           Icon(
                             Icons.keyboard_arrow_down,
                             color: Colors.black54,
@@ -337,10 +358,11 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
             ),
 
             // Body section
-            SizedBox(
-              height: 0.55.sh,
-              width: 0.95.sw,
-              child: calendarWidget,
+            Expanded(
+              child: SizedBox(
+                width: 0.95.sw,
+                child: calendarWidget,
+              ),
             ),
             const Divider(height: 1, color: Color(0xFFEDEEF0)),
             Padding(
@@ -363,7 +385,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                           switch (mode) {
                             case DatePickerWidgetMode.month:
                             case DatePickerWidgetMode.year:
-                            // Cancel month/year selection
+                              // Cancel month/year selection
                               _cancelMonthYearSelection();
                               break;
                             default:
@@ -380,10 +402,16 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                           height: 50.0,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: (mode == DatePickerWidgetMode.month || mode == DatePickerWidgetMode.year) && _hasMonthYearChanges
+                              backgroundColor: (mode ==
+                                              DatePickerWidgetMode.month ||
+                                          mode == DatePickerWidgetMode.year) &&
+                                      _hasMonthYearChanges
                                   ? Colors.black
                                   : const Color(0xFFE0E1E4),
-                              foregroundColor: (mode == DatePickerWidgetMode.month || mode == DatePickerWidgetMode.year) && _hasMonthYearChanges
+                              foregroundColor: (mode ==
+                                              DatePickerWidgetMode.month ||
+                                          mode == DatePickerWidgetMode.year) &&
+                                      _hasMonthYearChanges
                                   ? Colors.white
                                   : const Color(0xFFE0E1E4),
                             ),
@@ -394,7 +422,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                                   break;
                                 case DatePickerWidgetMode.month:
                                 case DatePickerWidgetMode.year:
-                                // Save the month/year selection
+                                  // Save the month/year selection
                                   _saveMonthYearSelection();
                                   log('Saved ${mode == DatePickerWidgetMode.month ? 'Month' : 'Year'}: ${mode == DatePickerWidgetMode.month ? selectedMonth : selectedYear}');
                                   break;
@@ -406,9 +434,14 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                             child: Text('Save',
                                 style: Font.apply(
                                     FontStyle.regular, FontSize.h6,
-                                    color: (mode == DatePickerWidgetMode.month || mode == DatePickerWidgetMode.year) && _hasMonthYearChanges
-                                        ? Colors.white
-                                        : const Color(0xFF393B40))),
+                                    color:
+                                        (mode == DatePickerWidgetMode.month ||
+                                                    mode ==
+                                                        DatePickerWidgetMode
+                                                            .year) &&
+                                                _hasMonthYearChanges
+                                            ? Colors.white
+                                            : const Color(0xFF393B40))),
                           )),
                     ],
                   ),
@@ -438,31 +471,45 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
 
   Widget _buildSingleDatePickerWithValue() {
     return _buildCalendarLayout(DatePickerWidget(
-      displayedMonthDate: _currentDisplayedMonthDate ?? _singleDatePickerValueWithDefaultValue.first,
+      displayedMonthDate: _currentDisplayedMonthDate ??
+          _singleDatePickerValueWithDefaultValue.first,
       config: DatePickerWidgetConfig(
         calendarViewMode: mode,
         hideMonthPickerDividers: true,
         hideScrollViewMonthWeekHeader: true,
         hideScrollViewTopHeader: true,
-        selectedDayHighlightColor: widget.selectedDayHighlightColor ?? Colors.grey,
-        selectedDayTextStyle: widget.selectedDayTextStyle ?? const TextStyle(color: Colors.white, fontWeight: FontWeight.normal),
+        selectedDayHighlightColor:
+            widget.selectedDayHighlightColor ?? Colors.grey,
+        selectedDayTextStyle: widget.selectedDayTextStyle ??
+            const TextStyle(color: Colors.white, fontWeight: FontWeight.normal),
         weekdayLabels: const ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-        weekdayLabelTextStyle: widget.weekdayLabelTextStyle ?? const TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
+        weekdayLabelTextStyle: widget.weekdayLabelTextStyle ??
+            const TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
         firstDayOfWeek: 0,
         controlsHeight: widget.controlsHeight ?? 50,
         dayMaxWidth: widget.dayMaxWidth ?? 50,
         dayBorderRadius: widget.dayBorderRadius ?? BorderRadius.circular(8),
         animateToDisplayedMonthDate: false,
-        controlsTextStyle: widget.controlsTextStyle ?? const TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),
-        dayTextStyle: widget.dayTextStyle ?? const TextStyle(color: Colors.black54, fontWeight: FontWeight.normal),
-        disabledDayTextStyle: widget.disabledDayTextStyle ?? const TextStyle(color: Colors.grey),
+        controlsTextStyle: widget.controlsTextStyle ??
+            const TextStyle(
+                color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),
+        dayTextStyle: widget.dayTextStyle ??
+            const TextStyle(
+                color: Colors.black54, fontWeight: FontWeight.normal),
+        disabledDayTextStyle:
+            widget.disabledDayTextStyle ?? const TextStyle(color: Colors.grey),
         centerAlignModePicker: true,
         useAbbrLabelForMonthModePicker: true,
-        firstDate: widget.firstDate ?? DateTime(DateTime.now().year - 2, DateTime.now().month - 1, DateTime.now().day - 5),
-        lastDate: widget.lastDate ?? DateTime(DateTime.now().year + 3, DateTime.now().month + 2, DateTime.now().day + 10),
-        selectableDayPredicate: (day) =>
-        !day.difference(DateTime.now().add(const Duration(days: -1))).isNegative &&
-            day.isBefore(DateTime.now().add(const Duration(days: 60))),
+        firstDate: widget.firstDate ??
+            DateTime(DateTime.now().year - 2, DateTime.now().month - 1,
+                DateTime.now().day - 5),
+        lastDate: widget.lastDate ??
+            DateTime(DateTime.now().year + 3, DateTime.now().month + 2,
+                DateTime.now().day + 10),
+        selectableDayPredicate: widget.selectableDayPredicate ??
+            (day) {
+              return true;
+            },
       ),
       value: _singleDatePickerValueWithDefaultValue,
       onValueChanged: _onSingleDateChanged,
@@ -478,9 +525,13 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
         calendarType: DatePickerWidgetType.range,
         calendarViewMode: mode,
         rangeBidirectional: true,
-        selectedDayHighlightColor: widget.selectedDayHighlightColor ?? Colors.teal[800],
+        selectedDayHighlightColor:
+            widget.selectedDayHighlightColor ?? Colors.teal[800],
         dynamicCalendarRows: true,
-        selectableDayPredicate: (day) => true,
+        selectableDayPredicate: widget.selectableDayPredicate ??
+            (day) {
+              return true;
+            },
       ),
       value: _rangeDatePickerValueWithDefaultValue,
       onValueChanged: _onRangeDateChanged,
@@ -492,7 +543,6 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    mode = isSingleDateMode ? DatePickerWidgetMode.day : DatePickerWidgetMode.scroll;
     return Column(
       children: [
         // Mode toggle
@@ -502,4 +552,4 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
       ],
     );
   }
-} 
+}

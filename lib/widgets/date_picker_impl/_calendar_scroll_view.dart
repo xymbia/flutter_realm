@@ -157,22 +157,61 @@ class _CalendarScrollViewState extends State<_CalendarScrollView> {
     );
   }
 
+  List<Widget> _dayHeaders(
+      TextStyle? headerStyle, MaterialLocalizations localizations) {
+    final List<Widget> result = <Widget>[];
+    final weekdays =
+        widget.config.weekdayLabels ?? localizations.narrowWeekdays;
+    final firstDayOfWeek =
+        widget.config.firstDayOfWeek ?? localizations.firstDayOfWeekIndex;
+    assert(firstDayOfWeek >= 0 && firstDayOfWeek <= 6,
+    'firstDayOfWeek must between 0 and 6');
+    for (int i = firstDayOfWeek; true; i = (i + 1) % 7) {
+      final String weekday = weekdays[i];
+      result.add(ExcludeSemantics(
+        child: widget.config.weekdayLabelBuilder?.call(weekday: i) ??
+            Center(
+              child: Text(weekday,
+                  style: Font.apply(FontStyle.regular, FontSize.h6,
+                      color: const Color(0xFF5C5E66))),
+            ),
+      ));
+      if (i == (firstDayOfWeek - 1) % 7) break;
+    }
+    return result;
+  }
+
+
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
     const Key monthsAfterInitialMonthKey = Key('monthsAfterInitialMonth');
-
+    final MaterialLocalizations localizations =
+    MaterialLocalizations.of(context);
+    final TextTheme textTheme = Theme.of(context).textTheme;
+    final TextStyle? headerStyle = textTheme.bodySmall?.apply(
+      color: colorScheme.onSurface.withValues(alpha: 0.60),
+    );
+    final List<Widget> dayItems = _dayHeaders(headerStyle, localizations);
     return Column(
       children: <Widget>[
-        if (widget.config.hideScrollViewTopHeader != true)
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _CalendarScrollViewHeader(widget.config),
-              if (_showWeekBottomDivider &&
-                  widget.config.hideScrollViewTopHeaderDivider != true)
-                const Divider(height: 0),
-            ],
+        SizedBox(
+          height: 50,
+          child: Expanded(
+            child: GridView.custom(
+              padding: EdgeInsets.zero,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: _DayPickerGridDelegate(
+                config: widget.config,
+                dayRowsCount: 1,
+              ),
+              childrenDelegate: SliverChildListDelegate(
+                dayItems,
+                addRepaintBoundaries: false,
+              ),
+            ),
           ),
+        ),
         Expanded(
           child: _CalendarKeyboardNavigator(
             config: widget.config,
@@ -188,19 +227,19 @@ class _CalendarScrollViewState extends State<_CalendarScrollView> {
               controller: _controller,
               center: monthsAfterInitialMonthKey,
               slivers: <Widget>[
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (BuildContext context, int index) =>
-                        _buildMonthItem(context, index, true),
-                    childCount: _initialMonthIndex,
-                  ),
-                ),
+                // SliverList(
+                //   delegate: SliverChildBuilderDelegate(
+                //     (BuildContext context, int index) =>
+                //         _buildMonthItem(context, index, true),
+                //     childCount: _initialMonthIndex,
+                //   ),
+                // ),
                 SliverList(
                   key: monthsAfterInitialMonthKey,
                   delegate: SliverChildBuilderDelegate(
                     (BuildContext context, int index) =>
                         _buildMonthItem(context, index, false),
-                    childCount: _numberOfMonths - _initialMonthIndex,
+                    childCount: 2,
                   ),
                 ),
               ],

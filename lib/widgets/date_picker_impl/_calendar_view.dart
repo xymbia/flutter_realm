@@ -381,8 +381,10 @@ class _CalendarViewState extends State<_CalendarView> {
                   height: firstMonthHeight,
                   child: _DayPicker(
                     key: ValueKey<DateTime>(month),
-                    selectedDates:
-                        widget.selectedDates.whereType<DateTime>().toList(),
+                    selectedDates: widget.selectedDates
+                        //.where((day) => day?.month == DateTime.now().month)
+                        .whereType<DateTime>()
+                        .toList(),
                     onChanged: _handleDateSelected,
                     config: widget.config,
                     displayedMonth: month,
@@ -407,7 +409,10 @@ class _CalendarViewState extends State<_CalendarView> {
                     height: secondMonthHeight,
                     child: _DayPicker(
                       key: ValueKey<DateTime>(nextMonth),
-                      selectedDates: [],
+                      selectedDates: widget.selectedDates
+                          //.where((day) => day?.month == DateTime.now().month)
+                          .whereType<DateTime>()
+                          .toList(),
                       onChanged: _handleDateSelected,
                       config: widget.config,
                       displayedMonth: nextMonth,
