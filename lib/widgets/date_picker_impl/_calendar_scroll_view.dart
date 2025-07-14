@@ -227,19 +227,19 @@ class _CalendarScrollViewState extends State<_CalendarScrollView> {
               controller: _controller,
               center: monthsAfterInitialMonthKey,
               slivers: <Widget>[
-                // SliverList(
-                //   delegate: SliverChildBuilderDelegate(
-                //     (BuildContext context, int index) =>
-                //         _buildMonthItem(context, index, true),
-                //     childCount: _initialMonthIndex,
-                //   ),
-                // ),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) =>
+                        _buildMonthItem(context, index, true),
+                    childCount: _initialMonthIndex,
+                  ),
+                ),
                 SliverList(
                   key: monthsAfterInitialMonthKey,
                   delegate: SliverChildBuilderDelegate(
                     (BuildContext context, int index) =>
                         _buildMonthItem(context, index, false),
-                    childCount: 2,
+                    childCount:  _numberOfMonths - _initialMonthIndex,
                   ),
                 ),
               ],

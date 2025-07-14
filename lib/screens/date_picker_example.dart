@@ -68,13 +68,13 @@ class _DatePickerPageState extends State<DatePickerPage> {
 
                   // The earliest selectable date
                   // If null, defaults to (DateTime.now().year - 2, DateTime.now().month - 1, DateTime.now().day - 5)
-                  firstDate: DateTime(DateTime.now().year, DateTime.now().month,
+                  firstDate: DateTime(DateTime.now().year-2, DateTime.now().month,
                       DateTime.now().day),
 
                   // The latest selectable date
                   // If null, defaults to (DateTime.now().year + 3, DateTime.now().month + 2, DateTime.now().day + 10)
-                  lastDate: DateTime(DateTime.now().year,
-                      DateTime.now().month+1, DateTime.now().day),
+                  lastDate: DateTime(DateTime.now().year+1,
+                      DateTime.now().month+6, DateTime.now().day),
 
                   // The color used to highlight the selected day
                   // If null, defaults to grey (single) or teal[800] (range)

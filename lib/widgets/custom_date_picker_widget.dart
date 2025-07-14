@@ -478,7 +478,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
         selectedDayHighlightColor:
             widget.selectedDayHighlightColor ?? Colors.grey,
         selectedDayTextStyle: widget.selectedDayTextStyle ??
-            const TextStyle(color: Colors.white, fontWeight: FontWeight.normal),
+            const TextStyle(color: Colors.black54, fontWeight: FontWeight.normal),
         weekdayLabels: const ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
         weekdayLabelTextStyle: widget.weekdayLabelTextStyle ??
             const TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
@@ -518,6 +518,8 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
 
   Widget _buildScrollRangeDatePickerWithValue() {
     return _buildCalendarLayout(DatePickerWidget(
+      displayedMonthDate: _currentDisplayedMonthDate ??
+          _singleDatePickerValueWithDefaultValue.first,
       config: DatePickerWidgetConfig(
         calendarType: DatePickerWidgetType.range,
         calendarViewMode: mode,

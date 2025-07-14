@@ -97,9 +97,12 @@ class _MonthPickerState extends State<_MonthPicker> {
 
     final bool isCurrentlyDisplayedMonth = widget.initialMonth.month == month;
 
-    var isMonthSelectable =
-        widget.initialMonth.year >= widget.config.firstDate.year &&
-            widget.initialMonth.year <= widget.config.lastDate.year;
+    // var isMonthSelectable =
+    //     widget.initialMonth.year >= widget.config.firstDate.year &&
+    //         widget.initialMonth.year <= widget.config.lastDate.year;
+
+    var isMonthSelectable = true;
+
     if (isMonthSelectable) {
       var isAfterFirst = true;
       var isBeforeLast = true;
