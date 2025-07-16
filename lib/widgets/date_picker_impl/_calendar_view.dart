@@ -296,140 +296,93 @@ class _CalendarViewState extends State<_CalendarView> {
   }
 
   Widget _buildItems(BuildContext context, int index) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final MaterialLocalizations localizations =
-        MaterialLocalizations.of(context);
-    final TextTheme textTheme = Theme.of(context).textTheme;
-    final TextStyle? headerStyle = textTheme.bodySmall?.apply(
-      color: colorScheme.onSurface.withValues(alpha: 0.60),
-    );
-    final List<Widget> dayItems = _dayHeaders(headerStyle, localizations);
-    final DateTime month =
-        DateUtils.addMonthsToMonthDate(widget.config.firstDate, index);
-
+    final MaterialLocalizations localizations = MaterialLocalizations.of(context);
+    final List<Widget> dayItems = _dayHeaders(null, localizations);
+    final DateTime month = DateUtils.addMonthsToMonthDate(widget.config.firstDate, index);
     final nextMonth = DateUtils.addMonthsToMonthDate(month, 1);
     final shouldShowNextMonth = nextMonth.isBefore(widget.config.lastDate) ||
         DateUtils.isSameMonth(nextMonth, widget.config.lastDate);
 
-    // Calculate dynamic heights based on row count
     final firstMonthRows = widget.config.dynamicCalendarRows == true
         ? getDayRowsCount(
-            month.year,
-            month.month,
-            widget.config.firstDayOfWeek ?? _localizations.firstDayOfWeekIndex,
-          )
+        month.year, month.month,
+        widget.config.firstDayOfWeek ?? localizations.firstDayOfWeekIndex)
         : _maxDayPickerRowCount;
 
     final secondMonthRows = widget.config.dynamicCalendarRows == true
         ? getDayRowsCount(
-            nextMonth.year,
-            nextMonth.month,
-            widget.config.firstDayOfWeek ?? _localizations.firstDayOfWeekIndex,
-          )
+        nextMonth.year, nextMonth.month,
+        widget.config.firstDayOfWeek ?? localizations.firstDayOfWeekIndex)
         : _maxDayPickerRowCount;
 
-    // Calculate heights (assuming ~50px per row)
-    final firstMonthHeight = (firstMonthRows * 60.0); // +20 for padding
-    final secondMonthHeight = (secondMonthRows * 60.0);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double availableHeight = constraints.maxHeight;
+        final double headerHeight = 40.h; // adjusted header height
+        final double spacing = 8.h;
+        final double remainingHeight = availableHeight - headerHeight - spacing * 4;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        // Fixed Day Headers (Non-scrollable)
-        SizedBox(
-          height: 50,
-          child: Expanded(
-            child: GridView.custom(
-              padding: EdgeInsets.zero,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: _DayPickerGridDelegate(
-                config: widget.config,
-                dayRowsCount: 1,
-              ),
-              childrenDelegate: SliverChildListDelegate(
-                dayItems,
-                addRepaintBoundaries: false,
-              ),
-            ),
-          ),
-        ),
+        final double firstMonthHeight = (remainingHeight / (shouldShowNextMonth ? 2 : 1)) * (firstMonthRows / _maxDayPickerRowCount);
+        final double secondMonthHeight = shouldShowNextMonth
+            ? (remainingHeight / 2) * (secondMonthRows / _maxDayPickerRowCount)
+            : 0;
 
-        // Scrollable Calendar Section with dynamic heights
-        Expanded(
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 0,
-              children: [
-                // First month title
-                Padding(
-                  padding:
-                      const EdgeInsets.only(left: 10.0, top: 8.0, bottom: 8.0),
-                  child: Text(
-                    "${getMonthAbbreviation(month.month)} ${month.year.toString()}",
-                    style: Font.apply(FontStyle.bold, FontSize.h6),
-                  ),
+        return SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: headerHeight, child: GridView.custom(
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: _DayPickerGridDelegate(
+                  config: widget.config,
+                  dayRowsCount: 1,
                 ),
-
-                // First month calendar with dynamic height
+                childrenDelegate: SliverChildListDelegate(dayItems),
+              )),
+              SizedBox(height: spacing),
+              Text(
+                "${getMonthAbbreviation(month.month)} ${month.year}",
+                style: Font.apply(FontStyle.bold, FontSize.h5),
+              ),
+              SizedBox(height: spacing),
+              SizedBox(
+                height: firstMonthHeight,
+                child: _DayPicker(
+                  key: ValueKey(month),
+                  selectedDates: widget.selectedDates.whereType<DateTime>().toList(),
+                  onChanged: _handleDateSelected,
+                  config: widget.config,
+                  displayedMonth: month,
+                  dayRowsCount: firstMonthRows,
+                ),
+              ),
+              if (shouldShowNextMonth) ...[
+                SizedBox(height: spacing),
+                Text(
+                  "${getMonthAbbreviation(nextMonth.month)} ${nextMonth.year}",
+                  style: Font.apply(FontStyle.bold, FontSize.h5),
+                ),
+                SizedBox(height: spacing),
                 SizedBox(
-                  height: firstMonthHeight,
+                  height: secondMonthHeight,
                   child: _DayPicker(
-                    key: ValueKey<DateTime>(month),
-                    selectedDates: widget.selectedDates
-                        //.where((day) => day?.month == DateTime.now().month)
-                        .whereType<DateTime>()
-                        .toList(),
+                    key: ValueKey(nextMonth),
+                    selectedDates: widget.selectedDates.whereType<DateTime>().toList(),
                     onChanged: _handleDateSelected,
                     config: widget.config,
-                    displayedMonth: month,
-                    dayRowsCount: firstMonthRows,
+                    displayedMonth: nextMonth,
+                    dayRowsCount: secondMonthRows,
                   ),
                 ),
-
-                // Second month section (only if should show)
-                if (shouldShowNextMonth) ...[
-                  // Second month title
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        left: 10.0, top: 16.0, bottom: 8.0),
-                    child: Text(
-                      "${getMonthAbbreviation(nextMonth.month)} ${nextMonth.year.toString()}",
-                      style: Font.apply(FontStyle.bold, FontSize.h6),
-                    ),
-                  ),
-
-                  // Second month calendar with dynamic height
-                  SizedBox(
-                    height: secondMonthHeight,
-                    child: _DayPicker(
-                      key: ValueKey<DateTime>(nextMonth),
-                      selectedDates: widget.selectedDates
-                          //.where((day) => day?.month == DateTime.now().month)
-                          .whereType<DateTime>()
-                          .toList(),
-                      onChanged: _handleDateSelected,
-                      config: widget.config,
-                      displayedMonth: nextMonth,
-                      dayRowsCount: secondMonthRows,
-                    ),
-                  ),
-                ],
-
-                // Bottom padding for better UX
-                const SizedBox(height: 20),
               ],
-            ),
+              SizedBox(height: spacing * 2),
+            ],
           ),
-        ),
-      ],
+        );
+      },
     );
   }
+
 
   @override
   Widget build(BuildContext context) {

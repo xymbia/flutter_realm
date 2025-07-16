@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 //This font class will return TextStyle with color, weight, size with optional text-decoration
 class Font {
@@ -35,25 +36,25 @@ extension FontSizes on FontSize {
   double get value {
     switch (this) {
       case FontSize.h1:
-        return 28;
+        return 28.sp;
       case FontSize.h2:
-        return 26;
+        return 26.sp;
       case FontSize.h3:
-        return 22;
+        return 22.sp;
       case FontSize.h4:
-        return 20;
+        return 20.sp;
       case FontSize.h5:
-        return 18;
+        return 18.sp;
       case FontSize.h6:
-        return 16;
+        return 16.sp;
       case FontSize.h7:
-        return 14;
+        return 14.sp;
       case FontSize.h8:
-        return 12;
+        return 12.sp;
       case FontSize.h9:
-        return 10;
+        return 10.sp;
       case FontSize.h10:
-        return 8;
+        return 8.sp;
     }
   }
 }

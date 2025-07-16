@@ -17,36 +17,41 @@ class _DatePickerPageState extends State<DatePickerPage> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, designSize: const Size(390, 848));
+    ScreenUtil.init(context,
+        designSize: const Size(720, 1024),
+        minTextAdapt: true,
+        splitScreenMode: true);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('DatePicker'),
       ),
-      body: Center(
-        child: Column(
-          children: [
-            SizedBox(
-                width: 0.4.sw,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                        child: Text(isSingleDateMode == true
-                            ? 'Single Mode'
-                            : 'Range Mode')),
-                    const SizedBox(width: 4),
-                    Switch(
-                      value: isSingleDateMode,
-                      onChanged: (value) {
-                        setState(() {
-                          isSingleDateMode = value;
-                        });
-                      },
-                    ),
-                  ],
-                )),
-            Padding(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+              width: 0.4.sw,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                      child: Text(isSingleDateMode == true
+                          ? 'Single Mode'
+                          : 'Range Mode')),
+                  const SizedBox(width: 4),
+                  Switch(
+                    value: isSingleDateMode,
+                    onChanged: (value) {
+                      setState(() {
+                        isSingleDateMode = value;
+                      });
+                    },
+                  ),
+                ],
+              )),
+          Expanded(
+            child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: CustomDatePickerWidget(
                   // Whether the picker is in single date mode (true) or range mode (false)
@@ -68,13 +73,13 @@ class _DatePickerPageState extends State<DatePickerPage> {
 
                   // The earliest selectable date
                   // If null, defaults to (DateTime.now().year - 2, DateTime.now().month - 1, DateTime.now().day - 5)
-                  firstDate: DateTime(DateTime.now().year-2, DateTime.now().month,
-                      DateTime.now().day),
+                  firstDate: DateTime(DateTime.now().year - 2,
+                      DateTime.now().month, DateTime.now().day),
 
                   // The latest selectable date
                   // If null, defaults to (DateTime.now().year + 3, DateTime.now().month + 2, DateTime.now().day + 10)
-                  lastDate: DateTime(DateTime.now().year+1,
-                      DateTime.now().month+6, DateTime.now().day),
+                  lastDate: DateTime(DateTime.now().year + 1,
+                      DateTime.now().month + 6, DateTime.now().day),
 
                   // The color used to highlight the selected day
                   // If null, defaults to grey (single) or teal[800] (range)
@@ -116,21 +121,20 @@ class _DatePickerPageState extends State<DatePickerPage> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                           duration: const Duration(milliseconds: 2500),
-                          content: Text(
-                              'Range: 	${formatDateRange([start, end])}')),
+                          content:
+                              Text('Range: 	${formatDateRange([start, end])}')),
                     );
                   },
 
                   // Allows days to be selected based on following predicate
                   selectableDayPredicate: (day) {
                     return !day
-                        .difference(
-                            DateTime.now().add(const Duration(days: -1)))
+                        .difference(DateTime.now().add(const Duration(days: -1)))
                         .isNegative;
                   }),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

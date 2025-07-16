@@ -274,182 +274,161 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
   }
 
   Widget _buildCalendarLayout(Widget calendarWidget) {
-    return SizedBox(
-      height: 0.8.sh,
-      child: Card(
-        elevation: 4,
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        color: const Color(0xFFF7F8FA),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          children: [
-            // Header section
-            Padding(
-              padding: const EdgeInsets.only(top: 16.0, bottom: 20.0),
-              child: Text(_handleTitleText(),
-                  style: Font.apply(FontStyle.medium, FontSize.h4)),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SizedBox(
+          height: constraints.maxHeight * 0.9,
+          child: Card(
+            elevation: 4,
+            margin: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+            color: const Color(0xFFF7F8FA),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.r),
             ),
-            const Divider(height: 1, color: Color(0xFFEDEEF0)),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  InkWell(
-                    splashColor: Colors.white,
-                    onTap: () {
-                      setState(() {
-                        mode = DatePickerWidgetMode.month;
-                      });
-                    },
-                    hoverColor: Colors.yellow,
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors
-                            .transparent, // material color will cover this
-                      ),
-                      child: Row(
-                        children: [
-                          Text(selectedMonth,
-                              style:
-                                  Font.apply(FontStyle.regular, FontSize.h6)),
-                          Icon(
-                            Icons.keyboard_arrow_down,
-                            color: Colors.black54,
-                            size: 24.sp,
-                          ),
-                        ],
-                      ),
-                    ),
+            child: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: 10.h, bottom: 12.h),
+                  child: Text(
+                    _handleTitleText(),
+                    style: Font.apply(FontStyle.medium, FontSize.h3),
                   ),
-                  InkWell(
-                    splashColor: Colors.white,
-                    onTap: () {
-                      setState(() {
-                        mode = DatePickerWidgetMode.year;
-                      });
-                    },
-                    hoverColor: Colors.yellow,
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors
-                            .transparent, // material color will cover this
-                      ),
-                      child: Row(
-                        children: [
-                          Text(selectedYear.toString(),
-                              style:
-                                  Font.apply(FontStyle.regular, FontSize.h6)),
-                          Icon(
-                            Icons.keyboard_arrow_down,
-                            color: Colors.black54,
-                            size: 24.sp,
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-
-            // Body section
-            Expanded(
-              child: SizedBox(
-                width: 0.95.sw,
-                child: calendarWidget,
-              ),
-            ),
-            const Divider(height: 1, color: Color(0xFFEDEEF0)),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    iconSize: 24,
-                    icon: const Icon(Icons.refresh),
-                    onPressed: () {
-                      setTodayAsSelected();
-                    },
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                ),
+                const Divider(height: 1, color: Color(0xFFEDEEF0)),
+                Padding(
+                  padding: const EdgeInsets.only(left: 20, right: 8, top: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      MaterialButton(
-                        onPressed: () {
-                          switch (mode) {
-                            case DatePickerWidgetMode.month:
-                            case DatePickerWidgetMode.year:
-                              // Cancel month/year selection
-                              _cancelMonthYearSelection();
-                              break;
-                            default:
-                              Navigator.pop(context);
-                              break;
-                          }
-                        },
-                        child: Text('Cancel',
-                            style: Font.apply(FontStyle.regular, FontSize.h6,
-                                color: const Color(0xFF393B40))),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            setState(() {
+                              mode = DatePickerWidgetMode.month;
+                            });
+                          },
+                          child: Row(
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  selectedMonth,
+                                  style: Font.apply(FontStyle.regular, FontSize.h4),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              Icon(
+                                Icons.keyboard_arrow_down,
+                                color: Colors.black54,
+                                size: 20.sp,
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                      const Padding(padding: EdgeInsets.only(right: 8.0)),
-                      SizedBox(
-                          height: 50.0,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: (mode ==
-                                              DatePickerWidgetMode.month ||
-                                          mode == DatePickerWidgetMode.year) &&
-                                      _hasMonthYearChanges
-                                  ? Colors.black
-                                  : const Color(0xFFE0E1E4),
-                              foregroundColor: (mode ==
-                                              DatePickerWidgetMode.month ||
-                                          mode == DatePickerWidgetMode.year) &&
-                                      _hasMonthYearChanges
-                                  ? Colors.white
-                                  : const Color(0xFFE0E1E4),
-                            ),
-                            onPressed: () {
-                              switch (mode) {
-                                case DatePickerWidgetMode.day:
-                                  break;
-                                case DatePickerWidgetMode.month:
-                                case DatePickerWidgetMode.year:
-                                  // Save the month/year selection
-                                  _saveMonthYearSelection();
-                                  break;
-                                case DatePickerWidgetMode.scroll:
-                                  break;
-                              }
-                            },
-                            child: Text('Save',
-                                style: Font.apply(
-                                    FontStyle.regular, FontSize.h6,
-                                    color:
-                                        (mode == DatePickerWidgetMode.month ||
-                                                    mode ==
-                                                        DatePickerWidgetMode
-                                                            .year) &&
-                                                _hasMonthYearChanges
-                                            ? Colors.white
-                                            : const Color(0xFF393B40))),
-                          )),
+                      const Spacer(flex: 3),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            setState(() {
+                              mode = DatePickerWidgetMode.year;
+                            });
+                          },
+                          child: Row(
+                            children: [
+                              Text(
+                                selectedYear.toString(),
+                                style: Font.apply(FontStyle.regular, FontSize.h4),
+                              ),
+                              Icon(
+                                Icons.keyboard_arrow_down,
+                                color: Colors.black54,
+                                size: 20.sp,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
-                ],
-              ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8.w),
+                    child: calendarWidget,
+                  ),
+                ),
+                const Divider(height: 1, color: Color(0xFFEDEEF0)),
+                Padding(
+                  padding: EdgeInsets.all(8.h),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                        iconSize: 30.sp,
+                        icon: const Icon(Icons.refresh),
+                        onPressed: setTodayAsSelected,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          MaterialButton(
+                            padding: EdgeInsets.symmetric(horizontal: 8.w),
+                            onPressed: () {
+                              mode == DatePickerWidgetMode.month || mode == DatePickerWidgetMode.year
+                                  ? _cancelMonthYearSelection()
+                                  : Navigator.pop(context);
+                            },
+                            child: Text('Cancel', style: Font.apply(FontStyle.regular, FontSize.h4)),
+                          ),
+                          SizedBox(width: 8.w),
+                          SizedBox(
+                            height: 40.h,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                padding: EdgeInsets.symmetric(horizontal: 10.w),
+                                backgroundColor: (mode == DatePickerWidgetMode.month ||
+                                    mode == DatePickerWidgetMode.year) &&
+                                    _hasMonthYearChanges
+                                    ? Colors.black
+                                    : const Color(0xFFE0E1E4),
+                              ),
+                              onPressed: () {
+                                switch (mode) {
+                                  case DatePickerWidgetMode.month:
+                                  case DatePickerWidgetMode.year:
+                                    _saveMonthYearSelection();
+                                    break;
+                                  default:
+                                    break;
+                                }
+                              },
+                              child: Text(
+                                'Save',
+                                style: Font.apply(
+                                  FontStyle.regular,
+                                  FontSize.h6,
+                                  color: (mode == DatePickerWidgetMode.month ||
+                                      mode == DatePickerWidgetMode.year) &&
+                                      _hasMonthYearChanges
+                                      ? Colors.white
+                                      : const Color(0xFF393B40),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
+
 
   String _handleTitleText() {
     switch (mode) {
@@ -546,8 +525,8 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
       children: [
         // Mode toggle
         isSingleDateMode
-            ? _buildSingleDatePickerWithValue()
-            : _buildScrollRangeDatePickerWithValue()
+            ? Expanded(child: _buildSingleDatePickerWithValue())
+            : Expanded(child: _buildScrollRangeDatePickerWithValue())
       ],
     );
   }
