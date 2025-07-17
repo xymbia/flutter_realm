@@ -41,6 +41,9 @@ class _CalendarScrollViewState extends State<_CalendarScrollView> {
 
   late MaterialLocalizations _localizations;
 
+  // Track the last reported visible month to avoid redundant callbacks
+  DateTime? _lastReportedVisibleMonth;
+
   @override
   void initState() {
     super.initState();
@@ -57,6 +60,10 @@ class _CalendarScrollViewState extends State<_CalendarScrollView> {
     }
 
     _showWeekBottomDivider = _initialMonthIndex != 0;
+    // Set the initial visible month
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      //_reportVisibleMonth();
+    });
   }
 
   @override
@@ -122,7 +129,7 @@ class _CalendarScrollViewState extends State<_CalendarScrollView> {
         widget.config.scrollViewMonthYearBuilder?.call(month) ??
             Row(
               children: [
-                if (widget.config.centerAlignModePicker == true) const Spacer(),
+                //if (widget.config.centerAlignModePicker == true) const Spacer(),
                 Container(
                   height: rowHeight,
                   margin: const EdgeInsets.symmetric(

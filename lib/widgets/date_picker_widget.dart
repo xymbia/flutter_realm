@@ -116,10 +116,30 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
   void initState() {
     super.initState();
     final config = widget.config;
-    final initialDate = widget.displayedMonthDate ??
-        (widget.value.isNotEmpty && widget.value[0] != null
-            ? DateTime(widget.value[0]!.year, widget.value[0]!.month)
-            : DateUtils.dateOnly(DateTime.now()));
+    // final initialDate = widget.displayedMonthDate ??
+    //     (widget.value.isNotEmpty && widget.value[0] != null
+    //         ? DateTime(widget.value[0]!.year, widget.value[0]!.month)
+    //         : DateUtils.dateOnly(DateTime.now()));
+
+    // Patch: Always use the first non-null date in value, or fallback to DateTime.now()
+    DateTime initialDate;
+    if (widget.displayedMonthDate != null) {
+      initialDate = widget.displayedMonthDate!;
+    } else if (widget.value.isNotEmpty) {
+      // Find the first non-null date in the value list
+      final nonNullDate = widget.value.firstWhere(
+            (d) => d != null,
+        orElse: () => null,
+      );
+      if (nonNullDate != null) {
+        initialDate = DateTime(nonNullDate.year, nonNullDate.month);
+      } else {
+        initialDate = DateUtils.dateOnly(DateTime.now());
+      }
+    } else {
+      initialDate = DateUtils.dateOnly(DateTime.now());
+    }
+
     _mode = config.calendarViewMode;
     _currentDisplayedMonthDate = DateTime(initialDate.year, initialDate.month);
     _selectedDates = widget.value.toList();
@@ -337,7 +357,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
 
         return Padding(
           padding: const EdgeInsets.all(16.0),
-          child: _CalendarView(
+          child: _CalendarScrollView(
               config: widget.config,
               key: _dayPickerKey,
               initialMonth: _currentDisplayedMonthDate,
