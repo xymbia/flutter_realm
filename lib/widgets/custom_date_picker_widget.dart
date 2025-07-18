@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../models/date_picker_widget_config.dart';
@@ -122,8 +121,16 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
     final nextMonthDate = DateTime(date.year, date.month + 1);
     final nextMonth = monthAbbreviations[nextMonthDate.month - 1];
     selectedMonth = '$currentMonth - $nextMonth';
+    selectedYear = date.year;
 
     _tempSelectedMonth = '$currentMonth - $nextMonth';
+    _tempSelectedYear = date.year;
+  }
+
+  void _updateYearLabel(DateTime date) {
+    final nextYearDate = DateTime(date.year, date.month);
+    selectedYear = nextYearDate.year;
+
     _tempSelectedYear = date.year;
   }
 
@@ -134,6 +141,19 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
     }
     setState(() {
       _updateMonthLabel(date);
+      //_updateYearLabel(date);
+      //selectedYear = date.year;
+      _currentDisplayedMonthDate = date;
+    });
+  }
+
+  void _handleDisplayedMYearChanged(DateTime date) {
+    if (_suspendDisplayedMonthUpdate) {
+      _suspendDisplayedMonthUpdate = false;
+      return;
+    }
+    setState(() {
+      _updateYearLabel(date);
       selectedYear = date.year;
       _currentDisplayedMonthDate = date;
     });
@@ -295,23 +315,29 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
   /// Sets today's date as the selected date
   void setTodayAsSelected() {
     clearDateSelection();
-    setCurrentDateSelection(DateTime.now());
-    // Scroll to the current month in the calendar scroll view
+    final today = DateTime.now();
+    setCurrentDateSelection(today);
+
+    setState(() {
+      _currentDisplayedMonthDate = DateTime(today.year, today.month);
+    });
+
+    // Scroll to today's month using controller logic
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final firstDate = widget.firstDate ??
-          DateTime(DateTime.now().year - 2, DateTime.now().month - 1, DateTime.now().day - 5);
-      final today = DateTime.now();
-      final monthIndex = (today.year - firstDate.year) * 12 + (today.month - firstDate.month);
-      // Estimate row height (should match _dayPickerRowHeight or dayMaxWidth + 2)
-      final double rowHeight = (widget.dayMaxWidth ?? 50) + 2;
-      // Estimate rows per month (max 6 weeks)
-      const int maxRows = 6; // 6 weeks max in a month
-      final double monthHeight = rowHeight * (maxRows + 1); // +1 for header
-      final double offset = monthIndex * monthHeight;
       if (_calendarScrollController.hasClients) {
+        final firstDate = widget.firstDate ??
+            DateTime(today.year - 2, today.month - 1, today.day - 5);
+        final monthIndex = DateUtils.monthDelta(firstDate, today);
+
+        final rowHeight =
+            widget.dayMaxWidth != null ? (widget.dayMaxWidth! + 2) : 50.0;
+        final dayRowsCount = 6; // Use max row count
+        final totalRows = dayRowsCount + 1; // Week header + day rows
+        final scrollOffset = monthIndex * (totalRows * rowHeight);
+
         _calendarScrollController.animateTo(
-          offset,
-          duration: const Duration(milliseconds: 400),
+          scrollOffset,
+          duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
         );
       }
@@ -550,6 +576,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
       value: _singleDatePickerValueWithDefaultValue,
       onValueChanged: _onSingleDateChanged,
       onDisplayedMonthChanged: _handleDisplayedMonthChanged,
+      onDisplayedYearChanged: _handleDisplayedMYearChanged,
       onMonthSelected: _handleMonthSelected,
       onYearSelected: _handleYearSelected,
     ));
@@ -607,6 +634,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
       value: _rangeDatePickerValueWithDefaultValue,
       onValueChanged: _onRangeDateChanged,
       onDisplayedMonthChanged: _handleDisplayedMonthChanged,
+      onDisplayedYearChanged: _handleDisplayedMYearChanged,
       onMonthSelected: _handleMonthSelected,
       onYearSelected: _handleYearSelected,
     ));

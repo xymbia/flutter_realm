@@ -80,6 +80,56 @@ class _CalendarScrollViewState extends State<_CalendarScrollView> {
     _localizations = MaterialLocalizations.of(context);
   }
 
+  void resetToToday() {
+    final DateTime today = DateTime.now();
+    if (!today.isBefore(widget.config.firstDate) &&
+        !today.isAfter(widget.config.lastDate)) {
+      setState(() {
+        _initialMonthIndex =
+            DateUtils.monthDelta(widget.config.firstDate, today);
+        _showWeekBottomDivider = _initialMonthIndex != 0;
+        _lastReportedVisibleMonth = null;
+      });
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final double offset = _calculateOffsetToMonth(_initialMonthIndex);
+        _controller.animateTo(
+          offset,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      });
+    }
+  }
+
+  double _calculateOffsetToMonth(int monthIndex) {
+    double offset = 0.0;
+
+    for (int i = 0; i < monthIndex; i++) {
+      final DateTime month =
+      DateUtils.addMonthsToMonthDate(widget.config.firstDate, i);
+      final dayRowsCount = widget.config.dynamicCalendarRows == true
+          ? getDayRowsCount(
+        month.year,
+        month.month,
+        widget.config.firstDayOfWeek ??
+            _localizations.firstDayOfWeekIndex,
+      )
+          : _maxDayPickerRowCount;
+      var totalRowsCount = dayRowsCount + 1;
+      var rowHeight = widget.config.dayMaxWidth != null
+          ? (widget.config.dayMaxWidth! + 2)
+          : _dayPickerRowHeight;
+      if (widget.config.calendarViewMode == DatePickerWidgetMode.scroll &&
+          widget.config.hideScrollViewMonthWeekHeader == true) {
+        totalRowsCount -= 1;
+      }
+      offset += rowHeight * totalRowsCount;
+    }
+
+    return offset;
+  }
+
   void _scrollListener() {
     if (_controller.offset <= _controller.position.minScrollExtent) {
       if(mounted) {

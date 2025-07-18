@@ -21,6 +21,7 @@ class YearPicker extends StatefulWidget {
     required this.onChanged,
     required this.initialMonth,
     this.dragStartBehavior = DragStartBehavior.start,
+    this.onDisplayedYearChanged,
     Key? key,
   }) : super(key: key);
 
@@ -41,12 +42,16 @@ class YearPicker extends StatefulWidget {
   /// {@macro flutter.widgets.scrollable.dragStartBehavior}
   final DragStartBehavior dragStartBehavior;
 
+  /// Called when the displayed year changes (e.g., after scroll)
+  final ValueChanged<DateTime>? onDisplayedYearChanged;
+
   @override
   State<YearPicker> createState() => _YearPickerState();
 }
 
 class _YearPickerState extends State<YearPicker> {
   late ScrollController _scrollController;
+  int? _lastReportedYear;
 
   // The approximate number of years necessary to fill the available space.
   static const int minYears = 18;
@@ -60,6 +65,8 @@ class _YearPickerState extends State<YearPicker> {
             : _scrollOffsetForYear(DateUtils.dateOnly(DateTime.now()));
     _scrollController = widget.config.yearViewController ??
         ScrollController(initialScrollOffset: scrollOffset);
+
+    _scrollController.addListener(_onScroll);
   }
 
   @override
@@ -72,6 +79,17 @@ class _YearPickerState extends State<YearPicker> {
               : _scrollOffsetForYear(DateUtils.dateOnly(DateTime.now()));
       _scrollController.jumpTo(scrollOffset);
     }
+  }
+
+  void _onScroll() {
+    // Calculate the currently visible year (top row)
+    // final double offset = _scrollController.offset;
+    // final int row = (offset / _yearPickerRowHeight).round();
+    // final int year = widget.config.firstDate.year + row * _yearPickerColumnCount;
+    // if (_lastReportedYear != year) {
+    //   _lastReportedYear = year;
+    //   widget.onDisplayedYearChanged?.call(DateTime(year));
+    // }
   }
 
   double _scrollOffsetForYear(DateTime date) {
@@ -220,6 +238,12 @@ class _YearPickerState extends State<YearPicker> {
         )
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    super.dispose();
   }
 }
 

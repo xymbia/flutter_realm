@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:math' as math;
 
 import 'package:flutter/gestures.dart';
@@ -52,6 +53,7 @@ class DatePickerWidget extends StatefulWidget {
     this.onDisplayedMonthChanged,
     this.onMonthSelected,
     this.onYearSelected,
+    this.onDisplayedYearChanged,
     Key? key,
   }) : super(key: key) {
     const valid = true;
@@ -96,6 +98,9 @@ class DatePickerWidget extends StatefulWidget {
 
   /// Called when a year is selected from the year picker
   final ValueChanged<DateTime>? onYearSelected;
+
+  /// Called when the displayed year changed
+  final ValueChanged<DateTime>? onDisplayedYearChanged;
 
   @override
   State<DatePickerWidget> createState() => _DatePickerWidgetState();
@@ -197,6 +202,8 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
         newDisplayedMonthDate = DateTime(date.year, date.month);
       }
 
+      log('Current displayed month date: $currentDisplayedMonthDate, New displayed month date: $newDisplayedMonthDate');
+
       if (fromYearPicker) {
         final selectedDatesInThisYear = _selectedDates
             .where((d) => d?.year == date.year)
@@ -230,7 +237,9 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
 
   void _handleYearChanged(DateTime value) {
     _vibrate();
-
+    setState(() {
+      _handleDisplayedYearDateChanged(value);
+    });
     if (value.isBefore(widget.config.firstDate)) {
       value = widget.config.firstDate;
     } else if (value.isAfter(widget.config.lastDate)) {
@@ -305,6 +314,18 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
     });
   }
 
+  void _handleDisplayedYearDateChanged(DateTime date) {
+    _vibrate();
+    setState(() {
+      final currentDisplayedYearDate =
+          DateTime(_currentDisplayedMonthDate.year);
+      if (currentDisplayedYearDate.year != date.year) {
+        _currentDisplayedMonthDate = DateTime(date.year, 1);
+        widget.onDisplayedYearChanged?.call(_currentDisplayedMonthDate);
+      }
+    });
+  }
+
   Widget _buildPicker() {
     switch (_mode) {
       case DatePickerWidgetMode.month:
@@ -327,6 +348,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
             initialMonth: _currentDisplayedMonthDate,
             selectedDates: _selectedDates,
             onChanged: _handleYearChanged,
+            onDisplayedYearChanged: _handleDisplayedYearDateChanged,
           ),
         );
       case DatePickerWidgetMode.scroll || DatePickerWidgetMode.day:
