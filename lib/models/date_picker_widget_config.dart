@@ -201,7 +201,7 @@ class DatePickerWidgetConfig {
     this.selectedRangeHighlightBuilder,
     this.selectedRangeDecorationPredicate,
   })  : calendarType = calendarType ?? DatePickerWidgetType.single,
-        firstDate = DateUtils.dateOnly(firstDate ?? DateTime(1970)),
+        firstDate = DateUtils.dateOnly(firstDate ?? DateTime.now()),
         lastDate =
             DateUtils.dateOnly(lastDate ?? DateTime(DateTime.now().year + 50)),
         currentDate = currentDate ?? DateUtils.dateOnly(DateTime.now()),

@@ -312,7 +312,8 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                               Flexible(
                                 child: Text(
                                   selectedMonth,
-                                  style: Font.apply(FontStyle.regular, FontSize.h4),
+                                  style: Font.apply(
+                                      FontStyle.regular, FontSize.h4),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
@@ -337,7 +338,8 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                             children: [
                               Text(
                                 selectedYear.toString(),
-                                style: Font.apply(FontStyle.regular, FontSize.h4),
+                                style:
+                                    Font.apply(FontStyle.regular, FontSize.h4),
                               ),
                               Icon(
                                 Icons.keyboard_arrow_down,
@@ -374,11 +376,14 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                           MaterialButton(
                             padding: EdgeInsets.symmetric(horizontal: 8.w),
                             onPressed: () {
-                              mode == DatePickerWidgetMode.month || mode == DatePickerWidgetMode.year
+                              mode == DatePickerWidgetMode.month ||
+                                      mode == DatePickerWidgetMode.year
                                   ? _cancelMonthYearSelection()
                                   : Navigator.pop(context);
                             },
-                            child: Text('Cancel', style: Font.apply(FontStyle.regular, FontSize.h4)),
+                            child: Text('Cancel',
+                                style:
+                                    Font.apply(FontStyle.regular, FontSize.h4)),
                           ),
                           SizedBox(width: 8.w),
                           SizedBox(
@@ -386,9 +391,11 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 padding: EdgeInsets.symmetric(horizontal: 10.w),
-                                backgroundColor: (mode == DatePickerWidgetMode.month ||
-                                    mode == DatePickerWidgetMode.year) &&
-                                    _hasMonthYearChanges
+                                backgroundColor: (mode ==
+                                                DatePickerWidgetMode.month ||
+                                            mode ==
+                                                DatePickerWidgetMode.year) &&
+                                        _hasMonthYearChanges
                                     ? Colors.black
                                     : const Color(0xFFE0E1E4),
                               ),
@@ -408,8 +415,9 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                                   FontStyle.regular,
                                   FontSize.h6,
                                   color: (mode == DatePickerWidgetMode.month ||
-                                      mode == DatePickerWidgetMode.year) &&
-                                      _hasMonthYearChanges
+                                              mode ==
+                                                  DatePickerWidgetMode.year) &&
+                                          _hasMonthYearChanges
                                       ? Colors.white
                                       : const Color(0xFF393B40),
                                 ),
@@ -428,7 +436,6 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
       },
     );
   }
-
 
   String _handleTitleText() {
     switch (mode) {
@@ -457,8 +464,9 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
         selectedDayHighlightColor:
             widget.selectedDayHighlightColor ?? Colors.grey,
         selectedDayTextStyle: widget.selectedDayTextStyle ??
-            const TextStyle(color: Colors.black54, fontWeight: FontWeight.normal),
-        weekdayLabels: const ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+            const TextStyle(
+                color: Colors.black54, fontWeight: FontWeight.normal),
+        weekdayLabels: const ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
         weekdayLabelTextStyle: widget.weekdayLabelTextStyle ??
             const TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
         firstDayOfWeek: 0,
@@ -510,6 +518,36 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
             (day) {
               return true;
             },
+        hideMonthPickerDividers: true,
+        hideScrollViewMonthWeekHeader: true,
+        hideScrollViewTopHeader: true,
+        selectedDayTextStyle: widget.selectedDayTextStyle ??
+            const TextStyle(
+                color: Colors.black54, fontWeight: FontWeight.normal),
+        weekdayLabels: const ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+        weekdayLabelTextStyle: widget.weekdayLabelTextStyle ??
+            const TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
+        firstDayOfWeek: 0,
+        controlsHeight: widget.controlsHeight ?? 50,
+        dayMaxWidth: widget.dayMaxWidth ?? 50,
+        dayBorderRadius: widget.dayBorderRadius ?? BorderRadius.circular(8),
+        animateToDisplayedMonthDate: false,
+        controlsTextStyle: widget.controlsTextStyle ??
+            const TextStyle(
+                color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),
+        dayTextStyle: widget.dayTextStyle ??
+            const TextStyle(
+                color: Colors.black54, fontWeight: FontWeight.normal),
+        disabledDayTextStyle:
+            widget.disabledDayTextStyle ?? const TextStyle(color: Colors.grey),
+        centerAlignModePicker: true,
+        useAbbrLabelForMonthModePicker: true,
+        firstDate: widget.firstDate ??
+            DateTime(DateTime.now().year - 2, DateTime.now().month - 1,
+                DateTime.now().day - 5),
+        lastDate: widget.lastDate ??
+            DateTime(DateTime.now().year + 3, DateTime.now().month + 2,
+                DateTime.now().day + 10),
       ),
       value: _rangeDatePickerValueWithDefaultValue,
       onValueChanged: _onRangeDateChanged,

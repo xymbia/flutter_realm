@@ -199,27 +199,6 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
     }
   }
 
-  void _handleModeChanged(DatePickerWidgetMode mode) {
-    _vibrate();
-    setState(() {
-      _mode = mode;
-      if (_selectedDates.isNotEmpty) {
-        for (final date in _selectedDates) {
-          if (date != null) {
-            SemanticsService.announce(
-              _mode == DatePickerWidgetMode.day
-                  ? _localizations.formatMonthYear(date)
-                  : _mode == DatePickerWidgetMode.month
-                      ? _localizations.formatMonthYear(date)
-                      : _localizations.formatYear(date),
-              _textDirection,
-            );
-          }
-        }
-      }
-    });
-  }
-
   void _handleDisplayedMonthDateChanged(
     DateTime date, {
     bool fromYearPicker = false,
@@ -347,24 +326,6 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
 
   Widget _buildPicker() {
     switch (_mode) {
-      case DatePickerWidgetMode.day:
-        // Calculate next month, ensuring it doesn't exceed lastDate
-        final nextMonth =
-            DateUtils.addMonthsToMonthDate(_currentDisplayedMonthDate, 1);
-        final shouldShowNextMonth =
-            nextMonth.isBefore(widget.config.lastDate) ||
-                DateUtils.isSameMonth(nextMonth, widget.config.lastDate);
-
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: _CalendarScrollView(
-              config: widget.config,
-              key: _dayPickerKey,
-              initialMonth: _currentDisplayedMonthDate,
-              selectedDates: _selectedDates,
-              onChanged: _handleDayChanged,
-              onDisplayedMonthChanged: _handleDisplayedMonthDateChanged),
-        );
       case DatePickerWidgetMode.month:
         return Padding(
           padding: const EdgeInsets.all(16.0),
@@ -387,7 +348,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
             onChanged: _handleYearChanged,
           ),
         );
-      case DatePickerWidgetMode.scroll:
+      case DatePickerWidgetMode.scroll || DatePickerWidgetMode.day:
         return Padding(
           padding: const EdgeInsets.all(16.0),
           child: _CalendarScrollView(
@@ -407,87 +368,6 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
     assert(debugCheckHasMaterial(context));
     assert(debugCheckHasMaterialLocalizations(context));
     assert(debugCheckHasDirectionality(context));
-
-    // Calculate height based on mode
-    double maxContentHeight;
-
-    // For day mode, we show two months in a column, so double the height
-    final dayRowsCount = widget.config.dynamicCalendarRows == true
-        ? getDayRowsCount(
-            _currentDisplayedMonthDate.year,
-            _currentDisplayedMonthDate.month,
-            widget.config.firstDayOfWeek ?? _localizations.firstDayOfWeekIndex,
-          )
-        : _maxDayPickerRowCount;
-    final totalRowsCount = dayRowsCount + 1;
-    final rowHeight = widget.config.dayMaxWidth != null
-        ? (widget.config.dayMaxWidth! + 2)
-        : _dayPickerRowHeight;
-    final singleMonthHeight = rowHeight * totalRowsCount;
-
-    // Calculate next month height as well
-    final nextMonth =
-        DateUtils.addMonthsToMonthDate(_currentDisplayedMonthDate, 1);
-    final shouldShowNextMonth = nextMonth.isBefore(widget.config.lastDate) ||
-        DateUtils.isSameMonth(nextMonth, widget.config.lastDate);
-
-    if (shouldShowNextMonth) {
-      final nextMonthDayRowsCount = widget.config.dynamicCalendarRows == true
-          ? getDayRowsCount(
-              nextMonth.year,
-              nextMonth.month,
-              widget.config.firstDayOfWeek ??
-                  _localizations.firstDayOfWeekIndex,
-            )
-          : _maxDayPickerRowCount;
-      final nextMonthTotalRowsCount = nextMonthDayRowsCount + 1;
-      final nextMonthHeight = rowHeight * nextMonthTotalRowsCount;
-
-      maxContentHeight = singleMonthHeight +
-          16.0 +
-          nextMonthHeight; // 16.0 is the SizedBox height
-    } else {
-      maxContentHeight = singleMonthHeight;
-    }
-
-    return widget.config.calendarViewMode == DatePickerWidgetMode.scroll
-        ? _buildPicker()
-        : Stack(
-            children: <Widget>[
-              SizedBox(
-                height: (widget.config.controlsHeight ?? _subHeaderHeight) +
-                    maxContentHeight,
-                child: _buildPicker(),
-              ),
-              // Put the mode toggle button on top so that it won't be covered up by the _CalendarView
-              _DatePickerModeToggleButton(
-                config: widget.config,
-                mode: _mode,
-                monthDate: _currentDisplayedMonthDate,
-                onMonthPressed: () {
-                  if (_mode == DatePickerWidgetMode.year) {
-                    _handleModeChanged(DatePickerWidgetMode.month);
-                  } else {
-                    _handleModeChanged(
-                      _mode == DatePickerWidgetMode.month
-                          ? DatePickerWidgetMode.day
-                          : DatePickerWidgetMode.month,
-                    );
-                  }
-                },
-                onYearPressed: () {
-                  if (_mode == DatePickerWidgetMode.month) {
-                    _handleModeChanged(DatePickerWidgetMode.year);
-                  } else {
-                    _handleModeChanged(
-                      _mode == DatePickerWidgetMode.year
-                          ? DatePickerWidgetMode.day
-                          : DatePickerWidgetMode.year,
-                    );
-                  }
-                },
-              ),
-            ],
-          );
+    return _buildPicker();
   }
 }
