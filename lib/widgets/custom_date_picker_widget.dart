@@ -65,6 +65,9 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
   bool _hasMonthYearChanges = false;
   DateTime? selectedDate;
 
+  // Add ScrollController for calendar scroll view
+  final ScrollController _calendarScrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -187,6 +190,22 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
       selectedYear = _tempSelectedYear;
       _hasMonthYearChanges = false;
 
+      // Parse the selected month index from the selectedMonth string
+      // selectedMonth is like 'Jan - Feb', so take the first month
+      final firstMonthAbbr = selectedMonth.split(' - ').first;
+      final monthIndex = monthAbbreviations.indexOf(firstMonthAbbr) + 1;
+      final newDate = DateTime(selectedYear, monthIndex, 1);
+
+      // Update the actual selection to the first day of the selected month/year
+      if (isSingleDateMode) {
+        _singleDatePickerValueWithDefaultValue = [newDate];
+        _currentDisplayedMonthDate = newDate;
+      } else {
+        // For range mode, reset the range to start at the new month/year
+        _rangeDatePickerValueWithDefaultValue = [newDate];
+        _currentDisplayedMonthDate = newDate;
+      }
+
       // Switch back to day mode after saving
       if (isSingleDateMode) {
         mode = DatePickerWidgetMode.day;
@@ -271,6 +290,26 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
   void setTodayAsSelected() {
     clearDateSelection();
     setCurrentDateSelection(DateTime.now());
+    // Scroll to the current month in the calendar scroll view
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final firstDate = widget.firstDate ??
+          DateTime(DateTime.now().year - 2, DateTime.now().month - 1, DateTime.now().day - 5);
+      final today = DateTime.now();
+      final monthIndex = (today.year - firstDate.year) * 12 + (today.month - firstDate.month);
+      // Estimate row height (should match _dayPickerRowHeight or dayMaxWidth + 2)
+      final double rowHeight = (widget.dayMaxWidth ?? 50) + 2;
+      // Estimate rows per month (max 6 weeks)
+      const int maxRows = 6; // 6 weeks max in a month
+      final double monthHeight = rowHeight * (maxRows + 1); // +1 for header
+      final double offset = monthIndex * monthHeight;
+      if (_calendarScrollController.hasClients) {
+        _calendarScrollController.animateTo(
+          offset,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
   }
 
   Widget _buildCalendarLayout(Widget calendarWidget) {
@@ -291,7 +330,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                   padding: EdgeInsets.only(top: 10.h, bottom: 12.h),
                   child: Text(
                     _handleTitleText(),
-                    style: Font.apply(FontStyle.medium, FontSize.h3),
+                    style: Font.apply(FontStyle.medium, FontSize.h1),
                   ),
                 ),
                 const Divider(height: 1, color: Color(0xFFEDEEF0)),
@@ -313,7 +352,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                                 child: Text(
                                   selectedMonth,
                                   style: Font.apply(
-                                      FontStyle.regular, FontSize.h4),
+                                      FontStyle.regular, FontSize.h2),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
@@ -326,7 +365,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                           ),
                         ),
                       ),
-                      const Spacer(flex: 3),
+                      const Spacer(flex: 2),
                       Expanded(
                         child: InkWell(
                           onTap: () {
@@ -339,7 +378,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                               Text(
                                 selectedYear.toString(),
                                 style:
-                                    Font.apply(FontStyle.regular, FontSize.h4),
+                                    Font.apply(FontStyle.regular, FontSize.h2),
                               ),
                               Icon(
                                 Icons.keyboard_arrow_down,
@@ -468,7 +507,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                 color: Colors.black54, fontWeight: FontWeight.normal),
         weekdayLabels: const ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
         weekdayLabelTextStyle: widget.weekdayLabelTextStyle ??
-            const TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
+            Font.apply(FontStyle.regular, FontSize.h1, color: Colors.black87),
         firstDayOfWeek: 0,
         controlsHeight: widget.controlsHeight ?? 50,
         dayMaxWidth: widget.dayMaxWidth ?? 50,
@@ -494,6 +533,8 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
             (day) {
               return true;
             },
+        // Pass the scroll controller
+        scrollViewController: _calendarScrollController,
       ),
       value: _singleDatePickerValueWithDefaultValue,
       onValueChanged: _onSingleDateChanged,
@@ -548,6 +589,8 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
         lastDate: widget.lastDate ??
             DateTime(DateTime.now().year + 3, DateTime.now().month + 2,
                 DateTime.now().day + 10),
+        // Pass the scroll controller
+        scrollViewController: _calendarScrollController,
       ),
       value: _rangeDatePickerValueWithDefaultValue,
       onValueChanged: _onRangeDateChanged,
@@ -555,6 +598,12 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
       onMonthSelected: _handleMonthSelected,
       onYearSelected: _handleYearSelected,
     ));
+  }
+
+  @override
+  void dispose() {
+    _calendarScrollController.dispose();
+    super.dispose();
   }
 
   @override

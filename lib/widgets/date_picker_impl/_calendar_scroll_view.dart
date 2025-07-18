@@ -48,7 +48,9 @@ class _CalendarScrollViewState extends State<_CalendarScrollView> {
   void initState() {
     super.initState();
     _controller = widget.config.scrollViewController ?? ScrollController();
-    _controller.addListener(_scrollListener);
+    //if (_controller.hasClients) {
+      _controller.addListener(_scrollListener);
+    //}
 
     // Calculate the index for the initially displayed month. This is needed to
     // divide the list of months into two `SliverList`s.
@@ -68,7 +70,7 @@ class _CalendarScrollViewState extends State<_CalendarScrollView> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    //_controller.dispose();
     super.dispose();
   }
 
@@ -80,16 +82,20 @@ class _CalendarScrollViewState extends State<_CalendarScrollView> {
 
   void _scrollListener() {
     if (_controller.offset <= _controller.position.minScrollExtent) {
-      setState(() {
-        _showWeekBottomDivider = false;
-      });
+      if(mounted) {
+        setState(() {
+          _showWeekBottomDivider = false;
+        });
+      }
     } else if (!_showWeekBottomDivider) {
-      setState(() {
-        _showWeekBottomDivider = true;
-      });
+      if(mounted) {
+        setState(() {
+          _showWeekBottomDivider = true;
+        });
+      }
     }
     widget.config.scrollViewOnScrolling?.call(_controller.offset);
-    //_reportVisibleMonth();
+    _reportVisibleMonth();
   }
 
   void _reportVisibleMonth() {
@@ -98,12 +104,14 @@ class _CalendarScrollViewState extends State<_CalendarScrollView> {
     double cumulativeHeight = 0.0;
     int visibleMonthIndex = 0;
     for (int i = 0; i < _numberOfMonths; i++) {
-      final DateTime month = DateUtils.addMonthsToMonthDate(widget.config.firstDate, i);
+      final DateTime month =
+          DateUtils.addMonthsToMonthDate(widget.config.firstDate, i);
       final dayRowsCount = widget.config.dynamicCalendarRows == true
           ? getDayRowsCount(
               month.year,
               month.month,
-              widget.config.firstDayOfWeek ?? _localizations.firstDayOfWeekIndex,
+              widget.config.firstDayOfWeek ??
+                  _localizations.firstDayOfWeekIndex,
             )
           : _maxDayPickerRowCount;
       var totalRowsCount = dayRowsCount + 1;
@@ -122,7 +130,8 @@ class _CalendarScrollViewState extends State<_CalendarScrollView> {
       }
       cumulativeHeight += maxContentHeight;
     }
-    final DateTime visibleMonth = DateUtils.addMonthsToMonthDate(widget.config.firstDate, visibleMonthIndex);
+    final DateTime visibleMonth = DateUtils.addMonthsToMonthDate(
+        widget.config.firstDate, visibleMonthIndex);
     if (_lastReportedVisibleMonth == null ||
         _lastReportedVisibleMonth!.year != visibleMonth.year ||
         _lastReportedVisibleMonth!.month != visibleMonth.month) {
@@ -212,15 +221,21 @@ class _CalendarScrollViewState extends State<_CalendarScrollView> {
     final firstDayOfWeek =
         widget.config.firstDayOfWeek ?? localizations.firstDayOfWeekIndex;
     assert(firstDayOfWeek >= 0 && firstDayOfWeek <= 6,
-    'firstDayOfWeek must between 0 and 6');
+        'firstDayOfWeek must between 0 and 6');
     for (int i = firstDayOfWeek; true; i = (i + 1) % 7) {
       final String weekday = weekdays[i];
       result.add(ExcludeSemantics(
         child: widget.config.weekdayLabelBuilder?.call(weekday: i) ??
             Center(
               child: Text(weekday,
-                  style: Font.apply(FontStyle.regular, FontSize.h6,
-                      color: const Color(0xFF5C5E66))),
+                  style: widget.config.weekdayLabelTextStyle ??
+                      headerStyle ??
+                      TextStyle(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withValues(alpha: 0.60),
+                      )),
             ),
       ));
       if (i == (firstDayOfWeek - 1) % 7) break;
@@ -228,13 +243,12 @@ class _CalendarScrollViewState extends State<_CalendarScrollView> {
     return result;
   }
 
-
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     const Key monthsAfterInitialMonthKey = Key('monthsAfterInitialMonth');
     final MaterialLocalizations localizations =
-    MaterialLocalizations.of(context);
+        MaterialLocalizations.of(context);
     final TextTheme textTheme = Theme.of(context).textTheme;
     final TextStyle? headerStyle = textTheme.bodySmall?.apply(
       color: colorScheme.onSurface.withValues(alpha: 0.60),
@@ -244,18 +258,16 @@ class _CalendarScrollViewState extends State<_CalendarScrollView> {
       children: <Widget>[
         SizedBox(
           height: 50,
-          child: Expanded(
-            child: GridView.custom(
-              padding: EdgeInsets.zero,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: _DayPickerGridDelegate(
-                config: widget.config,
-                dayRowsCount: 1,
-              ),
-              childrenDelegate: SliverChildListDelegate(
-                dayItems,
-                addRepaintBoundaries: false,
-              ),
+          child: GridView.custom(
+            padding: EdgeInsets.zero,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: _DayPickerGridDelegate(
+              config: widget.config,
+              dayRowsCount: 1,
+            ),
+            childrenDelegate: SliverChildListDelegate(
+              dayItems,
+              addRepaintBoundaries: false,
             ),
           ),
         ),
@@ -286,7 +298,7 @@ class _CalendarScrollViewState extends State<_CalendarScrollView> {
                   delegate: SliverChildBuilderDelegate(
                     (BuildContext context, int index) =>
                         _buildMonthItem(context, index, false),
-                    childCount:  _numberOfMonths - _initialMonthIndex,
+                    childCount: _numberOfMonths - _initialMonthIndex,
                   ),
                 ),
               ],

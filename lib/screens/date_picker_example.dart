@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../utils/date_util.dart';
+import '../utils/font_helper.dart';
 import '../widgets/custom_date_picker_widget.dart';
 
 class DatePickerPage extends StatefulWidget {
@@ -73,12 +74,12 @@ class _DatePickerPageState extends State<DatePickerPage> {
 
                   // The earliest selectable date
                   // If null, defaults to (DateTime.now().year - 2, DateTime.now().month - 1, DateTime.now().day - 5)
-                  firstDate: DateTime(DateTime.now().year - 2,
-                      DateTime.now().month, DateTime.now().day),
+                  firstDate: DateTime(DateTime.now().year, DateTime.now().month,
+                      DateTime.now().day),
 
                   // The latest selectable date
                   // If null, defaults to (DateTime.now().year + 3, DateTime.now().month + 2, DateTime.now().day + 10)
-                  lastDate: DateTime(DateTime.now().year + 1,
+                  lastDate: DateTime(DateTime.now().year + 50,
                       DateTime.now().month + 6, DateTime.now().day),
 
                   // The color used to highlight the selected day
@@ -92,8 +93,9 @@ class _DatePickerPageState extends State<DatePickerPage> {
 
                   // The text style for weekday labels (e.g., Sun, Mon)
                   // If null, defaults to black87, bold
-                  weekdayLabelTextStyle: const TextStyle(
-                      color: Colors.black87, fontWeight: FontWeight.bold),
+                  weekdayLabelTextStyle: Font.apply(
+                      FontStyle.regular, FontSize.h2,
+                      color: Colors.black87),
 
                   // The border radius for day cells
                   // If null, defaults to BorderRadius.circular(8)
@@ -129,7 +131,8 @@ class _DatePickerPageState extends State<DatePickerPage> {
                   // Allows days to be selected based on following predicate
                   selectableDayPredicate: (day) {
                     return !day
-                        .difference(DateTime.now().add(const Duration(days: -1)))
+                        .difference(
+                            DateTime.now().add(const Duration(days: -1)))
                         .isNegative;
                   }),
             ),
