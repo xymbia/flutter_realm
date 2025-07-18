@@ -62,7 +62,7 @@ class _CalendarScrollViewState extends State<_CalendarScrollView> {
     _showWeekBottomDivider = _initialMonthIndex != 0;
     // Set the initial visible month
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      //_reportVisibleMonth();
+      _reportVisibleMonth();
     });
   }
 
@@ -89,6 +89,46 @@ class _CalendarScrollViewState extends State<_CalendarScrollView> {
       });
     }
     widget.config.scrollViewOnScrolling?.call(_controller.offset);
+    //_reportVisibleMonth();
+  }
+
+  void _reportVisibleMonth() {
+    // Calculate the height of each month item up to the first month
+    double offset = _controller.hasClients ? _controller.offset : 0.0;
+    double cumulativeHeight = 0.0;
+    int visibleMonthIndex = 0;
+    for (int i = 0; i < _numberOfMonths; i++) {
+      final DateTime month = DateUtils.addMonthsToMonthDate(widget.config.firstDate, i);
+      final dayRowsCount = widget.config.dynamicCalendarRows == true
+          ? getDayRowsCount(
+              month.year,
+              month.month,
+              widget.config.firstDayOfWeek ?? _localizations.firstDayOfWeekIndex,
+            )
+          : _maxDayPickerRowCount;
+      var totalRowsCount = dayRowsCount + 1;
+      var rowHeight = widget.config.dayMaxWidth != null
+          ? (widget.config.dayMaxWidth! + 2)
+          : _dayPickerRowHeight;
+      if (widget.config.calendarViewMode == DatePickerWidgetMode.scroll &&
+          widget.config.hideScrollViewMonthWeekHeader == true) {
+        // Exclude header row
+        totalRowsCount -= 1;
+      }
+      final maxContentHeight = rowHeight * totalRowsCount;
+      if (offset < cumulativeHeight + maxContentHeight) {
+        visibleMonthIndex = i;
+        break;
+      }
+      cumulativeHeight += maxContentHeight;
+    }
+    final DateTime visibleMonth = DateUtils.addMonthsToMonthDate(widget.config.firstDate, visibleMonthIndex);
+    if (_lastReportedVisibleMonth == null ||
+        _lastReportedVisibleMonth!.year != visibleMonth.year ||
+        _lastReportedVisibleMonth!.month != visibleMonth.month) {
+      _lastReportedVisibleMonth = visibleMonth;
+      widget.onDisplayedMonthChanged(visibleMonth);
+    }
   }
 
   int get _numberOfMonths =>
