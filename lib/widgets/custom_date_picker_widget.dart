@@ -67,6 +67,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
 
   // Add ScrollController for calendar scroll view
   final ScrollController _calendarScrollController = ScrollController();
+  bool _suspendDisplayedMonthUpdate = false;
 
   @override
   void initState() {
@@ -127,6 +128,10 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
   }
 
   void _handleDisplayedMonthChanged(DateTime date) {
+    if (_suspendDisplayedMonthUpdate) {
+      _suspendDisplayedMonthUpdate = false;
+      return;
+    }
     setState(() {
       _updateMonthLabel(date);
       selectedYear = date.year;
@@ -212,6 +217,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
       } else {
         mode = DatePickerWidgetMode.scroll;
       }
+      _suspendDisplayedMonthUpdate = true;
     });
   }
 
@@ -310,6 +316,10 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
         );
       }
     });
+  }
+
+  void _onUserScrolled() {
+    _suspendDisplayedMonthUpdate = false;
   }
 
   Widget _buildCalendarLayout(Widget calendarWidget) {
@@ -535,6 +545,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
             },
         // Pass the scroll controller
         scrollViewController: _calendarScrollController,
+        scrollViewOnScrolling: (_) => _onUserScrolled(),
       ),
       value: _singleDatePickerValueWithDefaultValue,
       onValueChanged: _onSingleDateChanged,
@@ -591,6 +602,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                 DateTime.now().day + 10),
         // Pass the scroll controller
         scrollViewController: _calendarScrollController,
+        scrollViewOnScrolling: (_) => _onUserScrolled(),
       ),
       value: _rangeDatePickerValueWithDefaultValue,
       onValueChanged: _onRangeDateChanged,

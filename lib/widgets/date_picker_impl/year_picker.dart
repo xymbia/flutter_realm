@@ -143,6 +143,7 @@ class _YearPickerState extends State<YearPicker> {
     }
 
     if (isCurrentYear && !isDisabled) {
+      itemStyle = itemStyle?.copyWith(color: Colors.black87);
       decoration = BoxDecoration(
         border: Border.all(
           color: widget.config.selectedDayHighlightColor ?? colorScheme.primary,

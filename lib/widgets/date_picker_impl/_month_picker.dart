@@ -167,6 +167,7 @@ class _MonthPickerState extends State<_MonthPicker> {
 
     if (isCurrentMonth && isMonthSelectable) {
       // Today's month gets its own style
+      itemStyle = itemStyle?.copyWith(color: Colors.black87);
       decoration = BoxDecoration(
         border: Border.all(
           color: widget.config.selectedDayHighlightColor ?? colorScheme.primary,
