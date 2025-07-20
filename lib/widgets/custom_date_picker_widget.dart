@@ -313,6 +313,13 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
   /// Clears all date selections
   void clearDateSelection() {
     setState(() {
+      _userSelectedMonthDate = null;
+      _suspendDisplayedMonthUpdate = false;
+      _hasMonthYearChanges = false;
+      _tempSelectedMonth = '';
+      _tempSelectedYear = 0;
+      _currentDisplayedMonthDate = null;
+
       if (isSingleDateMode) {
         _singleDatePickerValueWithDefaultValue = [];
       } else {
