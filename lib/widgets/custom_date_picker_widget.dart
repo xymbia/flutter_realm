@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../models/date_picker_widget_config.dart';
@@ -55,6 +57,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
   late List<DateTime?> _singleDatePickerValueWithDefaultValue;
   late List<DateTime> _rangeDatePickerValueWithDefaultValue;
   DateTime? _currentDisplayedMonthDate;
+  DateTime? _userSelectedMonthDate;
   String selectedMonth = '';
   int selectedYear = 0;
 
@@ -141,8 +144,8 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
     }
     setState(() {
       _updateMonthLabel(date);
-      //_updateYearLabel(date);
-      //selectedYear = date.year;
+      _updateYearLabel(date);
+      selectedYear = date.year;
       _currentDisplayedMonthDate = date;
     });
   }
@@ -160,24 +163,34 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
   }
 
   void _handleMonthSelected(DateTime date) {
+
+    _userSelectedMonthDate = date;
+
     setState(() {
       _currentDisplayedMonthDate = date;
       _updateMonthLabel(date);
+      _updateYearLabel(date);
       selectedYear = date.year;
 
       // Check if there are changes
       _hasMonthYearChanges = true;
+
     });
   }
 
   void _handleYearSelected(DateTime date) {
+
+    _userSelectedMonthDate = date;
+
     setState(() {
       _currentDisplayedMonthDate = date;
       selectedYear = date.year;
       _updateMonthLabel(date);
+      _updateMonthLabel(date);
 
       // Check if there are changes
       _hasMonthYearChanges = true;
+
     });
   }
 
@@ -215,29 +228,25 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
       selectedYear = _tempSelectedYear;
       _hasMonthYearChanges = false;
 
-      // Parse the selected month index from the selectedMonth string
-      // selectedMonth is like 'Jan - Feb', so take the first month
+      // Get selected month index from 'Jan - Feb'
       final firstMonthAbbr = selectedMonth.split(' - ').first;
       final monthIndex = monthAbbreviations.indexOf(firstMonthAbbr) + 1;
       final newDate = DateTime(selectedYear, monthIndex, 1);
 
-      // Update the actual selection to the first day of the selected month/year
+      // Suppress next scroll update!
+      _suspendDisplayedMonthUpdate = true;
+
       if (isSingleDateMode) {
         _singleDatePickerValueWithDefaultValue = [newDate];
         _currentDisplayedMonthDate = newDate;
       } else {
-        // For range mode, reset the range to start at the new month/year
         _rangeDatePickerValueWithDefaultValue = [newDate];
         _currentDisplayedMonthDate = newDate;
       }
 
-      // Switch back to day mode after saving
-      if (isSingleDateMode) {
-        mode = DatePickerWidgetMode.day;
-      } else {
-        mode = DatePickerWidgetMode.scroll;
-      }
-      _suspendDisplayedMonthUpdate = true;
+      mode = isSingleDateMode
+          ? DatePickerWidgetMode.day
+          : DatePickerWidgetMode.scroll;
     });
   }
 
@@ -579,6 +588,8 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
       onDisplayedYearChanged: _handleDisplayedMYearChanged,
       onMonthSelected: _handleMonthSelected,
       onYearSelected: _handleYearSelected,
+      suppressVisibleMonthReporting: _suspendDisplayedMonthUpdate,
+      userSelectedDate: _userSelectedMonthDate,
     ));
   }
 
@@ -637,6 +648,8 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
       onDisplayedYearChanged: _handleDisplayedMYearChanged,
       onMonthSelected: _handleMonthSelected,
       onYearSelected: _handleYearSelected,
+      suppressVisibleMonthReporting: _suspendDisplayedMonthUpdate,
+      userSelectedDate: _userSelectedMonthDate,
     ));
   }
 

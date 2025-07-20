@@ -3,14 +3,20 @@ part of '../date_picker_widget.dart';
 /// Displays a scrollable calendar grid that allows a user to select dates
 class _CalendarScrollView extends StatefulWidget {
   /// Creates a scrollable calendar grid for picking dates
-  const _CalendarScrollView({
+  _CalendarScrollView({
     required this.config,
     required this.initialMonth,
     required this.selectedDates,
     required this.onChanged,
     required this.onDisplayedMonthChanged,
-    Key? key,
-  }) : super(key: key);
+    required this.suppressVisibleMonthReporting,
+    required this.userSelectedDate,
+    super.key,
+  });
+
+  bool suppressVisibleMonthReporting = false;
+  DateTime _firstDate = DateTime.now();
+  DateTime? userSelectedDate = null;
 
   /// The calendar configurations
   final DatePickerWidgetConfig config;
@@ -47,22 +53,27 @@ class _CalendarScrollViewState extends State<_CalendarScrollView> {
   @override
   void initState() {
     super.initState();
+
+    if (widget.userSelectedDate != null) {
+      widget._firstDate = widget.userSelectedDate!;
+    } else {
+      widget._firstDate = widget.config.firstDate;
+    }
+
     _controller = widget.config.scrollViewController ?? ScrollController();
     //if (_controller.hasClients) {
-      _controller.addListener(_scrollListener);
+    _controller.addListener(_scrollListener);
     //}
 
     // Calculate the index for the initially displayed month. This is needed to
     // divide the list of months into two `SliverList`s.
     final DateTime initialDate = widget.initialMonth;
-    if (!initialDate.isBefore(widget.config.firstDate) &&
+    if (!initialDate.isBefore(widget._firstDate) &&
         !initialDate.isAfter(widget.config.lastDate)) {
-      _initialMonthIndex =
-          DateUtils.monthDelta(widget.config.firstDate, initialDate);
+      _initialMonthIndex = DateUtils.monthDelta(widget._firstDate, initialDate);
     }
 
     _showWeekBottomDivider = _initialMonthIndex != 0;
-    // Set the initial visible month
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _reportVisibleMonth();
     });
@@ -107,14 +118,14 @@ class _CalendarScrollViewState extends State<_CalendarScrollView> {
 
     for (int i = 0; i < monthIndex; i++) {
       final DateTime month =
-      DateUtils.addMonthsToMonthDate(widget.config.firstDate, i);
+          DateUtils.addMonthsToMonthDate(widget.config.firstDate, i);
       final dayRowsCount = widget.config.dynamicCalendarRows == true
           ? getDayRowsCount(
-        month.year,
-        month.month,
-        widget.config.firstDayOfWeek ??
-            _localizations.firstDayOfWeekIndex,
-      )
+              month.year,
+              month.month,
+              widget.config.firstDayOfWeek ??
+                  _localizations.firstDayOfWeekIndex,
+            )
           : _maxDayPickerRowCount;
       var totalRowsCount = dayRowsCount + 1;
       var rowHeight = widget.config.dayMaxWidth != null
@@ -132,13 +143,13 @@ class _CalendarScrollViewState extends State<_CalendarScrollView> {
 
   void _scrollListener() {
     if (_controller.offset <= _controller.position.minScrollExtent) {
-      if(mounted) {
+      if (mounted) {
         setState(() {
           _showWeekBottomDivider = false;
         });
       }
     } else if (!_showWeekBottomDivider) {
-      if(mounted) {
+      if (mounted) {
         setState(() {
           _showWeekBottomDivider = true;
         });
@@ -149,13 +160,32 @@ class _CalendarScrollViewState extends State<_CalendarScrollView> {
   }
 
   void _reportVisibleMonth() {
+    if (widget.userSelectedDate != null) {
+      widget._firstDate = widget.userSelectedDate!;
+    }
+
+    if (widget.suppressVisibleMonthReporting) {
+      // Adjust internal firstDate to avoid reset/revert behavior
+      final sortedDates = widget.selectedDates.whereType<DateTime>().toList()
+        ..sort((a, b) => a.compareTo(b));
+      final DateTime? newStart = sortedDates.firstOrNull;
+
+      if (newStart != null && newStart.isBefore(widget._firstDate)) {
+        widget._firstDate =
+            DateTime(newStart.year, newStart.month); // Trim to month start
+      }
+      _lastReportedVisibleMonth = null;
+      widget.suppressVisibleMonthReporting = false;
+      return; // Skip this scroll-triggered report
+    }
+
     // Calculate the height of each month item up to the first month
     double offset = _controller.hasClients ? _controller.offset : 0.0;
     double cumulativeHeight = 0.0;
     int visibleMonthIndex = 0;
     for (int i = 0; i < _numberOfMonths; i++) {
       final DateTime month =
-          DateUtils.addMonthsToMonthDate(widget.config.firstDate, i);
+          DateUtils.addMonthsToMonthDate(widget._firstDate, i);
       final dayRowsCount = widget.config.dynamicCalendarRows == true
           ? getDayRowsCount(
               month.year,
@@ -180,21 +210,27 @@ class _CalendarScrollViewState extends State<_CalendarScrollView> {
       }
       cumulativeHeight += maxContentHeight;
     }
-    final DateTime visibleMonth = DateUtils.addMonthsToMonthDate(
-        widget.config.firstDate, visibleMonthIndex);
+    final DateTime visibleMonth =
+        DateUtils.addMonthsToMonthDate(widget._firstDate, visibleMonthIndex);
     if (_lastReportedVisibleMonth == null ||
         _lastReportedVisibleMonth!.year != visibleMonth.year ||
         _lastReportedVisibleMonth!.month != visibleMonth.month) {
       _lastReportedVisibleMonth = visibleMonth;
+
       widget.onDisplayedMonthChanged(visibleMonth);
     }
   }
 
   int get _numberOfMonths =>
-      DateUtils.monthDelta(widget.config.firstDate, widget.config.lastDate) + 1;
+      DateUtils.monthDelta(widget._firstDate, widget.config.lastDate) + 1;
 
   Widget _buildMonthItem(
       BuildContext context, int index, bool beforeInitialMonth) {
+
+    if (widget.userSelectedDate != null) {
+      widget._firstDate = widget.userSelectedDate!;
+    }
+
     final ThemeData themeData = Theme.of(context);
     final ColorScheme colorScheme = themeData.colorScheme;
     final TextTheme textTheme = themeData.textTheme;
@@ -203,7 +239,7 @@ class _CalendarScrollViewState extends State<_CalendarScrollView> {
         ? _initialMonthIndex - index - 1
         : _initialMonthIndex + index;
     final DateTime month =
-        DateUtils.addMonthsToMonthDate(widget.config.firstDate, monthIndex);
+        DateUtils.addMonthsToMonthDate(widget._firstDate, monthIndex);
     final dayRowsCount = widget.config.dynamicCalendarRows == true
         ? getDayRowsCount(
             month.year,
@@ -324,7 +360,7 @@ class _CalendarScrollViewState extends State<_CalendarScrollView> {
         Expanded(
           child: _CalendarKeyboardNavigator(
             config: widget.config,
-            firstDate: widget.config.firstDate,
+            firstDate: widget._firstDate,
             lastDate: widget.config.lastDate,
             initialFocusedDay: widget.config.currentDate,
             // In order to prevent performance issues when displaying the
