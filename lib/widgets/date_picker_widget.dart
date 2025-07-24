@@ -15,8 +15,6 @@ part '../widgets/date_picker_impl/_calendar_scroll_view.dart';
 
 part '../widgets/date_picker_impl/_calendar_view.dart';
 
-part '../widgets/date_picker_impl/_date_picker_mode_toggle_button.dart';
-
 part '../widgets/date_picker_impl/_day_picker.dart';
 
 part '../widgets/date_picker_impl/_focus_date.dart';
