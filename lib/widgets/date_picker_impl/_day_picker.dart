@@ -123,38 +123,41 @@ class _DayPickerState extends State<_DayPicker> {
             DateUtils.isSameDay(widget.config.currentDate, dayToBuild);
 
         BoxDecoration? decoration;
-
         Color dayColor = enabledDayColor;
-        if (isSelectedDay) {
-          // The selected day gets a circle background highlight, and a
-          // contrasting text color.
-          if (isToday) {
-            // If today is also selected, use black background with white text
-            dayColor = Colors.white;
+        // Use config-provided decorations if available
+        if (isSelectedDay && isToday && widget.config.isTodayDecoration != null) {
+          decoration = widget.config.isTodayDecoration;
+        } else if (isSelectedDay && widget.config.isSelectedDecoration != null) {
+          decoration = widget.config.isSelectedDecoration;
+        } else if (isDisabled && widget.config.isDisabledDecoration != null) {
+          decoration = widget.config.isDisabledDecoration;
+        } else {
+          if (isSelectedDay) {
+            if (isToday) {
+              dayColor = Colors.white;
+              decoration = BoxDecoration(
+                borderRadius: BorderRadius.circular(50),
+                color: const Color(0xFF1A1B1D),
+                border: Border.all(width: 2, color: const Color(0xFF393B40)),
+                shape: widget.config.dayBorderRadius != null ? BoxShape.rectangle : BoxShape.circle,
+              );
+            } else {
+              dayColor = Colors.white;
+              decoration = BoxDecoration(
+                borderRadius: BorderRadius.circular(50),
+                color: const Color(0xFF393B40),
+                border: Border.all(width: 3, color: const Color(0xFF393B40)),
+              );
+            }
+          } else if (isDisabled) {
+            dayColor = disabledDayColor;
             decoration = BoxDecoration(
               borderRadius: BorderRadius.circular(50),
-              color: const Color(0xFF1A1B1D), // Black background for today's date
-              border: Border.all(
-                  width: 2,
-                  color: const Color(
-                      0xFF393B40)), // Add border to show it's selected
-              shape: widget.config.dayBorderRadius != null
-                  ? BoxShape.rectangle
-                  : BoxShape.circle,
-            );
-          } else {
-            // Regular selected day styling
-            dayColor = Colors.white; // White text on black background
-            decoration = BoxDecoration(
-              borderRadius: BorderRadius.circular(50),
-              color: const Color(0xFF393B40),
-              border: Border.all(
-                  width: 3,
-                  color: const Color(0xFF393B40)), // Different border color
+              color: const Color(0xFFCFCFCF),
+              border: Border.all(width: 1, color: const Color(0xFF393B40)),
+              shape: widget.config.dayBorderRadius != null ? BoxShape.rectangle : BoxShape.circle,
             );
           }
-        } else if (isDisabled) {
-          dayColor = disabledDayColor;
         }
 
 

@@ -200,6 +200,9 @@ class DatePickerWidgetConfig {
     this.dayModeScrollDirection,
     this.selectedRangeHighlightBuilder,
     this.selectedRangeDecorationPredicate,
+    this.isTodayDecoration,
+    this.isSelectedDecoration,
+    this.isDisabledDecoration,
   })  : calendarType = calendarType ?? DatePickerWidgetType.single,
         firstDate = DateUtils.dateOnly(firstDate ?? DateTime.now()),
         lastDate =
@@ -431,6 +434,15 @@ class DatePickerWidgetConfig {
   /// Predicate to determine the day widget box decoration for a day in selected range
   final SelectedRangeDecorationPredicate? selectedRangeDecorationPredicate;
 
+  /// Decoration for today cell
+  final BoxDecoration? isTodayDecoration;
+
+  /// Decoration for selected cell
+  final BoxDecoration? isSelectedDecoration;
+
+  /// Decoration for disabled cell
+  final BoxDecoration? isDisabledDecoration;
+
   /// Copy the current [DatePickerWidgetConfig] with some new values
   DatePickerWidgetConfig copyWith({
     DatePickerWidgetType? calendarType,
@@ -504,6 +516,9 @@ class DatePickerWidgetConfig {
     Axis? dayModeScrollDirection,
     SelectedRangeHighlightBuilder? selectedRangeHighlightBuilder,
     SelectedRangeDecorationPredicate? selectedRangeDecorationPredicate,
+    BoxDecoration? isTodayDecoration,
+    BoxDecoration? isSelectedDecoration,
+    BoxDecoration? isDisabledDecoration,
   }) {
     return DatePickerWidgetConfig(
       calendarType: calendarType ?? this.calendarType,
@@ -607,6 +622,9 @@ class DatePickerWidgetConfig {
           selectedRangeHighlightBuilder ?? this.selectedRangeHighlightBuilder,
       selectedRangeDecorationPredicate: selectedRangeDecorationPredicate ??
           this.selectedRangeDecorationPredicate,
+      isTodayDecoration: isTodayDecoration ?? this.isTodayDecoration,
+      isSelectedDecoration: isSelectedDecoration ?? this.isSelectedDecoration,
+      isDisabledDecoration: isDisabledDecoration ?? this.isDisabledDecoration,
     );
   }
 }
@@ -878,6 +896,9 @@ class DatePickerWidgetWithActionButtonsConfig
     Axis? dayModeScrollDirection,
     SelectedRangeHighlightBuilder? selectedRangeHighlightBuilder,
     SelectedRangeDecorationPredicate? selectedRangeDecorationPredicate,
+    BoxDecoration? isTodayDecoration,
+    BoxDecoration? isSelectedDecoration,
+    BoxDecoration? isDisabledDecoration,
   }) {
     return DatePickerWidgetWithActionButtonsConfig(
       calendarType: calendarType ?? this.calendarType,
