@@ -133,21 +133,6 @@ class _DatePickerPageState extends State<DatePickerPage> {
                       titleMonthMode: 'Pick a Month',
                       titleYearMode: 'Pick a Year',
                       titleRangeMode: 'Pick a Date Range',
-                      onCancel: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Selection cancelled')),
-                        );
-                      },
-                      onSave: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Selection applied')),
-                        );
-                      },
-                      onRefresh: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Reset to today')),
-                        );
-                      },
                       showSaveButton: true,
                       showCancelButton: true,
                       showRefreshButton: true,

@@ -7,8 +7,11 @@ import 'package:flutter_realm/screens/link_example.dart';
 import 'package:flutter_realm/screens/switch_tile_example.dart';
 import 'package:flutter_realm/screens/reminder_example.dart';
 import 'package:flutter_realm/screens/textfield_with_action_example.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting();
   runApp(const MyApp());
 }
 
