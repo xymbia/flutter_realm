@@ -25,6 +25,39 @@ class CustomDatePickerWidget extends StatefulWidget {
   final void Function(DateTime)? onSingleDateSelected;
   final void Function(DateTime? start, DateTime? end)? onRangeSelected;
   final bool Function(DateTime)? selectableDayPredicate;
+  final double? cardElevation;
+  final Color? cardColor;
+  final Color? dividerColor;
+  final String? cancelButtonLabel;
+  final String? saveButtonLabel;
+  final String? refreshTooltip;
+  final Color? iconColor;
+  final EdgeInsetsGeometry? cardMargin;
+  final EdgeInsetsGeometry? cardPadding;
+  final EdgeInsetsGeometry? calendarPadding;
+  final List<String>? customWeekdayLabels;
+  final String? titleDayMode;
+  final String? titleMonthMode;
+  final String? titleYearMode;
+  final String? titleRangeMode;
+  final void Function()? onCancel;
+  final void Function()? onSave;
+  final void Function()? onRefresh;
+
+  // New parameters for controlling visibility
+  final bool showSaveButton;
+  final bool showCancelButton;
+  final bool showRefreshButton;
+  final bool showTitleDay;
+  final bool showTitleMonth;
+  final bool showTitleYear;
+  final bool showTitleRange;
+
+  // Decoration parameters
+  final BoxDecoration? isTodayDecoration;
+  final BoxDecoration? isSelectedDecoration;
+  final BoxDecoration? isDisabledDecoration;
+  final DatePickerWidgetConfig? config;
 
   const CustomDatePickerWidget({
     Key? key,
@@ -45,6 +78,36 @@ class CustomDatePickerWidget extends StatefulWidget {
     this.onSingleDateSelected,
     this.onRangeSelected,
     this.selectableDayPredicate,
+    this.cardElevation,
+    this.cardColor,
+    this.dividerColor,
+    this.cancelButtonLabel,
+    this.saveButtonLabel,
+    this.refreshTooltip,
+    this.iconColor,
+    this.cardMargin,
+    this.cardPadding,
+    this.calendarPadding,
+    this.customWeekdayLabels,
+    this.titleDayMode,
+    this.titleMonthMode,
+    this.titleYearMode,
+    this.titleRangeMode,
+    this.onCancel,
+    this.onSave,
+    this.onRefresh,
+    // Initialize new parameters with default values
+    this.showSaveButton = true,
+    this.showCancelButton = true,
+    this.showRefreshButton = true,
+    this.showTitleDay = true,
+    this.showTitleMonth = true,
+    this.showTitleYear = true,
+    this.showTitleRange = true,
+    this.isTodayDecoration,
+    this.isSelectedDecoration,
+    this.isDisabledDecoration,
+    this.config,
   }) : super(key: key);
 
   @override
@@ -163,7 +226,6 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
   }
 
   void _handleMonthSelected(DateTime date) {
-
     _userSelectedMonthDate = date;
 
     setState(() {
@@ -174,12 +236,10 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
 
       // Check if there are changes
       _hasMonthYearChanges = true;
-
     });
   }
 
   void _handleYearSelected(DateTime date) {
-
     _userSelectedMonthDate = date;
 
     setState(() {
@@ -190,7 +250,6 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
 
       // Check if there are changes
       _hasMonthYearChanges = true;
-
     });
   }
 
@@ -370,24 +429,30 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
         return SizedBox(
           height: constraints.maxHeight * 0.9,
           child: Card(
-            elevation: 4,
-            margin: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-            color: const Color(0xFFF7F8FA),
+            elevation: widget.cardElevation ?? 4,
+            margin: widget.cardMargin ??
+                EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+            color: widget.cardColor ?? const Color(0xFFF7F8FA),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12.r),
             ),
             child: Column(
               children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 10.h, bottom: 12.h),
-                  child: Text(
-                    _handleTitleText(),
-                    style: Font.apply(FontStyle.medium, FontSize.h1),
+                if (_shouldShowTitle())
+                  Padding(
+                    padding: widget.cardPadding ??
+                        EdgeInsets.only(top: 10.h, bottom: 12.h),
+                    child: Text(
+                      _handleTitleText(),
+                      style: Font.apply(FontStyle.medium, FontSize.h1),
+                    ),
                   ),
-                ),
-                const Divider(height: 1, color: Color(0xFFEDEEF0)),
+                Divider(
+                    height: 1,
+                    color: widget.dividerColor ?? const Color(0xFFEDEEF0)),
                 Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 8, top: 8),
+                  padding: widget.calendarPadding ??
+                      const EdgeInsets.only(left: 20, right: 8, top: 8),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
@@ -410,7 +475,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                               ),
                               Icon(
                                 Icons.keyboard_arrow_down,
-                                color: Colors.black54,
+                                color: widget.iconColor ?? Colors.black54,
                                 size: 20.sp,
                               ),
                             ],
@@ -434,7 +499,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                               ),
                               Icon(
                                 Icons.keyboard_arrow_down,
-                                color: Colors.black54,
+                                color: widget.iconColor ?? Colors.black54,
                                 size: 20.sp,
                               ),
                             ],
@@ -450,71 +515,91 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                     child: calendarWidget,
                   ),
                 ),
-                const Divider(height: 1, color: Color(0xFFEDEEF0)),
+                Divider(
+                    height: 1,
+                    color: widget.dividerColor ?? const Color(0xFFEDEEF0)),
                 Padding(
                   padding: EdgeInsets.all(8.h),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      IconButton(
-                        iconSize: 30.sp,
-                        icon: const Icon(Icons.refresh),
-                        onPressed: setTodayAsSelected,
-                      ),
+                      if (widget.showRefreshButton)
+                        IconButton(
+                          iconSize: 30.sp,
+                          icon: const Icon(Icons.refresh),
+                          color: widget.iconColor,
+                          tooltip: widget.refreshTooltip ?? 'Refresh',
+                          onPressed: widget.onRefresh ?? setTodayAsSelected,
+                        ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          MaterialButton(
-                            padding: EdgeInsets.symmetric(horizontal: 8.w),
-                            onPressed: () {
-                              mode == DatePickerWidgetMode.month ||
-                                      mode == DatePickerWidgetMode.year
-                                  ? _cancelMonthYearSelection()
-                                  : Navigator.pop(context);
-                            },
-                            child: Text('Cancel',
-                                style:
-                                    Font.apply(FontStyle.regular, FontSize.h4)),
-                          ),
-                          SizedBox(width: 8.w),
-                          SizedBox(
-                            height: 40.h,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                padding: EdgeInsets.symmetric(horizontal: 10.w),
-                                backgroundColor: (mode ==
-                                                DatePickerWidgetMode.month ||
-                                            mode ==
-                                                DatePickerWidgetMode.year) &&
-                                        _hasMonthYearChanges
-                                    ? Colors.black
-                                    : const Color(0xFFE0E1E4),
-                              ),
+                          if (widget.showCancelButton)
+                            MaterialButton(
+                              padding: EdgeInsets.symmetric(horizontal: 8.w),
                               onPressed: () {
-                                switch (mode) {
-                                  case DatePickerWidgetMode.month:
-                                  case DatePickerWidgetMode.year:
-                                    _saveMonthYearSelection();
-                                    break;
-                                  default:
-                                    break;
+                                if (mode == DatePickerWidgetMode.month ||
+                                    mode == DatePickerWidgetMode.year) {
+                                  if (widget.onCancel != null) {
+                                    widget.onCancel!();
+                                  } else {
+                                    _cancelMonthYearSelection();
+                                  }
+                                } else {
+                                  Navigator.pop(context);
                                 }
                               },
-                              child: Text(
-                                'Save',
-                                style: Font.apply(
-                                  FontStyle.regular,
-                                  FontSize.h6,
-                                  color: (mode == DatePickerWidgetMode.month ||
+                              child: Text(widget.cancelButtonLabel ?? 'Cancel',
+                                  style: Font.apply(
+                                      FontStyle.regular, FontSize.h4)),
+                            ),
+                          if (widget.showSaveButton) SizedBox(width: 8.w),
+                          if (widget.showSaveButton)
+                            SizedBox(
+                              height: 40.h,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 10.w),
+                                  backgroundColor: (mode ==
+                                                  DatePickerWidgetMode.month ||
                                               mode ==
                                                   DatePickerWidgetMode.year) &&
                                           _hasMonthYearChanges
-                                      ? Colors.white
-                                      : const Color(0xFF393B40),
+                                      ? Colors.black
+                                      : const Color(0xFFE0E1E4),
+                                ),
+                                onPressed: () {
+                                  switch (mode) {
+                                    case DatePickerWidgetMode.month:
+                                    case DatePickerWidgetMode.year:
+                                      if (widget.onSave != null) {
+                                        widget.onSave!();
+                                      } else {
+                                        _saveMonthYearSelection();
+                                      }
+                                      break;
+                                    default:
+                                      break;
+                                  }
+                                },
+                                child: Text(
+                                  widget.saveButtonLabel ?? 'Save',
+                                  style: Font.apply(
+                                    FontStyle.regular,
+                                    FontSize.h6,
+                                    color:
+                                        (mode == DatePickerWidgetMode.month ||
+                                                    mode ==
+                                                        DatePickerWidgetMode
+                                                            .year) &&
+                                                _hasMonthYearChanges
+                                            ? Colors.white
+                                            : const Color(0xFF393B40),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
                         ],
                       ),
                     ],
@@ -531,64 +616,93 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
   String _handleTitleText() {
     switch (mode) {
       case DatePickerWidgetMode.day:
-        return 'Select a date';
+        return widget.showTitleDay
+            ? (widget.titleDayMode ?? 'Select a date')
+            : '';
       case DatePickerWidgetMode.month:
-        return 'Select a month';
+        return widget.showTitleMonth
+            ? (widget.titleMonthMode ?? 'Select a month')
+            : '';
       case DatePickerWidgetMode.year:
-        return 'Select a year';
+        return widget.showTitleYear
+            ? (widget.titleYearMode ?? 'Select a year')
+            : '';
       case DatePickerWidgetMode.scroll:
-        return _rangeDatePickerValueWithDefaultValue.length <= 1
-            ? 'Select Start & End Date'
-            : formatDateRange(_rangeDatePickerValueWithDefaultValue);
+        return widget.showTitleRange
+            ? (widget.titleRangeMode ??
+                (_rangeDatePickerValueWithDefaultValue.length <= 1
+                    ? 'Select Start & End Date'
+                    : formatDateRange(_rangeDatePickerValueWithDefaultValue)))
+            : '';
+    }
+  }
+
+  bool _shouldShowTitle() {
+    switch (mode) {
+      case DatePickerWidgetMode.day:
+        return widget.showTitleDay;
+      case DatePickerWidgetMode.month:
+        return widget.showTitleMonth;
+      case DatePickerWidgetMode.year:
+        return widget.showTitleYear;
+      case DatePickerWidgetMode.scroll:
+        return widget.showTitleRange;
     }
   }
 
   Widget _buildSingleDatePickerWithValue() {
+    final DatePickerWidgetConfig effectiveConfig = widget.config ??
+        DatePickerWidgetConfig(
+          calendarViewMode: mode,
+          hideMonthPickerDividers: true,
+          hideScrollViewMonthWeekHeader: true,
+          hideScrollViewTopHeader: true,
+          selectedDayHighlightColor:
+              widget.selectedDayHighlightColor ?? Colors.grey,
+          selectedDayTextStyle: widget.selectedDayTextStyle ??
+              const TextStyle(
+                  color: Colors.black54, fontWeight: FontWeight.normal),
+          weekdayLabels: widget.customWeekdayLabels ??
+              const ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+          weekdayLabelTextStyle: widget.weekdayLabelTextStyle ??
+              Font.apply(FontStyle.regular, FontSize.h1, color: Colors.black87),
+          firstDayOfWeek: 0,
+          controlsHeight: widget.controlsHeight ?? 50,
+          dayMaxWidth: widget.dayMaxWidth ?? 50,
+          dayBorderRadius: widget.dayBorderRadius ?? BorderRadius.circular(8),
+          animateToDisplayedMonthDate: false,
+          controlsTextStyle: widget.controlsTextStyle ??
+              const TextStyle(
+                  color: Colors.black,
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold),
+          dayTextStyle: widget.dayTextStyle ??
+              const TextStyle(
+                  color: Colors.black54, fontWeight: FontWeight.normal),
+          disabledDayTextStyle: widget.disabledDayTextStyle ??
+              const TextStyle(color: Colors.grey),
+          centerAlignModePicker: true,
+          useAbbrLabelForMonthModePicker: true,
+          firstDate: widget.firstDate ??
+              DateTime(DateTime.now().year - 2, DateTime.now().month - 1,
+                  DateTime.now().day - 5),
+          lastDate: widget.lastDate ??
+              DateTime(DateTime.now().year + 3, DateTime.now().month + 2,
+                  DateTime.now().day + 10),
+          selectableDayPredicate: widget.selectableDayPredicate ??
+              (day) {
+                return true;
+              },
+          scrollViewController: _calendarScrollController,
+          scrollViewOnScrolling: (_) => _onUserScrolled(),
+          isTodayDecoration: widget.isTodayDecoration,
+          isSelectedDecoration: widget.isSelectedDecoration,
+          isDisabledDecoration: widget.isDisabledDecoration,
+        );
     return _buildCalendarLayout(DatePickerWidget(
       displayedMonthDate: _currentDisplayedMonthDate ??
           _singleDatePickerValueWithDefaultValue.first,
-      config: DatePickerWidgetConfig(
-        calendarViewMode: mode,
-        hideMonthPickerDividers: true,
-        hideScrollViewMonthWeekHeader: true,
-        hideScrollViewTopHeader: true,
-        selectedDayHighlightColor:
-            widget.selectedDayHighlightColor ?? Colors.grey,
-        selectedDayTextStyle: widget.selectedDayTextStyle ??
-            const TextStyle(
-                color: Colors.black54, fontWeight: FontWeight.normal),
-        weekdayLabels: const ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
-        weekdayLabelTextStyle: widget.weekdayLabelTextStyle ??
-            Font.apply(FontStyle.regular, FontSize.h1, color: Colors.black87),
-        firstDayOfWeek: 0,
-        controlsHeight: widget.controlsHeight ?? 50,
-        dayMaxWidth: widget.dayMaxWidth ?? 50,
-        dayBorderRadius: widget.dayBorderRadius ?? BorderRadius.circular(8),
-        animateToDisplayedMonthDate: false,
-        controlsTextStyle: widget.controlsTextStyle ??
-            const TextStyle(
-                color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),
-        dayTextStyle: widget.dayTextStyle ??
-            const TextStyle(
-                color: Colors.black54, fontWeight: FontWeight.normal),
-        disabledDayTextStyle:
-            widget.disabledDayTextStyle ?? const TextStyle(color: Colors.grey),
-        centerAlignModePicker: true,
-        useAbbrLabelForMonthModePicker: true,
-        firstDate: widget.firstDate ??
-            DateTime(DateTime.now().year - 2, DateTime.now().month - 1,
-                DateTime.now().day - 5),
-        lastDate: widget.lastDate ??
-            DateTime(DateTime.now().year + 3, DateTime.now().month + 2,
-                DateTime.now().day + 10),
-        selectableDayPredicate: widget.selectableDayPredicate ??
-            (day) {
-              return true;
-            },
-        // Pass the scroll controller
-        scrollViewController: _calendarScrollController,
-        scrollViewOnScrolling: (_) => _onUserScrolled(),
-      ),
+      config: effectiveConfig,
       value: _singleDatePickerValueWithDefaultValue,
       onValueChanged: _onSingleDateChanged,
       onDisplayedMonthChanged: _handleDisplayedMonthChanged,
@@ -601,54 +715,62 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
   }
 
   Widget _buildScrollRangeDatePickerWithValue() {
+    final DatePickerWidgetConfig effectiveConfig = widget.config ??
+        DatePickerWidgetConfig(
+          calendarType: DatePickerWidgetType.range,
+          calendarViewMode: mode,
+          rangeBidirectional: true,
+          selectedDayHighlightColor:
+              widget.selectedDayHighlightColor ?? Colors.teal[800],
+          dynamicCalendarRows: true,
+          selectableDayPredicate: widget.selectableDayPredicate ??
+              (day) {
+                return true;
+              },
+          hideMonthPickerDividers: true,
+          hideScrollViewMonthWeekHeader: true,
+          hideScrollViewTopHeader: true,
+          selectedDayTextStyle: widget.selectedDayTextStyle ??
+              const TextStyle(
+                  color: Colors.black54, fontWeight: FontWeight.normal),
+          weekdayLabels: widget.customWeekdayLabels ??
+              const ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+          weekdayLabelTextStyle: widget.weekdayLabelTextStyle ??
+              const TextStyle(
+                  color: Colors.black87, fontWeight: FontWeight.bold),
+          firstDayOfWeek: 0,
+          controlsHeight: widget.controlsHeight ?? 50,
+          dayMaxWidth: widget.dayMaxWidth ?? 50,
+          dayBorderRadius: widget.dayBorderRadius ?? BorderRadius.circular(8),
+          animateToDisplayedMonthDate: false,
+          controlsTextStyle: widget.controlsTextStyle ??
+              const TextStyle(
+                  color: Colors.black,
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold),
+          dayTextStyle: widget.dayTextStyle ??
+              const TextStyle(
+                  color: Colors.black54, fontWeight: FontWeight.normal),
+          disabledDayTextStyle: widget.disabledDayTextStyle ??
+              const TextStyle(color: Colors.grey),
+          centerAlignModePicker: true,
+          useAbbrLabelForMonthModePicker: true,
+          firstDate: widget.firstDate ??
+              DateTime(DateTime.now().year - 2, DateTime.now().month - 1,
+                  DateTime.now().day - 5),
+          lastDate: widget.lastDate ??
+              DateTime(DateTime.now().year + 3, DateTime.now().month + 2,
+                  DateTime.now().day + 10),
+          scrollViewController: _calendarScrollController,
+          scrollViewOnScrolling: (_) => _onUserScrolled(),
+          isTodayDecoration: widget.isTodayDecoration,
+          isSelectedDecoration: widget.isSelectedDecoration,
+          isDisabledDecoration: widget.isDisabledDecoration,
+        );
     return _buildCalendarLayout(DatePickerWidget(
       displayedMonthDate: _currentDisplayedMonthDate ??
           _singleDatePickerValueWithDefaultValue.first,
-      config: DatePickerWidgetConfig(
-        calendarType: DatePickerWidgetType.range,
-        calendarViewMode: mode,
-        rangeBidirectional: true,
-        selectedDayHighlightColor:
-            widget.selectedDayHighlightColor ?? Colors.teal[800],
-        dynamicCalendarRows: true,
-        selectableDayPredicate: widget.selectableDayPredicate ??
-            (day) {
-              return true;
-            },
-        hideMonthPickerDividers: true,
-        hideScrollViewMonthWeekHeader: true,
-        hideScrollViewTopHeader: true,
-        selectedDayTextStyle: widget.selectedDayTextStyle ??
-            const TextStyle(
-                color: Colors.black54, fontWeight: FontWeight.normal),
-        weekdayLabels: const ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
-        weekdayLabelTextStyle: widget.weekdayLabelTextStyle ??
-            const TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
-        firstDayOfWeek: 0,
-        controlsHeight: widget.controlsHeight ?? 50,
-        dayMaxWidth: widget.dayMaxWidth ?? 50,
-        dayBorderRadius: widget.dayBorderRadius ?? BorderRadius.circular(8),
-        animateToDisplayedMonthDate: false,
-        controlsTextStyle: widget.controlsTextStyle ??
-            const TextStyle(
-                color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),
-        dayTextStyle: widget.dayTextStyle ??
-            const TextStyle(
-                color: Colors.black54, fontWeight: FontWeight.normal),
-        disabledDayTextStyle:
-            widget.disabledDayTextStyle ?? const TextStyle(color: Colors.grey),
-        centerAlignModePicker: true,
-        useAbbrLabelForMonthModePicker: true,
-        firstDate: widget.firstDate ??
-            DateTime(DateTime.now().year - 2, DateTime.now().month - 1,
-                DateTime.now().day - 5),
-        lastDate: widget.lastDate ??
-            DateTime(DateTime.now().year + 3, DateTime.now().month + 2,
-                DateTime.now().day + 10),
-        // Pass the scroll controller
-        scrollViewController: _calendarScrollController,
-        scrollViewOnScrolling: (_) => _onUserScrolled(),
-      ),
+      config: effectiveConfig,
       value: _rangeDatePickerValueWithDefaultValue,
       onValueChanged: _onRangeDateChanged,
       onDisplayedMonthChanged: _handleDisplayedMonthChanged,
