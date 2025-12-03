@@ -43,6 +43,7 @@ class CustomDatePickerWidget extends StatefulWidget {
   final void Function()? onCancel;
   final void Function()? onSave;
   final void Function()? onRefresh;
+  final void Function(List<DateTime>)? onMultiDatesSelected;
 
   // New parameters for controlling visibility
   final bool showSaveButton;
@@ -107,7 +108,7 @@ class CustomDatePickerWidget extends StatefulWidget {
     this.isTodayDecoration,
     this.isSelectedDecoration,
     this.isDisabledDecoration,
-    this.config,
+    this.config, this.onMultiDatesSelected,
   }) : super(key: key);
 
   @override
@@ -133,6 +134,15 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
   // Add ScrollController for calendar scroll view
   final ScrollController _calendarScrollController = ScrollController();
   bool _suspendDisplayedMonthUpdate = false;
+
+  final today = DateUtils.dateOnly(DateTime.now());
+  late List<DateTime?> _multiDatePickerValueWithDefaultValue = [
+    DateTime(today.year, today.month, 1),
+    DateTime(today.year, today.month, 5),
+    DateTime(today.year, today.month, 14),
+    DateTime(today.year, today.month, 17),
+    DateTime(today.year, today.month, 25),
+  ];
 
   @override
   void initState() {
@@ -782,6 +792,82 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
     ));
   }
 
+  Widget _buildMultiDatePickerWithValue() {
+    final config = DatePickerWidgetConfig(
+      dayModeScrollDirection: Axis.vertical,
+      disableMonthPicker: true,
+      calendarType: DatePickerWidgetType.multi,
+      selectedDayHighlightColor: Colors.indigo,
+    );
+    return SizedBox(
+      width: 375,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SizedBox(height: 10),
+          const Text('Multi Date Picker'),
+          SizedBox(
+            width: 300,
+            child: DatePickerWidget(
+              config: config,
+              value: _multiDatePickerValueWithDefaultValue,
+              onValueChanged: (dates) =>
+                  setState(() => _multiDatePickerValueWithDefaultValue = dates),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Wrap(
+            children: [
+              const Text('Selection(s):  '),
+              const SizedBox(width: 10),
+              Text(
+                _getValueText(
+                  config.calendarType,
+                  _multiDatePickerValueWithDefaultValue,
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                softWrap: false,
+              ),
+            ],
+          ),
+          const SizedBox(height: 25),
+        ],
+      ),
+    );
+  }
+
+  String _getValueText(
+    DatePickerWidgetType datePickerType,
+    List<DateTime?> values,
+  ) {
+    values =
+        values.map((e) => e != null ? DateUtils.dateOnly(e) : null).toList();
+    var valueText = (values.isNotEmpty ? values[0] : null)
+        .toString()
+        .replaceAll('00:00:00.000', '');
+
+    if (datePickerType == DatePickerWidgetType.multi) {
+      valueText = values.isNotEmpty
+          ? values
+              .map((v) => v.toString().replaceAll('00:00:00.000', ''))
+              .join(', ')
+          : 'null';
+    } else if (datePickerType == DatePickerWidgetType.range) {
+      if (values.isNotEmpty) {
+        final startDate = values[0].toString().replaceAll('00:00:00.000', '');
+        final endDate = values.length > 1
+            ? values[1].toString().replaceAll('00:00:00.000', '')
+            : 'null';
+        valueText = '$startDate to $endDate';
+      } else {
+        return 'null';
+      }
+    }
+
+    return valueText;
+  }
+
   @override
   void dispose() {
     _calendarScrollController.dispose();
@@ -790,6 +876,29 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final config = widget.config ?? DatePickerWidgetConfig(
+      calendarType: widget.initialSingleMode
+          ? DatePickerWidgetType.single
+          : DatePickerWidgetType.multi,
+      firstDate: widget.firstDate ?? DateTime.now(),
+      lastDate: widget.lastDate ?? DateTime(DateTime.now().year + 50),
+      selectedDayHighlightColor: widget.selectedDayHighlightColor,
+      selectedDayTextStyle: widget.selectedDayTextStyle,
+      weekdayLabelTextStyle: widget.weekdayLabelTextStyle,
+      dayTextStyle: widget.dayTextStyle,
+      disabledDayTextStyle: widget.disabledDayTextStyle,
+      controlsTextStyle: widget.controlsTextStyle,
+      dayBorderRadius: widget.dayBorderRadius,
+      dayMaxWidth: widget.dayMaxWidth,
+      controlsHeight: widget.controlsHeight,
+      selectableDayPredicate: widget.selectableDayPredicate,
+      weekdayLabels: widget.customWeekdayLabels,
+      isTodayDecoration: widget.isTodayDecoration,
+      isSelectedDecoration: widget.isSelectedDecoration,
+      isDisabledDecoration: widget.isDisabledDecoration,
+      onMultiDatesSelected: widget.onMultiDatesSelected,
+    );
+
     return Column(
       children: [
         // Mode toggle

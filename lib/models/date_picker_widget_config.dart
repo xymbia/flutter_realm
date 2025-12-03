@@ -203,6 +203,7 @@ class DatePickerWidgetConfig {
     this.isTodayDecoration,
     this.isSelectedDecoration,
     this.isDisabledDecoration,
+    this.onMultiDatesSelected,
   })  : calendarType = calendarType ?? DatePickerWidgetType.single,
         firstDate = DateUtils.dateOnly(firstDate ?? DateTime.now()),
         lastDate =
@@ -443,6 +444,9 @@ class DatePickerWidgetConfig {
   /// Decoration for disabled cell
   final BoxDecoration? isDisabledDecoration;
 
+  /// Callback for multi-date selection
+  final void Function(List<DateTime>)? onMultiDatesSelected;
+
   /// Copy the current [DatePickerWidgetConfig] with some new values
   DatePickerWidgetConfig copyWith({
     DatePickerWidgetType? calendarType,
@@ -519,6 +523,7 @@ class DatePickerWidgetConfig {
     BoxDecoration? isTodayDecoration,
     BoxDecoration? isSelectedDecoration,
     BoxDecoration? isDisabledDecoration,
+    void Function(List<DateTime>)? onMultiDatesSelected,
   }) {
     return DatePickerWidgetConfig(
       calendarType: calendarType ?? this.calendarType,
@@ -625,6 +630,7 @@ class DatePickerWidgetConfig {
       isTodayDecoration: isTodayDecoration ?? this.isTodayDecoration,
       isSelectedDecoration: isSelectedDecoration ?? this.isSelectedDecoration,
       isDisabledDecoration: isDisabledDecoration ?? this.isDisabledDecoration,
+      onMultiDatesSelected: onMultiDatesSelected ?? this.onMultiDatesSelected,
     );
   }
 }
@@ -899,6 +905,7 @@ class DatePickerWidgetWithActionButtonsConfig
     BoxDecoration? isTodayDecoration,
     BoxDecoration? isSelectedDecoration,
     BoxDecoration? isDisabledDecoration,
+    void Function(List<DateTime>)? onMultiDatesSelected,
   }) {
     return DatePickerWidgetWithActionButtonsConfig(
       calendarType: calendarType ?? this.calendarType,

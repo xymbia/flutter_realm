@@ -7,6 +7,8 @@ import '../utils/date_util.dart';
 import '../utils/font_helper.dart';
 import '../widgets/custom_date_picker_widget.dart';
 
+enum DatePickerSelectionMode { single, multi, range }
+
 class DatePickerPage extends StatefulWidget {
   const DatePickerPage({
     super.key,
@@ -17,7 +19,7 @@ class DatePickerPage extends StatefulWidget {
 }
 
 class _DatePickerPageState extends State<DatePickerPage> {
-  bool isSingleDateMode = true;
+  DatePickerSelectionMode _selectionMode = DatePickerSelectionMode.single;
 
   @override
   Widget build(BuildContext context) {
@@ -40,17 +42,45 @@ class _DatePickerPageState extends State<DatePickerPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Expanded(
-                      child: Text(isSingleDateMode == true
+                      child: Text(_selectionMode == DatePickerSelectionMode.single
                           ? 'Single Mode'
-                          : 'Range Mode')),
+                          : _selectionMode == DatePickerSelectionMode.multi
+                              ? 'Multi Mode'
+                              : 'Range Mode')),
                   const SizedBox(width: 4),
-                  Switch(
-                    value: isSingleDateMode,
-                    onChanged: (value) {
-                      setState(() {
-                        isSingleDateMode = value;
-                      });
-                    },
+                  Row(
+                    children: [
+                      Radio<DatePickerSelectionMode>(
+                        value: DatePickerSelectionMode.single,
+                        groupValue: _selectionMode,
+                        onChanged: (value) {
+                          setState(() {
+                            _selectionMode = value!;
+                          });
+                        },
+                      ),
+                      const Text('Single'),
+                      Radio<DatePickerSelectionMode>(
+                        value: DatePickerSelectionMode.multi,
+                        groupValue: _selectionMode,
+                        onChanged: (value) {
+                          setState(() {
+                            _selectionMode = value!;
+                          });
+                        },
+                      ),
+                      const Text('Multi'),
+                      Radio<DatePickerSelectionMode>(
+                        value: DatePickerSelectionMode.range,
+                        groupValue: _selectionMode,
+                        onChanged: (value) {
+                          setState(() {
+                            _selectionMode = value!;
+                          });
+                        },
+                      ),
+                      const Text('Range'),
+                    ],
                   ),
                 ],
               )),
@@ -58,7 +88,8 @@ class _DatePickerPageState extends State<DatePickerPage> {
               child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: CustomDatePickerWidget(
-                      initialSingleMode: isSingleDateMode,
+                      initialSingleMode: _selectionMode == DatePickerSelectionMode.single,
+                      // For multi/range, you may want to pass additional parameters or change config
                       initialSelectedDate:
                           DateTime.now().add(const Duration(days: 1)),
                       initialSelectedRange: [
@@ -100,6 +131,15 @@ class _DatePickerPageState extends State<DatePickerPage> {
                               duration: const Duration(milliseconds: 2500),
                               content: Text(
                                   'Range: \t${formatDateRange([start, end])}')),
+                        );
+                      },
+                      onMultiDatesSelected: (dates) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            duration: const Duration(milliseconds: 2500),
+                            content: Text(
+                                'Multi: \t${dates.map(formatDate).join(", ")}'),
+                          ),
                         );
                       },
                       selectableDayPredicate: (day) {
