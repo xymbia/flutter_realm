@@ -1,8 +1,5 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../models/date_picker_widget_config.dart';
 import '../utils/date_util.dart';
 import '../utils/font_helper.dart';
 import '../widgets/custom_date_picker_widget.dart';
@@ -24,7 +21,7 @@ class _DatePickerPageState extends State<DatePickerPage> {
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context,
-        designSize: const Size(340, 720),
+        designSize: const Size(540, 1080),
         minTextAdapt: true,
         splitScreenMode: false);
 
@@ -37,52 +34,50 @@ class _DatePickerPageState extends State<DatePickerPage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(
-              height: 0.1.sh,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
                 children: [
-                  Row(
-                    children: [
-                      Radio<DatePickerSelectionMode>(
-                        value: DatePickerSelectionMode.single,
-                        groupValue: _selectionMode,
-                        onChanged: (value) {
-                          setState(() {
-                            _selectionMode = value!;
-                          });
-                        },
-                      ),
-                      const Text('Single'),
-                      Radio<DatePickerSelectionMode>(
-                        value: DatePickerSelectionMode.multi,
-                        groupValue: _selectionMode,
-                        onChanged: (value) {
-                          setState(() {
-                            _selectionMode = value!;
-                          });
-                        },
-                      ),
-                      const Text('Multi'),
-                      Radio<DatePickerSelectionMode>(
-                        value: DatePickerSelectionMode.range,
-                        groupValue: _selectionMode,
-                        onChanged: (value) {
-                          setState(() {
-                            _selectionMode = value!;
-                          });
-                        },
-                      ),
-                      const Text('Range'),
-                    ],
+                  Radio<DatePickerSelectionMode>(
+                    value: DatePickerSelectionMode.single,
+                    groupValue: _selectionMode,
+                    onChanged: (value) {
+                      setState(() {
+                        _selectionMode = value!;
+                      });
+                    },
                   ),
+                  const Text('Single'),
+                  Radio<DatePickerSelectionMode>(
+                    value: DatePickerSelectionMode.multi,
+                    groupValue: _selectionMode,
+                    onChanged: (value) {
+                      setState(() {
+                        _selectionMode = value!;
+                      });
+                    },
+                  ),
+                  const Text('Multi'),
+                  Radio<DatePickerSelectionMode>(
+                    value: DatePickerSelectionMode.range,
+                    groupValue: _selectionMode,
+                    onChanged: (value) {
+                      setState(() {
+                        _selectionMode = value!;
+                      });
+                    },
+                  ),
+                  const Text('Range'),
                 ],
-              )),
+              ),
+            ],
+          )),
           Expanded(
               child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: CustomDatePickerWidget(
                       selectionMode: _selectionMode,
-                      // For multi/range, you may want to pass additional parameters or change config
                       initialSelectedDate:
                           DateTime.now().add(const Duration(days: 1)),
                       initialSelectedRange: [
@@ -94,10 +89,15 @@ class _DatePickerPageState extends State<DatePickerPage> {
                       lastDate: DateTime(DateTime.now().year + 50,
                           DateTime.now().month + 6, DateTime.now().day),
                       selectedDayHighlightColor: Colors.black87,
-                      selectedDayTextStyle: const TextStyle(
+                      selectedDayTextStyle: Font.apply(
+                          FontStyle.regular, FontSize.h6,
+                          color: Colors.black87),
+                      selectedMonthTextStyle: const TextStyle(
+                          color: Colors.black87, fontWeight: FontWeight.bold),
+                      selectedYearTextStyle: const TextStyle(
                           color: Colors.black87, fontWeight: FontWeight.bold),
                       weekdayLabelTextStyle: Font.apply(
-                          FontStyle.regular, FontSize.h2,
+                          FontStyle.regular, FontSize.h6,
                           color: Colors.black87),
                       dayTextStyle: const TextStyle(
                           color: Colors.black, fontWeight: FontWeight.w500),
@@ -110,6 +110,9 @@ class _DatePickerPageState extends State<DatePickerPage> {
                       dayBorderRadius: BorderRadius.circular(18),
                       dayMaxWidth: 55,
                       controlsHeight: 55,
+                      showMonthNavButtons: true,
+                      show2Months: false,
+                      showMonthYearLabel: false,
                       onSingleDateSelected: (date) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -154,14 +157,21 @@ class _DatePickerPageState extends State<DatePickerPage> {
                       calendarPadding: const EdgeInsets.symmetric(
                           horizontal: 24, vertical: 8),
                       customWeekdayLabels: const [
-                        'Sun',
-                        'Mon',
-                        'Tue',
-                        'Wed',
-                        'Thu',
-                        'Fri',
-                        'Sat'
+                        'S',
+                        'M',
+                        'T',
+                        'W',
+                        'T',
+                        'F',
+                        'S'
                       ],
+                      weekdayLabelDecoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(50),
+                        color: const Color(0xFFBBFBBA),
+                        // Black background for today's date
+                        border: Border.all(
+                            width: 1, color: const Color(0xFFBBFBBA)),
+                      ),
                       titleDayMode: 'Pick a Day',
                       titleMonthMode: 'Pick a Month',
                       titleYearMode: 'Pick a Year',

@@ -376,7 +376,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
             onDisplayedMonthChanged: _handleDisplayedMonthDateChanged,
           ),
         );
-      case DatePickerWidgetMode.scroll /*|| DatePickerWidgetMode.day*/:
+      case DatePickerWidgetMode.scroll:
         return Padding(
           padding: const EdgeInsets.all(16.0),
           child: _CalendarScrollView(
