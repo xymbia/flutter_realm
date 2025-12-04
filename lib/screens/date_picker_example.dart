@@ -24,9 +24,9 @@ class _DatePickerPageState extends State<DatePickerPage> {
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context,
-        designSize: const Size(720, 1024),
+        designSize: const Size(340, 720),
         minTextAdapt: true,
-        splitScreenMode: true);
+        splitScreenMode: false);
 
     return Scaffold(
       appBar: AppBar(
@@ -37,17 +37,10 @@ class _DatePickerPageState extends State<DatePickerPage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(
-              width: 0.4.sw,
+              height: 0.1.sh,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Expanded(
-                      child: Text(_selectionMode == DatePickerSelectionMode.single
-                          ? 'Single Mode'
-                          : _selectionMode == DatePickerSelectionMode.multi
-                              ? 'Multi Mode'
-                              : 'Range Mode')),
-                  const SizedBox(width: 4),
                   Row(
                     children: [
                       Radio<DatePickerSelectionMode>(
@@ -88,7 +81,7 @@ class _DatePickerPageState extends State<DatePickerPage> {
               child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: CustomDatePickerWidget(
-                      initialSingleMode: _selectionMode == DatePickerSelectionMode.single,
+                      selectionMode: _selectionMode,
                       // For multi/range, you may want to pass additional parameters or change config
                       initialSelectedDate:
                           DateTime.now().add(const Duration(days: 1)),

@@ -356,7 +356,7 @@ class _CalendarViewState extends State<_CalendarView> {
                   dayRowsCount: firstMonthRows,
                 ),
               ),
-              if (shouldShowNextMonth) ...[
+              if (widget.config.show2months == true && shouldShowNextMonth) ...[
                 SizedBox(height: spacing),
                 Text(
                   "${getMonthAbbreviation(nextMonth.month)} ${nextMonth.year}",

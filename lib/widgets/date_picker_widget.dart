@@ -364,7 +364,19 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
             //onDisplayedYearChanged: _handleDisplayedYearDateChanged,
           ),
         );
-      case DatePickerWidgetMode.scroll || DatePickerWidgetMode.day:
+      case DatePickerWidgetMode.day:
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: _CalendarView(
+            config: widget.config,
+            key: _dayPickerKey,
+            initialMonth: _currentDisplayedMonthDate,
+            selectedDates: _selectedDates,
+            onChanged: _handleDayChanged,
+            onDisplayedMonthChanged: _handleDisplayedMonthDateChanged,
+          ),
+        );
+      case DatePickerWidgetMode.scroll /*|| DatePickerWidgetMode.day*/:
         return Padding(
           padding: const EdgeInsets.all(16.0),
           child: _CalendarScrollView(
