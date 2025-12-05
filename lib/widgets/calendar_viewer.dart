@@ -36,7 +36,8 @@ class CalendarView extends StatefulWidget {
   final DateTime yearDate;
   final List<DateTime> selectedDates;
 
-  const CalendarView({super.key, 
+  const CalendarView({
+    super.key,
     required this.yearDate,
     required this.selectedDates,
   });
@@ -87,7 +88,8 @@ class YearView extends StatelessWidget {
   final DateTime yearDate;
   final List<DateTime> selectedDates;
 
-  const YearView({super.key, 
+  const YearView({
+    super.key,
     required this.yearDate,
     required this.selectedDates,
   });
@@ -114,7 +116,8 @@ class MonthView extends StatelessWidget {
   final DateTime monthDate;
   final List<DateTime> selectedDates;
 
-  const MonthView({super.key, 
+  const MonthView({
+    super.key,
     required this.monthDate,
     required this.selectedDates,
   });
@@ -230,9 +233,10 @@ Widget _dateText({
   );
   return isSelected
       ? DottedBorder(
-          color: colorScheme.primary,
-          borderType: BorderType.Circle,
-          dashPattern: const [3, 3],
+          options: CircularDottedBorderOptions(
+            color: colorScheme.primary,
+            dashPattern: const [3, 3],
+          ),
           child: dateContent,
         )
       : dateContent;
