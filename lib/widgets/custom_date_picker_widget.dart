@@ -757,6 +757,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
       onYearSelected: _handleYearSelected,
       suppressVisibleMonthReporting: _suspendDisplayedMonthUpdate,
       userSelectedDate: _userSelectedMonthDate,
+      onMultiDatesSelected: widget.onMultiDatesSelected,
     ));
   }
 
@@ -835,6 +836,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
       onYearSelected: _handleYearSelected,
       suppressVisibleMonthReporting: _suspendDisplayedMonthUpdate,
       userSelectedDate: _userSelectedMonthDate,
+      onMultiDatesSelected: widget.onMultiDatesSelected,
     ));
   }
 
@@ -906,6 +908,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
       value: _multiDatePickerValueWithDefaultValue,
       onValueChanged: (dates) =>
           setState(() => _multiDatePickerValueWithDefaultValue = dates),
+      onMultiDatesSelected: widget.onMultiDatesSelected,
     ));
   }
 

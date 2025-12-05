@@ -356,7 +356,7 @@ class _CalendarViewState extends State<_CalendarView> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final double availableHeight = constraints.maxHeight;
-        final double headerHeight = 40.h;
+        final double headerHeight = 50.h;
         final double spacing = 8.h;
         final double remainingHeight =
             availableHeight - headerHeight - spacing * 4;
@@ -365,7 +365,7 @@ class _CalendarViewState extends State<_CalendarView> {
             widget.config.show2months == true && shouldShowNextMonth;
 
         final double firstMonthHeight = show2months
-            ? (remainingHeight / 2) * (firstMonthRows / _maxDayPickerRowCount)
+            ? (remainingHeight /2) * (firstMonthRows / _maxDayPickerRowCount)
             : remainingHeight * (firstMonthRows / _maxDayPickerRowCount);
 
         final double secondMonthHeight = show2months
