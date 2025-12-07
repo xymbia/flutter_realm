@@ -1,14 +1,13 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../models/date_picker_widget_config.dart';
+import '../screens/date_picker_example.dart';
 import '../utils/date_util.dart';
 import '../utils/font_helper.dart';
 import 'date_picker_widget.dart';
 
 class CustomDatePickerWidget extends StatefulWidget {
-  final bool initialSingleMode;
+  final DatePickerSelectionMode selectionMode;
   final DateTime? initialSelectedDate;
   final List<DateTime>? initialSelectedRange;
   final DateTime? firstDate;
@@ -17,6 +16,8 @@ class CustomDatePickerWidget extends StatefulWidget {
   final TextStyle? selectedDayTextStyle;
   final TextStyle? weekdayLabelTextStyle;
   final TextStyle? dayTextStyle;
+  final TextStyle? selectedMonthTextStyle;
+  final TextStyle? selectedYearTextStyle;
   final TextStyle? disabledDayTextStyle;
   final TextStyle? controlsTextStyle;
   final BorderRadius? dayBorderRadius;
@@ -36,6 +37,7 @@ class CustomDatePickerWidget extends StatefulWidget {
   final EdgeInsetsGeometry? cardPadding;
   final EdgeInsetsGeometry? calendarPadding;
   final List<String>? customWeekdayLabels;
+  final BoxDecoration? weekdayLabelDecoration;
   final String? titleDayMode;
   final String? titleMonthMode;
   final String? titleYearMode;
@@ -43,6 +45,7 @@ class CustomDatePickerWidget extends StatefulWidget {
   final void Function()? onCancel;
   final void Function()? onSave;
   final void Function()? onRefresh;
+  final void Function(List<DateTime>)? onMultiDatesSelected;
 
   // New parameters for controlling visibility
   final bool showSaveButton;
@@ -52,16 +55,20 @@ class CustomDatePickerWidget extends StatefulWidget {
   final bool showTitleMonth;
   final bool showTitleYear;
   final bool showTitleRange;
+  final bool showMonthNavButtons;
+  final bool show2Months;
+  final bool showMonthYearLabel;
 
   // Decoration parameters
   final BoxDecoration? isTodayDecoration;
   final BoxDecoration? isSelectedDecoration;
   final BoxDecoration? isDisabledDecoration;
   final DatePickerWidgetConfig? config;
+  final ScrollController? monthViewController;
 
   const CustomDatePickerWidget({
     Key? key,
-    this.initialSingleMode = true,
+    required this.selectionMode,
     this.initialSelectedDate,
     this.initialSelectedRange,
     this.firstDate,
@@ -70,6 +77,8 @@ class CustomDatePickerWidget extends StatefulWidget {
     this.selectedDayTextStyle,
     this.weekdayLabelTextStyle,
     this.dayTextStyle,
+    this.selectedMonthTextStyle,
+    this.selectedYearTextStyle,
     this.disabledDayTextStyle,
     this.controlsTextStyle,
     this.dayBorderRadius,
@@ -89,6 +98,7 @@ class CustomDatePickerWidget extends StatefulWidget {
     this.cardPadding,
     this.calendarPadding,
     this.customWeekdayLabels,
+    this.weekdayLabelDecoration,
     this.titleDayMode,
     this.titleMonthMode,
     this.titleYearMode,
@@ -108,6 +118,11 @@ class CustomDatePickerWidget extends StatefulWidget {
     this.isSelectedDecoration,
     this.isDisabledDecoration,
     this.config,
+    this.onMultiDatesSelected,
+    this.monthViewController,
+    this.showMonthNavButtons = false,
+    this.show2Months = true,
+    this.showMonthYearLabel = true,
   }) : super(key: key);
 
   @override
@@ -115,7 +130,7 @@ class CustomDatePickerWidget extends StatefulWidget {
 }
 
 class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
-  late bool isSingleDateMode;
+  late DatePickerSelectionMode selectionMode;
   late DatePickerWidgetMode mode;
   late List<DateTime?> _singleDatePickerValueWithDefaultValue;
   late List<DateTime> _rangeDatePickerValueWithDefaultValue;
@@ -134,11 +149,14 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
   final ScrollController _calendarScrollController = ScrollController();
   bool _suspendDisplayedMonthUpdate = false;
 
+  final today = DateUtils.dateOnly(DateTime.now());
+  late List<DateTime?> _multiDatePickerValueWithDefaultValue = [];
+
   @override
   void initState() {
     super.initState();
-    isSingleDateMode = widget.initialSingleMode;
-    mode = isSingleDateMode
+    selectionMode = widget.selectionMode;
+    mode = selectionMode == DatePickerSelectionMode.single
         ? DatePickerWidgetMode.day
         : DatePickerWidgetMode.scroll;
     _singleDatePickerValueWithDefaultValue = [
@@ -160,7 +178,11 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
     final nextMonth = monthAbbreviations[nextMonthDate.month - 1];
 
     // Display both months
-    selectedMonth = '$currentMonth - $nextMonth';
+    if (widget.show2Months == true) {
+      selectedMonth = '$currentMonth - $nextMonth';
+    } else {
+      selectedMonth = currentMonth;
+    }
     selectedYear = displayedDate.year;
     _currentDisplayedMonthDate = displayedDate;
 
@@ -172,10 +194,10 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
   @override
   void didUpdateWidget(covariant CustomDatePickerWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.initialSingleMode != widget.initialSingleMode) {
+    if (oldWidget.selectionMode != widget.selectionMode) {
       setState(() {
-        isSingleDateMode = widget.initialSingleMode;
-        mode = isSingleDateMode
+        selectionMode = widget.selectionMode;
+        mode = selectionMode == DatePickerSelectionMode.single
             ? DatePickerWidgetMode.day
             : DatePickerWidgetMode.scroll;
       });
@@ -186,10 +208,19 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
     final currentMonth = monthAbbreviations[date.month - 1];
     final nextMonthDate = DateTime(date.year, date.month + 1);
     final nextMonth = monthAbbreviations[nextMonthDate.month - 1];
-    selectedMonth = '$currentMonth - $nextMonth';
+
+    if (widget.show2Months == true) {
+      selectedMonth = '$currentMonth - $nextMonth';
+    } else {
+      selectedMonth = currentMonth;
+    }
     selectedYear = date.year;
 
-    _tempSelectedMonth = '$currentMonth - $nextMonth';
+    if (widget.show2Months == true) {
+      _tempSelectedMonth = '$currentMonth - $nextMonth';
+    } else {
+      _tempSelectedMonth = currentMonth;
+    }
     _tempSelectedYear = date.year;
   }
 
@@ -295,7 +326,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
       // Suppress next scroll update!
       _suspendDisplayedMonthUpdate = true;
 
-      if (isSingleDateMode) {
+      if (selectionMode == DatePickerSelectionMode.single) {
         _singleDatePickerValueWithDefaultValue = [newDate];
         _currentDisplayedMonthDate = newDate;
       } else {
@@ -303,7 +334,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
         _currentDisplayedMonthDate = newDate;
       }
 
-      mode = isSingleDateMode
+      mode = selectionMode == DatePickerSelectionMode.single
           ? DatePickerWidgetMode.day
           : DatePickerWidgetMode.scroll;
     });
@@ -318,7 +349,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
       _hasMonthYearChanges = false;
 
       // Switch back to day mode after canceling
-      if (isSingleDateMode) {
+      if (selectionMode == DatePickerSelectionMode.single) {
         mode = DatePickerWidgetMode.day;
       } else {
         mode = DatePickerWidgetMode.scroll;
@@ -333,7 +364,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
   void setCurrentDateSelection(DateTime date,
       {bool updateDisplayedMonth = true}) {
     setState(() {
-      if (isSingleDateMode) {
+      if (selectionMode == DatePickerSelectionMode.single) {
         // For single date mode, update the single date picker value
         _singleDatePickerValueWithDefaultValue = [date];
       } else {
@@ -363,7 +394,12 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
         final currentMonth = monthAbbreviations[date.month - 1];
         final nextMonthDate = DateTime(date.year, date.month + 1);
         final nextMonth = monthAbbreviations[nextMonthDate.month - 1];
-        selectedMonth = '$currentMonth - $nextMonth';
+
+        if (widget.show2Months == true) {
+          selectedMonth = '$currentMonth - $nextMonth';
+        } else {
+          selectedMonth = currentMonth;
+        }
         selectedYear = date.year;
       }
     });
@@ -379,7 +415,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
       _tempSelectedYear = 0;
       _currentDisplayedMonthDate = null;
 
-      if (isSingleDateMode) {
+      if (selectionMode == DatePickerSelectionMode.single) {
         _singleDatePickerValueWithDefaultValue = [];
       } else {
         _rangeDatePickerValueWithDefaultValue = [];
@@ -468,8 +504,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                               Flexible(
                                 child: Text(
                                   selectedMonth,
-                                  style: Font.apply(
-                                      FontStyle.regular, FontSize.h2),
+                                  style: widget.selectedMonthTextStyle,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
@@ -482,7 +517,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                           ),
                         ),
                       ),
-                      const Spacer(flex: 2),
+                      const Spacer(flex: 3),
                       Expanded(
                         child: InkWell(
                           onTap: () {
@@ -494,8 +529,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                             children: [
                               Text(
                                 selectedYear.toString(),
-                                style:
-                                    Font.apply(FontStyle.regular, FontSize.h2),
+                                style: widget.selectedYearTextStyle,
                               ),
                               Icon(
                                 Icons.keyboard_arrow_down,
@@ -653,52 +687,64 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
   Widget _buildSingleDatePickerWithValue() {
     final DatePickerWidgetConfig effectiveConfig = widget.config ??
         DatePickerWidgetConfig(
-          calendarViewMode: mode,
-          hideMonthPickerDividers: true,
-          hideScrollViewMonthWeekHeader: true,
-          hideScrollViewTopHeader: true,
-          selectedDayHighlightColor:
-              widget.selectedDayHighlightColor ?? Colors.grey,
-          selectedDayTextStyle: widget.selectedDayTextStyle ??
-              const TextStyle(
-                  color: Colors.black54, fontWeight: FontWeight.normal),
-          weekdayLabels: widget.customWeekdayLabels ??
-              const ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
-          weekdayLabelTextStyle: widget.weekdayLabelTextStyle ??
-              Font.apply(FontStyle.regular, FontSize.h1, color: Colors.black87),
-          firstDayOfWeek: 0,
-          controlsHeight: widget.controlsHeight ?? 50,
-          dayMaxWidth: widget.dayMaxWidth ?? 50,
-          dayBorderRadius: widget.dayBorderRadius ?? BorderRadius.circular(8),
-          animateToDisplayedMonthDate: false,
-          controlsTextStyle: widget.controlsTextStyle ??
-              const TextStyle(
-                  color: Colors.black,
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold),
-          dayTextStyle: widget.dayTextStyle ??
-              const TextStyle(
-                  color: Colors.black54, fontWeight: FontWeight.normal),
-          disabledDayTextStyle: widget.disabledDayTextStyle ??
-              const TextStyle(color: Colors.grey),
-          centerAlignModePicker: true,
-          useAbbrLabelForMonthModePicker: true,
-          firstDate: widget.firstDate ??
-              DateTime(DateTime.now().year - 2, DateTime.now().month - 1,
-                  DateTime.now().day - 5),
-          lastDate: widget.lastDate ??
-              DateTime(DateTime.now().year + 3, DateTime.now().month + 2,
-                  DateTime.now().day + 10),
-          selectableDayPredicate: widget.selectableDayPredicate ??
-              (day) {
-                return true;
-              },
-          scrollViewController: _calendarScrollController,
-          scrollViewOnScrolling: (_) => _onUserScrolled(),
-          isTodayDecoration: widget.isTodayDecoration,
-          isSelectedDecoration: widget.isSelectedDecoration,
-          isDisabledDecoration: widget.isDisabledDecoration,
-        );
+            calendarViewMode: mode,
+            hideMonthPickerDividers: true,
+            hideScrollViewMonthWeekHeader: true,
+            hideScrollViewTopHeader: true,
+            selectedDayHighlightColor:
+                widget.selectedDayHighlightColor ?? Colors.grey,
+            selectedDayTextStyle: widget.selectedDayTextStyle ??
+                const TextStyle(
+                    color: Colors.black54, fontWeight: FontWeight.normal),
+            selectedMonthTextStyle: widget.selectedMonthTextStyle ??
+                const TextStyle(
+                    color: Colors.black54, fontWeight: FontWeight.normal),
+            selectedYearTextStyle: widget.selectedYearTextStyle ??
+                const TextStyle(
+                    color: Colors.black54, fontWeight: FontWeight.normal),
+            weekdayLabels: widget.customWeekdayLabels ??
+                const ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+            weekdayLabelDecoration: widget.weekdayLabelDecoration,
+            weekdayLabelTextStyle: widget.weekdayLabelTextStyle ??
+                Font.apply(FontStyle.regular, FontSize.h1,
+                    color: Colors.black87),
+            firstDayOfWeek: 0,
+            controlsHeight: widget.controlsHeight ?? 50,
+            dayMaxWidth: widget.dayMaxWidth ?? 50,
+            dayBorderRadius: widget.dayBorderRadius ?? BorderRadius.circular(8),
+            animateToDisplayedMonthDate: false,
+            controlsTextStyle: widget.controlsTextStyle ??
+                const TextStyle(
+                    color: Colors.black,
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold),
+            dayTextStyle: widget.dayTextStyle ??
+                const TextStyle(
+                    color: Colors.black54, fontWeight: FontWeight.normal),
+            disabledDayTextStyle: widget.disabledDayTextStyle ??
+                const TextStyle(color: Colors.grey),
+            centerAlignModePicker: true,
+            useAbbrLabelForMonthModePicker: true,
+            firstDate: widget.firstDate ??
+                DateTime(DateTime.now().year - 2, DateTime.now().month - 1,
+                    DateTime.now().day - 5),
+            lastDate: widget.lastDate ??
+                DateTime(DateTime.now().year + 3, DateTime.now().month + 2,
+                    DateTime.now().day + 10),
+            selectableDayPredicate: widget.selectableDayPredicate ??
+                (day) {
+                  return true;
+                },
+            scrollViewController: _calendarScrollController,
+            scrollViewOnScrolling: (_) => _onUserScrolled(),
+            isTodayDecoration: widget.isTodayDecoration,
+            isSelectedDecoration: widget.isSelectedDecoration,
+            isDisabledDecoration: widget.isDisabledDecoration,
+            show2months: widget.show2Months,
+            showMonthYearLabel: widget.showMonthYearLabel,
+            monthViewController: widget.monthViewController,
+            hideLastMonthIcon: !widget.showMonthNavButtons,
+            hideNextMonthIcon: !widget.showMonthNavButtons);
     return _buildCalendarLayout(DatePickerWidget(
       displayedMonthDate: _currentDisplayedMonthDate ??
           _singleDatePickerValueWithDefaultValue.first,
@@ -711,62 +757,73 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
       onYearSelected: _handleYearSelected,
       suppressVisibleMonthReporting: _suspendDisplayedMonthUpdate,
       userSelectedDate: _userSelectedMonthDate,
+      onMultiDatesSelected: widget.onMultiDatesSelected,
     ));
   }
 
   Widget _buildScrollRangeDatePickerWithValue() {
     final DatePickerWidgetConfig effectiveConfig = widget.config ??
         DatePickerWidgetConfig(
-          calendarType: DatePickerWidgetType.range,
-          calendarViewMode: mode,
-          rangeBidirectional: true,
-          selectedDayHighlightColor:
-              widget.selectedDayHighlightColor ?? Colors.teal[800],
-          dynamicCalendarRows: true,
-          selectableDayPredicate: widget.selectableDayPredicate ??
-              (day) {
-                return true;
-              },
-          hideMonthPickerDividers: true,
-          hideScrollViewMonthWeekHeader: true,
-          hideScrollViewTopHeader: true,
-          selectedDayTextStyle: widget.selectedDayTextStyle ??
-              const TextStyle(
-                  color: Colors.black54, fontWeight: FontWeight.normal),
-          weekdayLabels: widget.customWeekdayLabels ??
-              const ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
-          weekdayLabelTextStyle: widget.weekdayLabelTextStyle ??
-              const TextStyle(
-                  color: Colors.black87, fontWeight: FontWeight.bold),
-          firstDayOfWeek: 0,
-          controlsHeight: widget.controlsHeight ?? 50,
-          dayMaxWidth: widget.dayMaxWidth ?? 50,
-          dayBorderRadius: widget.dayBorderRadius ?? BorderRadius.circular(8),
-          animateToDisplayedMonthDate: false,
-          controlsTextStyle: widget.controlsTextStyle ??
-              const TextStyle(
-                  color: Colors.black,
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold),
-          dayTextStyle: widget.dayTextStyle ??
-              const TextStyle(
-                  color: Colors.black54, fontWeight: FontWeight.normal),
-          disabledDayTextStyle: widget.disabledDayTextStyle ??
-              const TextStyle(color: Colors.grey),
-          centerAlignModePicker: true,
-          useAbbrLabelForMonthModePicker: true,
-          firstDate: widget.firstDate ??
-              DateTime(DateTime.now().year - 2, DateTime.now().month - 1,
-                  DateTime.now().day - 5),
-          lastDate: widget.lastDate ??
-              DateTime(DateTime.now().year + 3, DateTime.now().month + 2,
-                  DateTime.now().day + 10),
-          scrollViewController: _calendarScrollController,
-          scrollViewOnScrolling: (_) => _onUserScrolled(),
-          isTodayDecoration: widget.isTodayDecoration,
-          isSelectedDecoration: widget.isSelectedDecoration,
-          isDisabledDecoration: widget.isDisabledDecoration,
-        );
+            calendarType: DatePickerWidgetType.range,
+            calendarViewMode: mode,
+            rangeBidirectional: true,
+            selectedDayHighlightColor:
+                widget.selectedDayHighlightColor ?? Colors.teal[800],
+            dynamicCalendarRows: true,
+            selectableDayPredicate: widget.selectableDayPredicate ??
+                (day) {
+                  return true;
+                },
+            hideMonthPickerDividers: true,
+            hideScrollViewMonthWeekHeader: true,
+            hideScrollViewTopHeader: true,
+            selectedDayTextStyle: widget.selectedDayTextStyle ??
+                const TextStyle(
+                    color: Colors.black54, fontWeight: FontWeight.normal),
+            selectedMonthTextStyle: widget.selectedMonthTextStyle ??
+                const TextStyle(
+                    color: Colors.black54, fontWeight: FontWeight.normal),
+            selectedYearTextStyle: widget.selectedYearTextStyle ??
+                const TextStyle(
+                    color: Colors.black54, fontWeight: FontWeight.normal),
+            weekdayLabels: widget.customWeekdayLabels ??
+                const ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+            weekdayLabelDecoration: widget.weekdayLabelDecoration,
+            weekdayLabelTextStyle: widget.weekdayLabelTextStyle ??
+                Font.apply(FontStyle.regular, FontSize.h1,
+                    color: Colors.black87),
+            firstDayOfWeek: 0,
+            controlsHeight: widget.controlsHeight ?? 50,
+            dayMaxWidth: widget.dayMaxWidth ?? 50,
+            dayBorderRadius: widget.dayBorderRadius ?? BorderRadius.circular(8),
+            animateToDisplayedMonthDate: false,
+            controlsTextStyle: widget.controlsTextStyle ??
+                const TextStyle(
+                    color: Colors.black,
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold),
+            dayTextStyle: widget.dayTextStyle ??
+                const TextStyle(
+                    color: Colors.black54, fontWeight: FontWeight.normal),
+            disabledDayTextStyle: widget.disabledDayTextStyle ??
+                const TextStyle(color: Colors.grey),
+            centerAlignModePicker: true,
+            useAbbrLabelForMonthModePicker: true,
+            firstDate: widget.firstDate ??
+                DateTime(DateTime.now().year - 2, DateTime.now().month - 1,
+                    DateTime.now().day - 5),
+            lastDate: widget.lastDate ??
+                DateTime(DateTime.now().year + 3, DateTime.now().month + 2,
+                    DateTime.now().day + 10),
+            scrollViewController: _calendarScrollController,
+            scrollViewOnScrolling: (_) => _onUserScrolled(),
+            isTodayDecoration: widget.isTodayDecoration,
+            isSelectedDecoration: widget.isSelectedDecoration,
+            isDisabledDecoration: widget.isDisabledDecoration,
+            show2months: widget.show2Months,
+            showMonthYearLabel: widget.showMonthYearLabel,
+            hideLastMonthIcon: !widget.showMonthNavButtons,
+            hideNextMonthIcon: !widget.showMonthNavButtons);
     return _buildCalendarLayout(DatePickerWidget(
       displayedMonthDate: _currentDisplayedMonthDate ??
           _singleDatePickerValueWithDefaultValue.first,
@@ -779,7 +836,111 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
       onYearSelected: _handleYearSelected,
       suppressVisibleMonthReporting: _suspendDisplayedMonthUpdate,
       userSelectedDate: _userSelectedMonthDate,
+      onMultiDatesSelected: widget.onMultiDatesSelected,
     ));
+  }
+
+  Widget _buildMultiDatePickerWithValue() {
+    final DatePickerWidgetConfig effectiveConfig = widget.config ??
+        DatePickerWidgetConfig(
+            calendarType: DatePickerWidgetType.multi,
+            calendarViewMode: DatePickerWidgetMode.day,
+            rangeBidirectional: true,
+            selectedDayHighlightColor:
+                widget.selectedDayHighlightColor ?? Colors.teal[800],
+            dynamicCalendarRows: true,
+            selectableDayPredicate: widget.selectableDayPredicate ??
+                (day) {
+                  return true;
+                },
+            hideMonthPickerDividers: true,
+            hideScrollViewMonthWeekHeader: true,
+            hideScrollViewTopHeader: true,
+            selectedDayTextStyle: widget.selectedDayTextStyle ??
+                const TextStyle(
+                    color: Colors.black54, fontWeight: FontWeight.normal),
+            selectedMonthTextStyle: widget.selectedMonthTextStyle ??
+                const TextStyle(
+                    color: Colors.black54, fontWeight: FontWeight.normal),
+            selectedYearTextStyle: widget.selectedYearTextStyle ??
+                const TextStyle(
+                    color: Colors.black54, fontWeight: FontWeight.normal),
+            weekdayLabels: widget.customWeekdayLabels ??
+                const ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+            weekdayLabelDecoration: widget.weekdayLabelDecoration,
+            weekdayLabelTextStyle: widget.weekdayLabelTextStyle ??
+                Font.apply(FontStyle.regular, FontSize.h1,
+                    color: Colors.black87),
+            firstDayOfWeek: 0,
+            controlsHeight: widget.controlsHeight ?? 50,
+            dayMaxWidth: widget.dayMaxWidth ?? 50,
+            dayBorderRadius: widget.dayBorderRadius ?? BorderRadius.circular(8),
+            animateToDisplayedMonthDate: false,
+            controlsTextStyle: widget.controlsTextStyle ??
+                const TextStyle(
+                    color: Colors.black,
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold),
+            dayTextStyle: widget.dayTextStyle ??
+                const TextStyle(
+                    color: Colors.black54, fontWeight: FontWeight.normal),
+            disabledDayTextStyle: widget.disabledDayTextStyle ??
+                const TextStyle(color: Colors.grey),
+            centerAlignModePicker: true,
+            useAbbrLabelForMonthModePicker: true,
+            firstDate: widget.firstDate ??
+                DateTime(DateTime.now().year - 2, DateTime.now().month - 1,
+                    DateTime.now().day - 5),
+            lastDate: widget.lastDate ??
+                DateTime(DateTime.now().year + 3, DateTime.now().month + 2,
+                    DateTime.now().day + 10),
+            scrollViewController: _calendarScrollController,
+            scrollViewOnScrolling: (_) => _onUserScrolled(),
+            isTodayDecoration: widget.isTodayDecoration,
+            isSelectedDecoration: widget.isSelectedDecoration,
+            isDisabledDecoration: widget.isDisabledDecoration,
+            show2months: widget.show2Months,
+            showMonthYearLabel: widget.showMonthYearLabel,
+            hideLastMonthIcon: !widget.showMonthNavButtons,
+            hideNextMonthIcon: !widget.showMonthNavButtons);
+    return _buildCalendarLayout(DatePickerWidget(
+      config: effectiveConfig,
+      value: _multiDatePickerValueWithDefaultValue,
+      onValueChanged: (dates) =>
+          setState(() => _multiDatePickerValueWithDefaultValue = dates),
+      onMultiDatesSelected: widget.onMultiDatesSelected,
+    ));
+  }
+
+  String _getValueText(
+    DatePickerWidgetType datePickerType,
+    List<DateTime?> values,
+  ) {
+    values =
+        values.map((e) => e != null ? DateUtils.dateOnly(e) : null).toList();
+    var valueText = (values.isNotEmpty ? values[0] : null)
+        .toString()
+        .replaceAll('00:00:00.000', '');
+
+    if (datePickerType == DatePickerWidgetType.multi) {
+      valueText = values.isNotEmpty
+          ? values
+              .map((v) => v.toString().replaceAll('00:00:00.000', ''))
+              .join(', ')
+          : 'null';
+    } else if (datePickerType == DatePickerWidgetType.range) {
+      if (values.isNotEmpty) {
+        final startDate = values[0].toString().replaceAll('00:00:00.000', '');
+        final endDate = values.length > 1
+            ? values[1].toString().replaceAll('00:00:00.000', '')
+            : 'null';
+        valueText = '$startDate to $endDate';
+      } else {
+        return 'null';
+      }
+    }
+
+    return valueText;
   }
 
   @override
@@ -793,9 +954,11 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
     return Column(
       children: [
         // Mode toggle
-        isSingleDateMode
+        selectionMode == DatePickerSelectionMode.single
             ? Expanded(child: _buildSingleDatePickerWithValue())
-            : Expanded(child: _buildScrollRangeDatePickerWithValue())
+            : selectionMode == DatePickerSelectionMode.multi
+                ? Expanded(child: _buildMultiDatePickerWithValue())
+                : Expanded(child: _buildScrollRangeDatePickerWithValue())
       ],
     );
   }

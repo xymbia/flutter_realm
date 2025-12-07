@@ -149,6 +149,26 @@ class _CalendarViewState extends State<_CalendarView> {
     return null;
   }
 
+  /// Navigate to the next month.
+  void _handleNextMonth() {
+    if (!_isDisplayingLastMonth) {
+      _pageController.nextPage(
+        duration: _monthScrollDuration,
+        curve: Curves.ease,
+      );
+    }
+  }
+
+  /// Navigate to the previous month.
+  void _handlePreviousMonth() {
+    if (!_isDisplayingFirstMonth) {
+      _pageController.previousPage(
+        duration: _monthScrollDuration,
+        curve: Curves.ease,
+      );
+    }
+  }
+
   /// Navigate to the given month.
   void _showMonth(DateTime month, {bool jump = false}) {
     final int monthPage = DateUtils.monthDelta(widget.config.firstDate, month);
@@ -273,6 +293,8 @@ class _CalendarViewState extends State<_CalendarView> {
 
   List<Widget> _dayHeaders(
       TextStyle? headerStyle, MaterialLocalizations localizations) {
+    BoxDecoration? weekDayLabelDecoration =
+        widget.config.weekdayLabelDecoration;
     final List<Widget> result = <Widget>[];
     final weekdays =
         widget.config.weekdayLabels ?? localizations.narrowWeekdays;
@@ -283,47 +305,70 @@ class _CalendarViewState extends State<_CalendarView> {
     for (int i = firstDayOfWeek; true; i = (i + 1) % 7) {
       final String weekday = weekdays[i];
       result.add(ExcludeSemantics(
-        child: widget.config.weekdayLabelBuilder?.call(weekday: i) ??
-            Center(
-              child: Text(weekday,
-                  style: Font.apply(FontStyle.regular, FontSize.h6,
-                      color: const Color(0xFF5C5E66))),
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
+              child: widget.config.weekdayLabelBuilder?.call(weekday: i) ??
+                  Container(
+                    decoration: (weekDayLabelDecoration != null)
+                        ? weekDayLabelDecoration
+                        : null,
+                    child: Center(
+                      child: Text(weekday,
+                          style: widget.config.weekdayLabelTextStyle ??
+                              headerStyle ??
+                              TextStyle(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurface
+                                    .withValues(alpha: 0.60),
+                              )),
+                    ),
+                  ),
             ),
-      ));
+          )));
       if (i == (firstDayOfWeek - 1) % 7) break;
     }
     return result;
   }
 
   Widget _buildItems(BuildContext context, int index) {
-    final MaterialLocalizations localizations = MaterialLocalizations.of(context);
+    final MaterialLocalizations localizations =
+        MaterialLocalizations.of(context);
     final List<Widget> dayItems = _dayHeaders(null, localizations);
-    final DateTime month = DateUtils.addMonthsToMonthDate(widget.config.firstDate, index);
+    final DateTime month =
+        DateUtils.addMonthsToMonthDate(widget.config.firstDate, index);
     final nextMonth = DateUtils.addMonthsToMonthDate(month, 1);
     final shouldShowNextMonth = nextMonth.isBefore(widget.config.lastDate) ||
         DateUtils.isSameMonth(nextMonth, widget.config.lastDate);
 
     final firstMonthRows = widget.config.dynamicCalendarRows == true
-        ? getDayRowsCount(
-        month.year, month.month,
-        widget.config.firstDayOfWeek ?? localizations.firstDayOfWeekIndex)
+        ? getDayRowsCount(month.year, month.month,
+            widget.config.firstDayOfWeek ?? localizations.firstDayOfWeekIndex)
         : _maxDayPickerRowCount;
 
     final secondMonthRows = widget.config.dynamicCalendarRows == true
-        ? getDayRowsCount(
-        nextMonth.year, nextMonth.month,
-        widget.config.firstDayOfWeek ?? localizations.firstDayOfWeekIndex)
+        ? getDayRowsCount(nextMonth.year, nextMonth.month,
+            widget.config.firstDayOfWeek ?? localizations.firstDayOfWeekIndex)
         : _maxDayPickerRowCount;
 
     return LayoutBuilder(
       builder: (context, constraints) {
         final double availableHeight = constraints.maxHeight;
-        final double headerHeight = 40.h; // adjusted header height
+        final double headerHeight = 50.h;
         final double spacing = 8.h;
-        final double remainingHeight = availableHeight - headerHeight - spacing * 4;
+        final double remainingHeight =
+            availableHeight - headerHeight - spacing * 4;
 
-        final double firstMonthHeight = (remainingHeight / (shouldShowNextMonth ? 2 : 1)) * (firstMonthRows / _maxDayPickerRowCount);
-        final double secondMonthHeight = shouldShowNextMonth
+        final bool show2months =
+            widget.config.show2months == true && shouldShowNextMonth;
+
+        final double firstMonthHeight = show2months
+            ? (remainingHeight /2) * (firstMonthRows / _maxDayPickerRowCount)
+            : remainingHeight * (firstMonthRows / _maxDayPickerRowCount);
+
+        final double secondMonthHeight = show2months
             ? (remainingHeight / 2) * (secondMonthRows / _maxDayPickerRowCount)
             : 0;
 
@@ -331,32 +376,36 @@ class _CalendarViewState extends State<_CalendarView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: headerHeight, child: GridView.custom(
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: _DayPickerGridDelegate(
-                  config: widget.config,
-                  dayRowsCount: 1,
-                ),
-                childrenDelegate: SliverChildListDelegate(dayItems),
-              )),
+              SizedBox(
+                  height: headerHeight,
+                  child: GridView.custom(
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: _DayPickerGridDelegate(
+                      config: widget.config,
+                      dayRowsCount: 1,
+                    ),
+                    childrenDelegate: SliverChildListDelegate(dayItems),
+                  )),
               SizedBox(height: spacing),
-              Text(
-                "${getMonthAbbreviation(month.month)} ${month.year}",
-                style: Font.apply(FontStyle.bold, FontSize.h5),
-              ),
+              if (widget.config.showMonthYearLabel == true)
+                Text(
+                  "${getMonthAbbreviation(month.month)} ${month.year}",
+                  style: Font.apply(FontStyle.bold, FontSize.h5),
+                ),
               SizedBox(height: spacing),
               SizedBox(
                 height: firstMonthHeight,
                 child: _DayPicker(
                   key: ValueKey(month),
-                  selectedDates: widget.selectedDates.whereType<DateTime>().toList(),
+                  selectedDates:
+                      widget.selectedDates.whereType<DateTime>().toList(),
                   onChanged: _handleDateSelected,
                   config: widget.config,
                   displayedMonth: month,
                   dayRowsCount: firstMonthRows,
                 ),
               ),
-              if (shouldShowNextMonth) ...[
+              if (widget.config.show2months == true && shouldShowNextMonth) ...[
                 SizedBox(height: spacing),
                 Text(
                   "${getMonthAbbreviation(nextMonth.month)} ${nextMonth.year}",
@@ -367,7 +416,8 @@ class _CalendarViewState extends State<_CalendarView> {
                   height: secondMonthHeight,
                   child: _DayPicker(
                     key: ValueKey(nextMonth),
-                    selectedDates: widget.selectedDates.whereType<DateTime>().toList(),
+                    selectedDates:
+                        widget.selectedDates.whereType<DateTime>().toList(),
                     onChanged: _handleDateSelected,
                     config: widget.config,
                     displayedMonth: nextMonth,
@@ -383,9 +433,11 @@ class _CalendarViewState extends State<_CalendarView> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
+    final Color controlColor =
+        Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.60);
+
     return Semantics(
       child: Column(
         children: <Widget>[
@@ -412,6 +464,51 @@ class _CalendarViewState extends State<_CalendarView> {
               ),
             ),
           ),
+          if (widget.config.hideLastMonthIcon != true &&
+              widget.config.hideNextMonthIcon != true)
+            Container(
+              padding: const EdgeInsetsDirectional.only(start: 8, end: 8),
+              height: (widget.config.controlsHeight ?? _subHeaderHeight),
+              child: Row(
+                children: <Widget>[
+                  const Spacer(),
+                  if (widget.config.hideLastMonthIcon != true)
+                    IconButton(
+                      splashRadius: widget.config.dayMaxWidth != null
+                          ? widget.config.dayMaxWidth! * 2 / 3
+                          : null,
+                      icon: widget.config.lastMonthIcon ??
+                          Icon(widget.config.dayModeScrollDirection ==
+                                  Axis.vertical
+                              ? Icons.keyboard_arrow_up
+                              : Icons.chevron_left),
+                      color: controlColor,
+                      tooltip: _isDisplayingFirstMonth
+                          ? null
+                          : _localizations.previousMonthTooltip,
+                      onPressed:
+                          _isDisplayingFirstMonth ? null : _handlePreviousMonth,
+                    ),
+                  if (widget.config.hideNextMonthIcon != true)
+                    IconButton(
+                      splashRadius: widget.config.dayMaxWidth != null
+                          ? widget.config.dayMaxWidth! * 2 / 3
+                          : null,
+                      icon: widget.config.nextMonthIcon ??
+                          Icon(widget.config.dayModeScrollDirection ==
+                                  Axis.vertical
+                              ? Icons.keyboard_arrow_down
+                              : Icons.chevron_right),
+                      color: controlColor,
+                      tooltip: _isDisplayingLastMonth
+                          ? null
+                          : _localizations.nextMonthTooltip,
+                      onPressed:
+                          _isDisplayingLastMonth ? null : _handleNextMonth,
+                    ),
+                ],
+              ),
+            ),
         ],
       ),
     );

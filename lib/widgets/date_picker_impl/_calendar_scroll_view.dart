@@ -301,29 +301,41 @@ class _CalendarScrollViewState extends State<_CalendarScrollView> {
 
   List<Widget> _dayHeaders(
       TextStyle? headerStyle, MaterialLocalizations localizations) {
+    BoxDecoration? weekDayLabelDecoration =
+        widget.config.weekdayLabelDecoration;
     final List<Widget> result = <Widget>[];
     final weekdays =
         widget.config.weekdayLabels ?? localizations.narrowWeekdays;
     final firstDayOfWeek =
         widget.config.firstDayOfWeek ?? localizations.firstDayOfWeekIndex;
     assert(firstDayOfWeek >= 0 && firstDayOfWeek <= 6,
-        'firstDayOfWeek must between 0 and 6');
+    'firstDayOfWeek must between 0 and 6');
     for (int i = firstDayOfWeek; true; i = (i + 1) % 7) {
       final String weekday = weekdays[i];
       result.add(ExcludeSemantics(
-        child: widget.config.weekdayLabelBuilder?.call(weekday: i) ??
-            Center(
-              child: Text(weekday,
-                  style: widget.config.weekdayLabelTextStyle ??
-                      headerStyle ??
-                      TextStyle(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withValues(alpha: 0.60),
-                      )),
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
+              child: widget.config.weekdayLabelBuilder?.call(weekday: i) ??
+                  Container(
+                    decoration: (weekDayLabelDecoration != null)
+                        ? weekDayLabelDecoration
+                        : null,
+                    child: Center(
+                      child: Text(weekday,
+                          style: widget.config.weekdayLabelTextStyle ??
+                              headerStyle ??
+                              TextStyle(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurface
+                                    .withValues(alpha: 0.60),
+                              )),
+                    ),
+                  ),
             ),
-      ));
+          )));
       if (i == (firstDayOfWeek - 1) % 7) break;
     }
     return result;

@@ -54,6 +54,7 @@ class DatePickerWidget extends StatefulWidget {
     this.onDisplayedYearChanged,
     this.suppressVisibleMonthReporting = false,
     this.userSelectedDate = null,
+    this.onMultiDatesSelected,
     Key? key,
   }) : super(key: key) {
     const valid = true;
@@ -104,6 +105,7 @@ class DatePickerWidget extends StatefulWidget {
 
   var suppressVisibleMonthReporting;
   var userSelectedDate;
+  final void Function(List<DateTime>)? onMultiDatesSelected;
 
   @override
   State<DatePickerWidget> createState() => _DatePickerWidgetState();
@@ -145,7 +147,8 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
     // Update displayed month only if it's new AND not overridden by scroll logic
     if (widget.displayedMonthDate != null &&
         (oldWidget.displayedMonthDate == null ||
-            !DateUtils.isSameMonth(oldWidget.displayedMonthDate!, widget.displayedMonthDate!))) {
+            !DateUtils.isSameMonth(
+                oldWidget.displayedMonthDate!, widget.displayedMonthDate!))) {
       _currentDisplayedMonthDate = DateTime(
         widget.displayedMonthDate!.year,
         widget.displayedMonthDate!.month,
@@ -193,9 +196,9 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
   }
 
   void _handleDisplayedMonthDateChanged(
-      DateTime date, {
-        bool fromYearPicker = false,
-      }) {
+    DateTime date, {
+    bool fromYearPicker = false,
+  }) {
     _vibrate();
 
     setState(() {
@@ -217,9 +220,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
         newMonthDate = selectedInYear.isNotEmpty
             ? DateTime(date.year, selectedInYear.first.month)
             : DateTime(date.year, 1);
-
-      }
-      else {
+      } else {
         // If user scrolls to a different month/year
         if (currentMonthDate.year == date.year &&
             currentMonthDate.month == date.month) {
@@ -233,7 +234,6 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
       widget.onDisplayedMonthChanged?.call(_currentDisplayedMonthDate);
     });
   }
-
 
   void _handleMonthChanged(DateTime value) {
     _vibrate();
@@ -250,7 +250,8 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
     _vibrate();
     setState(() {
       // Update the displayed month to the selected year and current month
-      _currentDisplayedMonthDate = DateTime(value.year, _currentDisplayedMonthDate.month);
+      _currentDisplayedMonthDate =
+          DateTime(value.year, _currentDisplayedMonthDate.month);
       _handleDisplayedYearDateChanged(value);
     });
     if (value.isBefore(widget.config.firstDate)) {
@@ -286,6 +287,8 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
           } else {
             selectedDates.add(value);
           }
+          widget.onMultiDatesSelected
+              ?.call(selectedDates.whereType<DateTime>().toList());
           break;
 
         case DatePickerWidgetType.range:
@@ -364,7 +367,19 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
             //onDisplayedYearChanged: _handleDisplayedYearDateChanged,
           ),
         );
-      case DatePickerWidgetMode.scroll || DatePickerWidgetMode.day:
+      case DatePickerWidgetMode.day:
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: _CalendarView(
+            config: widget.config,
+            key: _dayPickerKey,
+            initialMonth: _currentDisplayedMonthDate,
+            selectedDates: _selectedDates,
+            onChanged: _handleDayChanged,
+            onDisplayedMonthChanged: _handleDisplayedMonthDateChanged,
+          ),
+        );
+      case DatePickerWidgetMode.scroll:
         return Padding(
           padding: const EdgeInsets.all(16.0),
           child: _CalendarScrollView(
