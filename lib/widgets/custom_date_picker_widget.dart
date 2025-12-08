@@ -37,7 +37,12 @@ class CustomDatePickerWidget extends StatefulWidget {
   final EdgeInsetsGeometry? cardPadding;
   final EdgeInsetsGeometry? calendarPadding;
   final List<String>? customWeekdayLabels;
+  final EdgeInsets? weekdayLabelPadding;
+  final EdgeInsets? monthPickerPadding;
+  final EdgeInsets? yearPickerPadding;
   final BoxDecoration? weekdayLabelDecoration;
+  final BoxDecoration? monthPickerDecoration;
+  final BoxDecoration? yearPickerDecoration;
   final String? titleDayMode;
   final String? titleMonthMode;
   final String? titleYearMode;
@@ -98,7 +103,12 @@ class CustomDatePickerWidget extends StatefulWidget {
     this.cardPadding,
     this.calendarPadding,
     this.customWeekdayLabels,
+    this.weekdayLabelPadding,
+    this.monthPickerPadding,
+    this.yearPickerPadding,
     this.weekdayLabelDecoration,
+    this.monthPickerDecoration,
+    this.yearPickerDecoration,
     this.titleDayMode,
     this.titleMonthMode,
     this.titleYearMode,
@@ -517,22 +527,27 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                               mode = DatePickerWidgetMode.month;
                             });
                           },
-                          child: Row(
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  selectedMonth,
-                                  style: widget.selectedMonthTextStyle,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              Icon(
-                                Icons.keyboard_arrow_down,
-                                color: widget.iconColor ?? Colors.black54,
-                                size: 20.sp,
-                              ),
-                            ],
-                          ),
+                          child: Container(
+                              padding: widget.monthPickerPadding ??
+                                  EdgeInsets.symmetric(
+                                      horizontal: 12.w, vertical: 6.h),
+                              decoration: widget.monthPickerDecoration,
+                              child: Row(
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      selectedMonth,
+                                      style: widget.selectedMonthTextStyle,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.keyboard_arrow_down,
+                                    color: widget.iconColor ?? Colors.black54,
+                                    size: 20.sp,
+                                  ),
+                                ],
+                              )),
                         ),
                       ),
                       const Spacer(flex: 3),
@@ -543,19 +558,25 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                               mode = DatePickerWidgetMode.year;
                             });
                           },
-                          child: Row(
-                            children: [
-                              Text(
-                                selectedYear.toString(),
-                                style: widget.selectedYearTextStyle,
-                              ),
-                              Icon(
-                                Icons.keyboard_arrow_down,
-                                color: widget.iconColor ?? Colors.black54,
-                                size: 20.sp,
-                              ),
-                            ],
-                          ),
+                          child: Container(
+                              padding: widget.yearPickerPadding ??
+                                  EdgeInsets.symmetric(
+                                      horizontal: 12.w, vertical: 6.h),
+                              decoration: widget.yearPickerDecoration,
+                              child: Row(
+                                children: [
+                                  Flexible(
+                                      child: Text(
+                                    selectedYear.toString(),
+                                    style: widget.selectedYearTextStyle,
+                                  )),
+                                  Icon(
+                                    Icons.keyboard_arrow_down,
+                                    color: widget.iconColor ?? Colors.black54,
+                                    size: 20.sp,
+                                  ),
+                                ],
+                              )),
                         ),
                       ),
                     ],
@@ -723,6 +744,9 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
             weekdayLabels: widget.customWeekdayLabels ??
                 const ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
             weekdayLabelDecoration: widget.weekdayLabelDecoration,
+            monthPickerPadding: widget.monthPickerPadding,
+            yearPickerPadding: widget.yearPickerPadding,
+            weekdayLabelPadding: widget.weekdayLabelPadding,
             weekdayLabelTextStyle: widget.weekdayLabelTextStyle ??
                 Font.apply(FontStyle.regular, FontSize.h1,
                     color: Colors.black87),
@@ -806,6 +830,9 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                     color: Colors.black54, fontWeight: FontWeight.normal),
             weekdayLabels: widget.customWeekdayLabels ??
                 const ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+            monthPickerPadding: widget.monthPickerPadding,
+            yearPickerPadding: widget.yearPickerPadding,
+            weekdayLabelPadding: widget.weekdayLabelPadding,
             weekdayLabelDecoration: widget.weekdayLabelDecoration,
             weekdayLabelTextStyle: widget.weekdayLabelTextStyle ??
                 Font.apply(FontStyle.regular, FontSize.h1,
@@ -885,6 +912,9 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                     color: Colors.black54, fontWeight: FontWeight.normal),
             weekdayLabels: widget.customWeekdayLabels ??
                 const ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+            monthPickerPadding: widget.monthPickerPadding,
+            yearPickerPadding: widget.yearPickerPadding,
+            weekdayLabelPadding: widget.weekdayLabelPadding,
             weekdayLabelDecoration: widget.weekdayLabelDecoration,
             weekdayLabelTextStyle: widget.weekdayLabelTextStyle ??
                 Font.apply(FontStyle.regular, FontSize.h1,
@@ -932,37 +962,6 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
       onMonthSelected: _handleMonthSelected,
       onYearSelected: _handleYearSelected,
     ));
-  }
-
-  String _getValueText(
-    DatePickerWidgetType datePickerType,
-    List<DateTime?> values,
-  ) {
-    values =
-        values.map((e) => e != null ? DateUtils.dateOnly(e) : null).toList();
-    var valueText = (values.isNotEmpty ? values[0] : null)
-        .toString()
-        .replaceAll('00:00:00.000', '');
-
-    if (datePickerType == DatePickerWidgetType.multi) {
-      valueText = values.isNotEmpty
-          ? values
-              .map((v) => v.toString().replaceAll('00:00:00.000', ''))
-              .join(', ')
-          : 'null';
-    } else if (datePickerType == DatePickerWidgetType.range) {
-      if (values.isNotEmpty) {
-        final startDate = values[0].toString().replaceAll('00:00:00.000', '');
-        final endDate = values.length > 1
-            ? values[1].toString().replaceAll('00:00:00.000', '')
-            : 'null';
-        valueText = '$startDate to $endDate';
-      } else {
-        return 'null';
-      }
-    }
-
-    return valueText;
   }
 
   @override

@@ -306,28 +306,29 @@ class _CalendarViewState extends State<_CalendarView> {
       final String weekday = weekdays[i];
       result.add(ExcludeSemantics(
           child: AspectRatio(
-            aspectRatio: 1,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
-              child: widget.config.weekdayLabelBuilder?.call(weekday: i) ??
-                  Container(
-                    decoration: (weekDayLabelDecoration != null)
-                        ? weekDayLabelDecoration
-                        : null,
-                    child: Center(
-                      child: Text(weekday,
-                          style: widget.config.weekdayLabelTextStyle ??
-                              headerStyle ??
-                              TextStyle(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSurface
-                                    .withValues(alpha: 0.60),
-                              )),
-                    ),
-                  ),
-            ),
-          )));
+        aspectRatio: 1,
+        child: Padding(
+          padding: widget.config.weekdayLabelPadding ??
+              const EdgeInsets.symmetric(vertical: 4.0, horizontal: 4.0),
+          child: widget.config.weekdayLabelBuilder?.call(weekday: i) ??
+              Container(
+                decoration: (weekDayLabelDecoration != null)
+                    ? weekDayLabelDecoration
+                    : null,
+                child: Center(
+                  child: Text(weekday,
+                      style: widget.config.weekdayLabelTextStyle ??
+                          headerStyle ??
+                          TextStyle(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withValues(alpha: 0.60),
+                          )),
+                ),
+              ),
+        ),
+      )));
       if (i == (firstDayOfWeek - 1) % 7) break;
     }
     return result;
@@ -365,7 +366,7 @@ class _CalendarViewState extends State<_CalendarView> {
             widget.config.show2months == true && shouldShowNextMonth;
 
         final double firstMonthHeight = show2months
-            ? (remainingHeight /2) * (firstMonthRows / _maxDayPickerRowCount)
+            ? (remainingHeight / 2) * (firstMonthRows / _maxDayPickerRowCount)
             : remainingHeight * (firstMonthRows / _maxDayPickerRowCount);
 
         final double secondMonthHeight = show2months

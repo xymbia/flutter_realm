@@ -135,6 +135,9 @@ class DatePickerWidgetConfig {
       DateTime? currentDate,
       DatePickerWidgetMode? calendarViewMode,
       this.weekdayLabels,
+      this.weekdayLabelPadding,
+      this.monthPickerPadding,
+      this.yearPickerPadding,
       this.weekdayLabelDecoration,
       this.weekdayLabelTextStyle,
       this.weekdayLabelBuilder,
@@ -236,6 +239,10 @@ class DatePickerWidgetConfig {
   /// - Russian: вс, пн, вт, ср, чт, пт, сб - notice that the list begins with
   ///   вс (Sunday) even though the first day of week for Russian is Monday.
   final List<String>? weekdayLabels;
+
+  final EdgeInsetsGeometry? weekdayLabelPadding;
+  final EdgeInsetsGeometry? monthPickerPadding;
+  final EdgeInsetsGeometry? yearPickerPadding;
 
   final BoxDecoration? weekdayLabelDecoration;
 
@@ -466,6 +473,9 @@ class DatePickerWidgetConfig {
       DateTime? currentDate,
       DatePickerWidgetMode? calendarViewMode,
       List<String>? weekdayLabels,
+      EdgeInsets? weekdayLabelPadding,
+      EdgeInsets? monthPickerPadding,
+      EdgeInsets? yearPickerPadding,
       BoxDecoration? weekdayLabelDecoration,
       TextStyle? weekdayLabelTextStyle,
       WeekdayLabelBuilder? weekdayLabelBuilder,
@@ -545,6 +555,9 @@ class DatePickerWidgetConfig {
         currentDate: currentDate ?? this.currentDate,
         calendarViewMode: calendarViewMode ?? this.calendarViewMode,
         weekdayLabels: weekdayLabels ?? this.weekdayLabels,
+        weekdayLabelPadding: weekdayLabelPadding ?? this.weekdayLabelPadding,
+        monthPickerPadding: monthPickerPadding ?? this.monthPickerPadding,
+        yearPickerPadding: yearPickerPadding ?? this.yearPickerPadding,
         weekdayLabelDecoration:
             weekdayLabelDecoration ?? this.weekdayLabelDecoration,
         weekdayLabelTextStyle:
@@ -660,6 +673,9 @@ class DatePickerWidgetWithActionButtonsConfig extends DatePickerWidgetConfig {
     DateTime? currentDate,
     DatePickerWidgetMode? calendarViewMode,
     List<String>? weekdayLabels,
+    EdgeInsetsGeometry? weekdayLabelPadding,
+    EdgeInsetsGeometry? monthPickerPadding,
+    EdgeInsetsGeometry? yearPickerPadding,
     BoxDecoration? weekdayLabelDecoration,
     TextStyle? weekdayLabelTextStyle,
     WeekdayLabelBuilder? weekdayLabelBuilder,
@@ -853,6 +869,9 @@ class DatePickerWidgetWithActionButtonsConfig extends DatePickerWidgetConfig {
       DateTime? currentDate,
       DatePickerWidgetMode? calendarViewMode,
       List<String>? weekdayLabels,
+      EdgeInsetsGeometry? weekdayLabelPadding,
+      EdgeInsetsGeometry? monthPickerPadding,
+      EdgeInsetsGeometry? yearPickerPadding,
       BoxDecoration? weekdayLabelDecoration,
       TextStyle? weekdayLabelTextStyle,
       WeekdayLabelBuilder? weekdayLabelBuilder,
@@ -941,7 +960,11 @@ class DatePickerWidgetWithActionButtonsConfig extends DatePickerWidgetConfig {
         currentDate: currentDate ?? this.currentDate,
         calendarViewMode: calendarViewMode ?? this.calendarViewMode,
         weekdayLabels: weekdayLabels ?? this.weekdayLabels,
-        weekdayLabelDecoration: weekdayLabelDecoration ?? this.weekdayLabelDecoration,
+        weekdayLabelPadding: weekdayLabelPadding ?? this.weekdayLabelPadding,
+        monthPickerPadding: monthPickerPadding ?? this.monthPickerPadding,
+        yearPickerPadding: yearPickerPadding ?? this.yearPickerPadding,
+        weekdayLabelDecoration:
+            weekdayLabelDecoration ?? this.weekdayLabelDecoration,
         weekdayLabelTextStyle:
             weekdayLabelTextStyle ?? this.weekdayLabelTextStyle,
         weekdayLabelBuilder: weekdayLabelBuilder ?? this.weekdayLabelBuilder,

@@ -125,9 +125,12 @@ class _DayPickerState extends State<_DayPicker> {
         BoxDecoration? decoration;
         Color dayColor = enabledDayColor;
         // Use config-provided decorations if available
-        if (isSelectedDay && isToday && widget.config.isTodayDecoration != null) {
+        if (isSelectedDay &&
+            isToday &&
+            widget.config.isTodayDecoration != null) {
           decoration = widget.config.isTodayDecoration;
-        } else if (isSelectedDay && widget.config.isSelectedDecoration != null) {
+        } else if (isSelectedDay &&
+            widget.config.isSelectedDecoration != null) {
           decoration = widget.config.isSelectedDecoration;
         } else if (isDisabled && widget.config.isDisabledDecoration != null) {
           decoration = widget.config.isDisabledDecoration;
@@ -135,31 +138,39 @@ class _DayPickerState extends State<_DayPicker> {
           if (isSelectedDay) {
             if (isToday) {
               dayColor = Colors.white;
-              decoration = BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                color: const Color(0xFF1A1B1D),
-                border: Border.all(width: 2, color: const Color(0xFF393B40)),
-                shape: widget.config.dayBorderRadius != null ? BoxShape.rectangle : BoxShape.circle,
-              );
+              decoration = widget.config.isTodayDecoration ??
+                  BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    color: const Color(0xFF1A1B1D),
+                    border:
+                        Border.all(width: 2, color: const Color(0xFF393B40)),
+                    shape: widget.config.dayBorderRadius != null
+                        ? BoxShape.rectangle
+                        : BoxShape.circle,
+                  );
             } else {
               dayColor = Colors.white;
-              decoration = BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                color: const Color(0xFF393B40),
-                border: Border.all(width: 3, color: const Color(0xFF393B40)),
-              );
+              decoration = widget.config.isDisabledDecoration ??
+                  BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    color: const Color(0xFF393B40),
+                    border:
+                        Border.all(width: 3, color: const Color(0xFF393B40)),
+                  );
             }
           } else if (isDisabled) {
             dayColor = disabledDayColor;
-            decoration = BoxDecoration(
-              borderRadius: BorderRadius.circular(50),
-              color: const Color(0xFFCFCFCF),
-              border: Border.all(width: 1, color: const Color(0xFF393B40)),
-              shape: widget.config.dayBorderRadius != null ? BoxShape.rectangle : BoxShape.circle,
-            );
+            decoration = widget.config.isDisabledDecoration ??
+                BoxDecoration(
+                  borderRadius: BorderRadius.circular(50),
+                  color: const Color(0xFFCFCFCF),
+                  border: Border.all(width: 1, color: const Color(0xFF393B40)),
+                  shape: widget.config.dayBorderRadius != null
+                      ? BoxShape.rectangle
+                      : BoxShape.circle,
+                );
           }
         }
-
 
         var customDayTextStyle =
             widget.config.dayTextStylePredicate?.call(date: dayToBuild) ??
@@ -205,28 +216,29 @@ class _DayPickerState extends State<_DayPicker> {
 
         if (isToday) {
           // The current day gets a black background highlight
-          if (widget.config.calendarType != DatePickerWidgetType.range ) {
+          if (widget.config.calendarType != DatePickerWidgetType.range) {
             dayColor = selectedDayColor;
-          }else{
+          } else {
             customDayTextStyle = widget.config.selectedDayTextStyle
                 ?.copyWith(color: Colors.black54);
           }
-          decoration = BoxDecoration(
-              borderRadius: BorderRadius.circular(50),
-              border: Border.all(width: 1, color: const Color(0xFF393B40)));
+
+          decoration = widget.config.isTodayDecoration ??
+              BoxDecoration(
+                  borderRadius: BorderRadius.circular(50),
+                  border: Border.all(width: 1, color: const Color(0xFF393B40)));
         }
 
         if (isSelectedDay) {
-          customDayTextStyle = widget.config.selectedDayTextStyle
-                ?.copyWith(color: Colors.white);
-            decoration = BoxDecoration(
-              borderRadius: BorderRadius.circular(50),
-              color: const Color(0xFF1A1B1D), // Black background for today's date
-              border: Border.all(
-                  width: 2,
-                  color: const Color(
-                      0xFF393B40)),
-            );
+          customDayTextStyle =
+              widget.config.selectedDayTextStyle?.copyWith(color: Colors.white);
+          decoration = widget.config.isSelectedDecoration ??
+              BoxDecoration(
+                borderRadius: BorderRadius.circular(50),
+                color: const Color(
+                    0xFF1A1B1D), // Black background for today's date
+                border: Border.all(width: 2, color: const Color(0xFF393B40)),
+              );
         }
 
         final dayTextStyle =
@@ -301,8 +313,7 @@ class _DayPickerState extends State<_DayPicker> {
             dayWidget = Stack(
               alignment: AlignmentDirectional.center,
               children: [
-                rangePickerIncludedDayHighlight ??
-                    dayWidget,
+                rangePickerIncludedDayHighlight ?? dayWidget,
               ],
             );
           } else {
@@ -320,8 +331,8 @@ class _DayPickerState extends State<_DayPicker> {
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(50),
-                              color: const Color(
-                                  0xFFE4E5E7), // Black background for today's date
+                              color: const Color(0xFFE4E5E7),
+                              // Black background for today's date
                               border: Border.all(
                                   width: 2, color: const Color(0xFFE4E5E7)),
                             ),

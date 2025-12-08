@@ -174,12 +174,14 @@ class _DatePickerPageState extends State<DatePickerPage> {
                             'F',
                             'S'
                           ],
+                          weekdayLabelPadding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+                          monthPickerPadding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+                          yearPickerPadding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
                           weekdayLabelDecoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(50),
-                            color: const Color(0xFFBBFBBA),
+                            color: Colors.grey,
                             // Black background for today's date
-                            border: Border.all(
-                                width: 1, color: const Color(0xFFBBFBBA)),
+                            border: Border.all(width: 1, color: Colors.grey),
                           ),
                           titleDayMode: 'Pick a Day',
                           titleMonthMode: 'Pick a Month',
@@ -192,22 +194,30 @@ class _DatePickerPageState extends State<DatePickerPage> {
                           showTitleMonth: true,
                           showTitleYear: true,
                           showTitleRange: true,
+                          monthPickerDecoration: BoxDecoration(
+                            color: Colors.grey,
+                            border: Border.all(width: 1, color: Colors.white),
+                            shape: BoxShape.rectangle,
+                          ),
+                          yearPickerDecoration: BoxDecoration(
+                            color: Colors.grey,
+                            border: Border.all(width: 1, color: Colors.white),
+                            shape: BoxShape.rectangle,
+                          ),
                           isTodayDecoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(50),
-                            color: Colors.redAccent,
-                            border: Border.all(width: 1, color: Colors.pink),
+                            color: Colors.grey,
+                            border: Border.all(width: 1, color: Colors.grey),
                             shape: BoxShape.circle,
                           ),
                           isSelectedDecoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(50),
-                            color: const Color(0xFFCFCFCF),
+                            color: Colors.grey,
                             border: Border.all(
                                 width: 1, color: const Color(0xFF393B40)),
                             shape: BoxShape.circle,
                           ),
                           isDisabledDecoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(50),
-                            color: const Color(0xFFCFCFCF),
+                            color: Colors.grey,
+                            shape: BoxShape.circle,
                             border: Border.all(
                                 width: 1, color: const Color(0xFF393B40)),
                           )))),
