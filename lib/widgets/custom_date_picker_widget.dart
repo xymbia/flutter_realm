@@ -156,7 +156,8 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
   void initState() {
     super.initState();
     selectionMode = widget.selectionMode;
-    mode = selectionMode == DatePickerSelectionMode.single
+    mode = selectionMode == DatePickerSelectionMode.single ||
+            selectionMode == DatePickerSelectionMode.multi
         ? DatePickerWidgetMode.day
         : DatePickerWidgetMode.scroll;
     _singleDatePickerValueWithDefaultValue = [
@@ -167,6 +168,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
         _singleDatePickerValueWithDefaultValue.first ?? DateTime.now();
     _currentDisplayedMonthDate = displayedDate;
     _updateMonthLabel(displayedDate);
+    _updateYearLabel(displayedDate);
     selectedYear = displayedDate.year;
 
     // Get current month
@@ -197,7 +199,8 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
     if (oldWidget.selectionMode != widget.selectionMode) {
       setState(() {
         selectionMode = widget.selectionMode;
-        mode = selectionMode == DatePickerSelectionMode.single
+        mode = selectionMode == DatePickerSelectionMode.single ||
+                selectionMode == DatePickerSelectionMode.multi
             ? DatePickerWidgetMode.day
             : DatePickerWidgetMode.scroll;
       });
@@ -277,7 +280,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
       _currentDisplayedMonthDate = date;
       selectedYear = date.year;
       _updateMonthLabel(date);
-      _updateMonthLabel(date);
+      _updateYearLabel(date);
 
       // Check if there are changes
       _hasMonthYearChanges = true;
@@ -326,7 +329,8 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
       // Suppress next scroll update!
       _suspendDisplayedMonthUpdate = true;
 
-      if (selectionMode == DatePickerSelectionMode.single) {
+      if (selectionMode == DatePickerSelectionMode.single ||
+          selectionMode == DatePickerSelectionMode.multi) {
         _singleDatePickerValueWithDefaultValue = [newDate];
         _currentDisplayedMonthDate = newDate;
       } else {
@@ -334,7 +338,8 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
         _currentDisplayedMonthDate = newDate;
       }
 
-      mode = selectionMode == DatePickerSelectionMode.single
+      mode = selectionMode == DatePickerSelectionMode.single ||
+              selectionMode == DatePickerSelectionMode.multi
           ? DatePickerWidgetMode.day
           : DatePickerWidgetMode.scroll;
     });
@@ -349,7 +354,8 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
       _hasMonthYearChanges = false;
 
       // Switch back to day mode after canceling
-      if (selectionMode == DatePickerSelectionMode.single) {
+      if (selectionMode == DatePickerSelectionMode.single ||
+          selectionMode == DatePickerSelectionMode.multi) {
         mode = DatePickerWidgetMode.day;
       } else {
         mode = DatePickerWidgetMode.scroll;
@@ -367,6 +373,9 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
       if (selectionMode == DatePickerSelectionMode.single) {
         // For single date mode, update the single date picker value
         _singleDatePickerValueWithDefaultValue = [date];
+      } else if (selectionMode == DatePickerSelectionMode.multi) {
+        // For multi date mode, update the multi date picker value
+        _multiDatePickerValueWithDefaultValue = [];
       } else {
         // For range mode, add the date to the range or replace existing selection
         if (_rangeDatePickerValueWithDefaultValue.isEmpty) {
@@ -415,7 +424,8 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
       _tempSelectedYear = 0;
       _currentDisplayedMonthDate = null;
 
-      if (selectionMode == DatePickerSelectionMode.single) {
+      if (selectionMode == DatePickerSelectionMode.single ||
+          selectionMode == DatePickerSelectionMode.multi) {
         _singleDatePickerValueWithDefaultValue = [];
       } else {
         _rangeDatePickerValueWithDefaultValue = [];
@@ -844,7 +854,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
     final DatePickerWidgetConfig effectiveConfig = widget.config ??
         DatePickerWidgetConfig(
             calendarType: DatePickerWidgetType.multi,
-            calendarViewMode: DatePickerWidgetMode.day,
+            calendarViewMode: mode,
             rangeBidirectional: true,
             selectedDayHighlightColor:
                 widget.selectedDayHighlightColor ?? Colors.teal[800],
@@ -908,7 +918,11 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
       value: _multiDatePickerValueWithDefaultValue,
       onValueChanged: (dates) =>
           setState(() => _multiDatePickerValueWithDefaultValue = dates),
+      onDisplayedMonthChanged: _handleDisplayedMonthChanged,
+      onDisplayedYearChanged: _handleDisplayedMYearChanged,
       onMultiDatesSelected: widget.onMultiDatesSelected,
+      onMonthSelected: _handleMonthSelected,
+      onYearSelected: _handleYearSelected,
     ));
   }
 
