@@ -185,7 +185,7 @@ class _DatePickerPageState extends State<DatePickerPage> {
                           titleMonthMode: 'Pick a Month',
                           titleYearMode: 'Pick a Year',
                           titleRangeMode: 'Pick a Date Range',
-                          showSaveButton: true,
+                          showSaveButton: false,
                           showCancelButton: true,
                           showRefreshButton: true,
                           showTitleDay: true,

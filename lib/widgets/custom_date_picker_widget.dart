@@ -271,6 +271,10 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
       // Check if there are changes
       _hasMonthYearChanges = true;
     });
+
+    if (widget.showSaveButton == false) {
+      _saveMonthYearSelection();
+    }
   }
 
   void _handleYearSelected(DateTime date) {
@@ -285,6 +289,10 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
       // Check if there are changes
       _hasMonthYearChanges = true;
     });
+
+    if (widget.showSaveButton == false) {
+      _saveMonthYearSelection();
+    }
   }
 
   void _onSingleDateChanged(List<DateTime?> dates) {
