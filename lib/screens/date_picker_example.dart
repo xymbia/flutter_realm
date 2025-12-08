@@ -95,7 +95,7 @@ class _DatePickerPageState extends State<DatePickerPage> {
                           selectedDayHighlightColor: Colors.black87,
                           selectedDayTextStyle: Font.apply(
                               FontStyle.regular, FontSize.h6,
-                              color: Colors.black87),
+                              color: Colors.white),
                           selectedMonthTextStyle: const TextStyle(
                               color: Colors.black87,
                               fontWeight: FontWeight.bold),

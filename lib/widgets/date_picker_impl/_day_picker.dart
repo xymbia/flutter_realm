@@ -219,8 +219,7 @@ class _DayPickerState extends State<_DayPicker> {
           if (widget.config.calendarType != DatePickerWidgetType.range) {
             dayColor = selectedDayColor;
           } else {
-            customDayTextStyle = widget.config.selectedDayTextStyle
-                ?.copyWith(color: Colors.black54);
+            customDayTextStyle = widget.config.selectedDayTextStyle;
           }
 
           decoration = widget.config.isTodayDecoration ??
@@ -231,7 +230,7 @@ class _DayPickerState extends State<_DayPicker> {
 
         if (isSelectedDay) {
           customDayTextStyle =
-              widget.config.selectedDayTextStyle?.copyWith(color: Colors.white);
+              widget.config.selectedDayTextStyle;
           decoration = widget.config.isSelectedDecoration ??
               BoxDecoration(
                 borderRadius: BorderRadius.circular(50),
