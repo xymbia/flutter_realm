@@ -91,7 +91,7 @@ class _MonthPickerState extends State<_MonthPicker> {
 
     final bool isSelected = widget.selectedDates.isNotEmpty &&
         widget.selectedDates.any((date) =>
-        date != null &&
+            date != null &&
             widget.initialMonth.year == date.year &&
             date.month == month);
 
@@ -124,7 +124,7 @@ class _MonthPickerState extends State<_MonthPicker> {
     if (isSelected || isCurrentlyDisplayedMonth) {
       textColor = colorScheme.onSurface.withValues(alpha: 0.87);
     } else if (!isMonthSelectable) {
-      textColor = widget.config.isTodayHighlightColor ?? colorScheme.onSurface.withValues(alpha: 0.38);
+      textColor = colorScheme.onSurface.withValues(alpha: 0.38);
     } else if (isCurrentMonth) {
       textColor =
           widget.config.selectedDayHighlightColor ?? colorScheme.primary;
@@ -147,8 +147,9 @@ class _MonthPickerState extends State<_MonthPicker> {
     if (isCurrentlyDisplayedMonth) {
       // Currently displayed month gets dashed border or different style
       decoration = BoxDecoration(
-        borderRadius: BorderRadius.circular(decorationHeight/2),
-        border: Border.all(width: 1, color: const Color(0xFFACB1BF), style: BorderStyle.solid),
+        borderRadius: BorderRadius.circular(decorationHeight / 2),
+        border: Border.all(
+            width: 1, color: const Color(0xFFACB1BF), style: BorderStyle.solid),
       );
     }
 
@@ -158,10 +159,7 @@ class _MonthPickerState extends State<_MonthPicker> {
       decoration = BoxDecoration(
         borderRadius: BorderRadius.circular(50),
         color: const Color(0xFF1A1B1D), // Black background for today's date
-        border: Border.all(
-            width: 2,
-            color: const Color(
-                0xFF393B40)),
+        border: Border.all(width: 2, color: const Color(0xFF393B40)),
       );
     }
 
@@ -174,6 +172,10 @@ class _MonthPickerState extends State<_MonthPicker> {
         ),
         borderRadius: BorderRadius.circular(decorationHeight),
       );
+    }
+
+    if (isCurrentMonth) {
+      itemStyle = widget.config.currentMonthTextStyle ?? itemStyle;
     }
 
     Widget monthItem = widget.config.monthBuilder?.call(

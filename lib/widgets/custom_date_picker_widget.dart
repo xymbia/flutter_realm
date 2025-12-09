@@ -19,7 +19,9 @@ class CustomDatePickerWidget extends StatefulWidget {
   final TextStyle? weekdayLabelTextStyle;
   final TextStyle? dayTextStyle;
   final TextStyle? selectedMonthTextStyle;
+  final TextStyle? currentMonthTextStyle;
   final TextStyle? selectedYearTextStyle;
+  final TextStyle? currentYearTextStyle;
   final TextStyle? disabledDayTextStyle;
   final TextStyle? controlsTextStyle;
   final BorderRadius? dayBorderRadius;
@@ -87,7 +89,9 @@ class CustomDatePickerWidget extends StatefulWidget {
     this.weekdayLabelTextStyle,
     this.dayTextStyle,
     this.selectedMonthTextStyle,
+    this.currentMonthTextStyle,
     this.selectedYearTextStyle,
+    this.currentYearTextStyle,
     this.disabledDayTextStyle,
     this.controlsTextStyle,
     this.dayBorderRadius,
@@ -746,7 +750,13 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
             selectedMonthTextStyle: widget.selectedMonthTextStyle ??
                 const TextStyle(
                     color: Colors.black54, fontWeight: FontWeight.normal),
+            currentMonthTextStyle: widget.currentMonthTextStyle ??
+                const TextStyle(
+                    color: Colors.black54, fontWeight: FontWeight.normal),
             selectedYearTextStyle: widget.selectedYearTextStyle ??
+                const TextStyle(
+                    color: Colors.black54, fontWeight: FontWeight.normal),
+            currentYearTextStyle: widget.currentYearTextStyle ??
                 const TextStyle(
                     color: Colors.black54, fontWeight: FontWeight.normal),
             weekdayLabels: widget.customWeekdayLabels ??
@@ -837,7 +847,13 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
             selectedMonthTextStyle: widget.selectedMonthTextStyle ??
                 const TextStyle(
                     color: Colors.black54, fontWeight: FontWeight.normal),
+            currentMonthTextStyle: widget.currentMonthTextStyle ??
+                const TextStyle(
+                    color: Colors.black54, fontWeight: FontWeight.normal),
             selectedYearTextStyle: widget.selectedYearTextStyle ??
+                const TextStyle(
+                    color: Colors.black54, fontWeight: FontWeight.normal),
+            currentYearTextStyle: widget.currentYearTextStyle ??
                 const TextStyle(
                     color: Colors.black54, fontWeight: FontWeight.normal),
             weekdayLabels: widget.customWeekdayLabels ??
@@ -923,7 +939,13 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
             selectedMonthTextStyle: widget.selectedMonthTextStyle ??
                 const TextStyle(
                     color: Colors.black54, fontWeight: FontWeight.normal),
+            currentMonthTextStyle: widget.currentMonthTextStyle ??
+                const TextStyle(
+                    color: Colors.black54, fontWeight: FontWeight.normal),
             selectedYearTextStyle: widget.selectedYearTextStyle ??
+                const TextStyle(
+                    color: Colors.black54, fontWeight: FontWeight.normal),
+            currentYearTextStyle: widget.currentYearTextStyle ??
                 const TextStyle(
                     color: Colors.black54, fontWeight: FontWeight.normal),
             weekdayLabels: widget.customWeekdayLabels ??

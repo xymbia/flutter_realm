@@ -162,9 +162,11 @@ class DatePickerWidgetConfig {
       this.todayTextStyle,
       this.yearTextStyle,
       this.selectedYearTextStyle,
+      this.currentYearTextStyle,
       this.disabledYearTextStyle,
       this.monthTextStyle,
       this.selectedMonthTextStyle,
+      this.currentMonthTextStyle,
       this.disabledMonthTextStyle,
       this.dayBorderRadius,
       this.yearBorderRadius,
@@ -316,6 +318,7 @@ class DatePickerWidgetConfig {
   final TextStyle? yearTextStyle;
 
   /// Custom text style for selected year(s)
+  final TextStyle? currentYearTextStyle;
   final TextStyle? selectedYearTextStyle;
 
   /// Custom text style for disabled year(s)
@@ -326,6 +329,7 @@ class DatePickerWidgetConfig {
 
   /// Custom text style for selected month(s)
   final TextStyle? selectedMonthTextStyle;
+  final TextStyle? currentMonthTextStyle;
 
   /// Custom text style for disabled month(s)
   final TextStyle? disabledMonthTextStyle;
@@ -501,10 +505,12 @@ class DatePickerWidgetConfig {
       TextStyle? todayTextStyle,
       TextStyle? yearTextStyle,
       TextStyle? selectedYearTextStyle,
+      TextStyle? currentYearTextStyle,
       TextStyle? disabledYearTextStyle,
       TextStyle? selectedRangeDayTextStyle,
       TextStyle? monthTextStyle,
       TextStyle? selectedMonthTextStyle,
+      TextStyle? currentMonthTextStyle,
       TextStyle? disabledMonthTextStyle,
       BorderRadius? dayBorderRadius,
       BorderRadius? yearBorderRadius,
@@ -592,6 +598,7 @@ class DatePickerWidgetConfig {
         yearTextStyle: yearTextStyle ?? this.yearTextStyle,
         selectedYearTextStyle:
             selectedYearTextStyle ?? this.selectedYearTextStyle,
+        currentYearTextStyle: currentYearTextStyle ?? this.currentYearTextStyle,
         disabledYearTextStyle:
             disabledYearTextStyle ?? this.disabledYearTextStyle,
         selectedRangeDayTextStyle:
@@ -599,6 +606,8 @@ class DatePickerWidgetConfig {
         monthTextStyle: monthTextStyle ?? this.monthTextStyle,
         selectedMonthTextStyle:
             selectedMonthTextStyle ?? this.selectedMonthTextStyle,
+        currentMonthTextStyle:
+            currentMonthTextStyle ?? this.currentMonthTextStyle,
         disabledMonthTextStyle:
             disabledMonthTextStyle ?? this.disabledMonthTextStyle,
         dayBorderRadius: dayBorderRadius ?? this.dayBorderRadius,
@@ -705,9 +714,11 @@ class DatePickerWidgetWithActionButtonsConfig extends DatePickerWidgetConfig {
     TextStyle? todayTextStyle,
     TextStyle? yearTextStyle,
     TextStyle? selectedYearTextStyle,
+    TextStyle? currentYearTextStyle,
     TextStyle? disabledYearTextStyle,
     TextStyle? monthTextStyle,
     TextStyle? selectedMonthTextStyle,
+    TextStyle? currentMonthTextStyle,
     TextStyle? disabledMonthTextStyle,
     BorderRadius? dayBorderRadius,
     BorderRadius? yearBorderRadius,
@@ -790,9 +801,11 @@ class DatePickerWidgetWithActionButtonsConfig extends DatePickerWidgetConfig {
           todayTextStyle: todayTextStyle,
           yearTextStyle: yearTextStyle,
           selectedYearTextStyle: selectedYearTextStyle,
+          currentYearTextStyle: currentYearTextStyle,
           disabledYearTextStyle: disabledYearTextStyle,
           monthTextStyle: monthTextStyle,
           selectedMonthTextStyle: selectedMonthTextStyle,
+          currentMonthTextStyle: currentMonthTextStyle,
           disabledMonthTextStyle: disabledMonthTextStyle,
           dayBorderRadius: dayBorderRadius,
           yearBorderRadius: yearBorderRadius,
@@ -903,9 +916,11 @@ class DatePickerWidgetWithActionButtonsConfig extends DatePickerWidgetConfig {
       TextStyle? todayTextStyle,
       TextStyle? yearTextStyle,
       TextStyle? selectedYearTextStyle,
+      TextStyle? currentYearTextStyle,
       TextStyle? disabledYearTextStyle,
       TextStyle? monthTextStyle,
       TextStyle? selectedMonthTextStyle,
+      TextStyle? currentMonthTextStyle,
       TextStyle? disabledMonthTextStyle,
       BorderRadius? dayBorderRadius,
       BorderRadius? yearBorderRadius,
@@ -1002,11 +1017,14 @@ class DatePickerWidgetWithActionButtonsConfig extends DatePickerWidgetConfig {
         yearTextStyle: yearTextStyle ?? this.yearTextStyle,
         selectedYearTextStyle:
             selectedYearTextStyle ?? this.selectedYearTextStyle,
+        currentYearTextStyle: currentYearTextStyle ?? this.currentYearTextStyle,
         disabledYearTextStyle:
             disabledYearTextStyle ?? this.disabledYearTextStyle,
         monthTextStyle: monthTextStyle ?? this.monthTextStyle,
         selectedMonthTextStyle:
             selectedMonthTextStyle ?? this.selectedMonthTextStyle,
+        currentMonthTextStyle:
+            currentMonthTextStyle ?? this.currentMonthTextStyle,
         disabledMonthTextStyle:
             disabledMonthTextStyle ?? this.disabledMonthTextStyle,
         dayBorderRadius: dayBorderRadius ?? this.dayBorderRadius,

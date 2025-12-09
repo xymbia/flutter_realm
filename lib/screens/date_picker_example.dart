@@ -97,14 +97,19 @@ class _DatePickerPageState extends State<DatePickerPage> {
                               color: Colors.black),
                           selectedDayHighlightColor: Colors.black87,
                           isTodayHighlightColor: Colors.black,
-                          selectedDayTextStyle: Font.apply(
-                              FontStyle.regular, FontSize.h6,
+                          selectedDayTextStyle: Font.apply(FontStyle.regular, FontSize.h6,
                               color: Colors.black),
                           selectedMonthTextStyle: const TextStyle(
                               color: Colors.black87,
                               fontWeight: FontWeight.bold),
+                          currentMonthTextStyle: const TextStyle(
+                              color: Colors.blue,
+                              fontWeight: FontWeight.bold),
                           selectedYearTextStyle: const TextStyle(
                               color: Colors.black87,
+                              fontWeight: FontWeight.bold),
+                          currentYearTextStyle: const TextStyle(
+                              color: Colors.blue,
                               fontWeight: FontWeight.bold),
                           weekdayLabelTextStyle: Font.apply(
                               FontStyle.regular, FontSize.h6,
@@ -163,8 +168,7 @@ class _DatePickerPageState extends State<DatePickerPage> {
                           saveButtonLabel: 'Apply',
                           refreshTooltip: 'Reset to Today',
                           iconColor: Colors.deepPurple,
-                          cardMargin:
-                              const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          cardMargin: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                           cardPadding: const EdgeInsets.only(top: 18, bottom: 18),
                           calendarPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                           customWeekdayLabels: const ['S', 'M', 'T', 'W', 'T', 'F', 'S'],

@@ -121,14 +121,14 @@ class _YearPickerState extends State<YearPicker> {
 
     final Color textColor;
     if (isSelected || isCurrentlyDisplayedYear) {
-      textColor =  widget.config.isTodayHighlightColor ?? colorScheme.onSurface.withValues(alpha: 0.87);
+      textColor = colorScheme.onSurface.withValues(alpha: 0.87);
     } else if (isDisabled) {
       textColor = colorScheme.onSurface.withValues(alpha: 0.38);
     } else if (isCurrentYear) {
       textColor =
           widget.config.selectedDayHighlightColor ?? colorScheme.primary;
     } else {
-      textColor =  widget.config.isTodayHighlightColor ??colorScheme.onSurface.withValues(alpha: 0.87);
+      textColor = colorScheme.onSurface.withValues(alpha: 0.87);
     }
     TextStyle? itemStyle = widget.config.yearTextStyle ??
         textTheme.bodyLarge?.apply(color: textColor);
@@ -169,6 +169,10 @@ class _YearPickerState extends State<YearPicker> {
         borderRadius: widget.config.yearBorderRadius ??
             BorderRadius.circular(decorationHeight / 2),
       );
+    }
+
+    if (isCurrentYear) {
+      itemStyle = widget.config.currentYearTextStyle ?? itemStyle;
     }
 
     Widget yearItem = widget.config.yearBuilder?.call(
