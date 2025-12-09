@@ -13,6 +13,7 @@ class CustomDatePickerWidget extends StatefulWidget {
   final DateTime? firstDate;
   final DateTime? lastDate;
   final Color? selectedDayHighlightColor;
+  final Color? isTodayHighlightColor;
   final TextStyle? selectedRangeDayTextStyle;
   final TextStyle? selectedDayTextStyle;
   final TextStyle? weekdayLabelTextStyle;
@@ -80,6 +81,7 @@ class CustomDatePickerWidget extends StatefulWidget {
     this.firstDate,
     this.lastDate,
     this.selectedDayHighlightColor,
+    this.isTodayHighlightColor,
     this.selectedRangeDayTextStyle,
     this.selectedDayTextStyle,
     this.weekdayLabelTextStyle,
@@ -734,6 +736,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
             hideScrollViewTopHeader: true,
             selectedDayHighlightColor:
                 widget.selectedDayHighlightColor ?? Colors.grey,
+            isTodayHighlightColor: widget.isTodayHighlightColor ?? Colors.white,
             selectedRangeDayTextStyle: widget.selectedRangeDayTextStyle ??
                 const TextStyle(
                     color: Colors.black54, fontWeight: FontWeight.normal),
@@ -814,6 +817,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
             calendarType: DatePickerWidgetType.range,
             calendarViewMode: mode,
             rangeBidirectional: true,
+            isTodayHighlightColor: widget.isTodayHighlightColor ?? Colors.white,
             selectedDayHighlightColor:
                 widget.selectedDayHighlightColor ?? Colors.teal[800],
             dynamicCalendarRows: true,
@@ -899,6 +903,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
             calendarType: DatePickerWidgetType.multi,
             calendarViewMode: mode,
             rangeBidirectional: true,
+            isTodayHighlightColor: widget.isTodayHighlightColor ?? Colors.white,
             selectedDayHighlightColor:
                 widget.selectedDayHighlightColor ?? Colors.teal[800],
             dynamicCalendarRows: true,

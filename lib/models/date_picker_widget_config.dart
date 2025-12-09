@@ -156,6 +156,7 @@ class DatePickerWidgetConfig {
       this.dayTextStyle,
       this.selectedDayTextStyle,
       this.selectedDayHighlightColor,
+      this.isTodayHighlightColor,
       this.selectedRangeHighlightColor,
       this.disabledDayTextStyle,
       this.todayTextStyle,
@@ -299,6 +300,7 @@ class DatePickerWidgetConfig {
 
   /// The highlight color for selected day(s)
   final Color? selectedDayHighlightColor;
+  final Color? isTodayHighlightColor;
 
   /// The highlight color for day(s) included in the selected range
   /// Only applicable when [calendarType] is [DatePickerWidgetType.range]
@@ -493,6 +495,7 @@ class DatePickerWidgetConfig {
       TextStyle? dayTextStyle,
       TextStyle? selectedDayTextStyle,
       Color? selectedDayHighlightColor,
+      Color? isTodayHighlightColor,
       Color? selectedRangeHighlightColor,
       TextStyle? disabledDayTextStyle,
       TextStyle? todayTextStyle,
@@ -580,6 +583,8 @@ class DatePickerWidgetConfig {
         selectedDayTextStyle: selectedDayTextStyle ?? this.selectedDayTextStyle,
         selectedDayHighlightColor:
             selectedDayHighlightColor ?? this.selectedDayHighlightColor,
+        isTodayHighlightColor:
+            isTodayHighlightColor ?? this.isTodayHighlightColor,
         selectedRangeHighlightColor:
             selectedRangeHighlightColor ?? this.selectedRangeHighlightColor,
         disabledDayTextStyle: disabledDayTextStyle ?? this.disabledDayTextStyle,
@@ -694,6 +699,7 @@ class DatePickerWidgetWithActionButtonsConfig extends DatePickerWidgetConfig {
     TextStyle? selectedDayTextStyle,
     TextStyle? selectedRangeDayTextStyle,
     Color? selectedDayHighlightColor,
+    Color? isTodayHighlightColor,
     Color? selectedRangeHighlightColor,
     TextStyle? disabledDayTextStyle,
     TextStyle? todayTextStyle,
@@ -778,6 +784,7 @@ class DatePickerWidgetWithActionButtonsConfig extends DatePickerWidgetConfig {
           selectedDayTextStyle: selectedDayTextStyle,
           selectedRangeDayTextStyle: selectedRangeDayTextStyle,
           selectedDayHighlightColor: selectedDayHighlightColor,
+          isTodayHighlightColor: isTodayHighlightColor,
           selectedRangeHighlightColor: selectedRangeHighlightColor,
           disabledDayTextStyle: disabledDayTextStyle,
           todayTextStyle: todayTextStyle,
@@ -890,6 +897,7 @@ class DatePickerWidgetWithActionButtonsConfig extends DatePickerWidgetConfig {
       TextStyle? selectedDayTextStyle,
       TextStyle? selectedRangeDayTextStyle,
       Color? selectedDayHighlightColor,
+      Color? isTodayHighlightColor,
       Color? selectedRangeHighlightColor,
       TextStyle? disabledDayTextStyle,
       TextStyle? todayTextStyle,
@@ -985,6 +993,8 @@ class DatePickerWidgetWithActionButtonsConfig extends DatePickerWidgetConfig {
             selectedRangeDayTextStyle ?? this.selectedRangeDayTextStyle,
         selectedDayHighlightColor:
             selectedDayHighlightColor ?? this.selectedDayHighlightColor,
+        isTodayHighlightColor:
+            isTodayHighlightColor ?? this.isTodayHighlightColor,
         selectedRangeHighlightColor:
             selectedRangeHighlightColor ?? this.selectedRangeHighlightColor,
         disabledDayTextStyle: disabledDayTextStyle ?? this.disabledDayTextStyle,

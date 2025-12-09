@@ -96,6 +96,7 @@ class _DatePickerPageState extends State<DatePickerPage> {
                               FontStyle.regular, FontSize.h6,
                               color: Colors.black),
                           selectedDayHighlightColor: Colors.black87,
+                          isTodayHighlightColor: Colors.black,
                           selectedDayTextStyle: Font.apply(
                               FontStyle.regular, FontSize.h6,
                               color: Colors.black),
@@ -162,21 +163,11 @@ class _DatePickerPageState extends State<DatePickerPage> {
                           saveButtonLabel: 'Apply',
                           refreshTooltip: 'Reset to Today',
                           iconColor: Colors.deepPurple,
-                          cardMargin: const EdgeInsets.symmetric(
-                              horizontal: 24, vertical: 12),
-                          cardPadding:
-                              const EdgeInsets.only(top: 18, bottom: 18),
-                          calendarPadding: const EdgeInsets.symmetric(
-                              horizontal: 24, vertical: 8),
-                          customWeekdayLabels: const [
-                            'S',
-                            'M',
-                            'T',
-                            'W',
-                            'T',
-                            'F',
-                            'S'
-                          ],
+                          cardMargin:
+                              const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          cardPadding: const EdgeInsets.only(top: 18, bottom: 18),
+                          calendarPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                          customWeekdayLabels: const ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
                           weekdayLabelPadding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
                           monthPickerPadding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
                           yearPickerPadding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),

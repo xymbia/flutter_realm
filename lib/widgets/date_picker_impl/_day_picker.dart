@@ -137,7 +137,7 @@ class _DayPickerState extends State<_DayPicker> {
         } else {
           if (isSelectedDay) {
             if (isToday) {
-              dayColor = Colors.white;
+              dayColor = widget.config.isTodayHighlightColor ?? Colors.white;
               decoration = widget.config.isTodayDecoration ??
                   BoxDecoration(
                     borderRadius: BorderRadius.circular(50),
@@ -179,7 +179,7 @@ class _DayPickerState extends State<_DayPicker> {
         if (isToday && widget.config.todayTextStyle != null) {
           customDayTextStyle = widget.config.todayTextStyle?.copyWith(
             color: isSelectedDay
-                ? Colors.black
+                ? widget.config.isTodayHighlightColor ?? Colors.black
                 : dayColor, // Use white if selected, otherwise use calculated dayColor
           );
         }
@@ -219,7 +219,14 @@ class _DayPickerState extends State<_DayPicker> {
           if (widget.config.calendarType != DatePickerWidgetType.range) {
             dayColor = selectedDayColor;
           } else {
-            customDayTextStyle = widget.config.selectedDayTextStyle;
+            if(widget.config.isTodayHighlightColor != null) {
+              dayColor = widget.config.isTodayHighlightColor!;
+            } else {
+              dayColor = todayColor;
+            }
+            customDayTextStyle = widget.config.selectedDayTextStyle?.copyWith(
+              color: dayColor,
+            );
           }
 
           decoration = widget.config.isTodayDecoration ??
@@ -232,7 +239,15 @@ class _DayPickerState extends State<_DayPicker> {
             customDayTextStyle ?? dayStyle.apply(color: dayColor);
 
         if (isToday) {
-          dayTextStyle = dayStyle;
+          if(widget.config.isTodayHighlightColor!=null){
+            dayTextStyle = dayStyle.apply(
+              color: widget.config.isTodayHighlightColor,
+            );
+          } else {
+            dayTextStyle = dayStyle.apply(
+              color: todayColor,
+            );
+          }
         }
 
         if (isSelectedDay) {
