@@ -13,6 +13,7 @@ class CustomDatePickerWidget extends StatefulWidget {
   final DateTime? firstDate;
   final DateTime? lastDate;
   final Color? selectedDayHighlightColor;
+  final TextStyle? selectedRangeDayTextStyle;
   final TextStyle? selectedDayTextStyle;
   final TextStyle? weekdayLabelTextStyle;
   final TextStyle? dayTextStyle;
@@ -79,6 +80,7 @@ class CustomDatePickerWidget extends StatefulWidget {
     this.firstDate,
     this.lastDate,
     this.selectedDayHighlightColor,
+    this.selectedRangeDayTextStyle,
     this.selectedDayTextStyle,
     this.weekdayLabelTextStyle,
     this.dayTextStyle,
@@ -732,6 +734,9 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
             hideScrollViewTopHeader: true,
             selectedDayHighlightColor:
                 widget.selectedDayHighlightColor ?? Colors.grey,
+            selectedRangeDayTextStyle: widget.selectedRangeDayTextStyle ??
+                const TextStyle(
+                    color: Colors.black54, fontWeight: FontWeight.normal),
             selectedDayTextStyle: widget.selectedDayTextStyle ??
                 const TextStyle(
                     color: Colors.black54, fontWeight: FontWeight.normal),
@@ -819,6 +824,9 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
             hideMonthPickerDividers: true,
             hideScrollViewMonthWeekHeader: true,
             hideScrollViewTopHeader: true,
+            selectedRangeDayTextStyle: widget.selectedRangeDayTextStyle ??
+                const TextStyle(
+                    color: Colors.black54, fontWeight: FontWeight.normal),
             selectedDayTextStyle: widget.selectedDayTextStyle ??
                 const TextStyle(
                     color: Colors.black54, fontWeight: FontWeight.normal),
@@ -901,6 +909,9 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
             hideMonthPickerDividers: true,
             hideScrollViewMonthWeekHeader: true,
             hideScrollViewTopHeader: true,
+            selectedRangeDayTextStyle: widget.selectedRangeDayTextStyle ??
+                const TextStyle(
+                    color: Colors.black54, fontWeight: FontWeight.normal),
             selectedDayTextStyle: widget.selectedDayTextStyle ??
                 const TextStyle(
                     color: Colors.black54, fontWeight: FontWeight.normal),

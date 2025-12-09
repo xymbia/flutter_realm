@@ -92,10 +92,13 @@ class _DatePickerPageState extends State<DatePickerPage> {
                               DateTime.now().month, DateTime.now().day),
                           lastDate: DateTime(DateTime.now().year + 50,
                               DateTime.now().month + 6, DateTime.now().day),
+                          selectedRangeDayTextStyle: Font.apply(
+                              FontStyle.regular, FontSize.h6,
+                              color: Colors.black),
                           selectedDayHighlightColor: Colors.black87,
                           selectedDayTextStyle: Font.apply(
                               FontStyle.regular, FontSize.h6,
-                              color: Colors.white),
+                              color: Colors.black),
                           selectedMonthTextStyle: const TextStyle(
                               color: Colors.black87,
                               fontWeight: FontWeight.bold),

@@ -179,7 +179,7 @@ class _DayPickerState extends State<_DayPicker> {
         if (isToday && widget.config.todayTextStyle != null) {
           customDayTextStyle = widget.config.todayTextStyle?.copyWith(
             color: isSelectedDay
-                ? Colors.white
+                ? Colors.black
                 : dayColor, // Use white if selected, otherwise use calculated dayColor
           );
         }
@@ -228,20 +228,25 @@ class _DayPickerState extends State<_DayPicker> {
                   border: Border.all(width: 1, color: const Color(0xFF393B40)));
         }
 
-        if (isSelectedDay) {
-          customDayTextStyle =
-              widget.config.selectedDayTextStyle;
-          decoration = widget.config.isSelectedDecoration ??
-              BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                color: const Color(
-                    0xFF1A1B1D), // Black background for today's date
-                border: Border.all(width: 2, color: const Color(0xFF393B40)),
-              );
+        var dayTextStyle =
+            customDayTextStyle ?? dayStyle.apply(color: dayColor);
+
+        if (isToday) {
+          dayTextStyle = dayStyle;
         }
 
-        final dayTextStyle =
-            customDayTextStyle ?? dayStyle.apply(color: dayColor);
+        if (isSelectedDay) {
+          customDayTextStyle = widget.config.selectedDayTextStyle?.copyWith(
+            color: Colors.white,
+          );
+          dayTextStyle = customDayTextStyle!;
+        }
+
+        if (isDateInBetweenRangePickerSelectedDates &&
+            widget.config.selectedRangeDayTextStyle != null) {
+          customDayTextStyle = widget.config.selectedRangeDayTextStyle;
+          dayTextStyle = customDayTextStyle!;
+        }
 
         Widget dayWidget = widget.config.dayBuilder?.call(
               date: dayToBuild,
