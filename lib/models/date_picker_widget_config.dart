@@ -135,6 +135,9 @@ class DatePickerWidgetConfig {
       DateTime? currentDate,
       DatePickerWidgetMode? calendarViewMode,
       this.weekdayLabels,
+      this.weekdayLabelPadding,
+      this.monthPickerPadding,
+      this.yearPickerPadding,
       this.weekdayLabelDecoration,
       this.weekdayLabelTextStyle,
       this.weekdayLabelBuilder,
@@ -153,14 +156,17 @@ class DatePickerWidgetConfig {
       this.dayTextStyle,
       this.selectedDayTextStyle,
       this.selectedDayHighlightColor,
+      this.isTodayHighlightColor,
       this.selectedRangeHighlightColor,
       this.disabledDayTextStyle,
       this.todayTextStyle,
       this.yearTextStyle,
       this.selectedYearTextStyle,
+      this.currentYearTextStyle,
       this.disabledYearTextStyle,
       this.monthTextStyle,
       this.selectedMonthTextStyle,
+      this.currentMonthTextStyle,
       this.disabledMonthTextStyle,
       this.dayBorderRadius,
       this.yearBorderRadius,
@@ -237,6 +243,10 @@ class DatePickerWidgetConfig {
   ///   вс (Sunday) even though the first day of week for Russian is Monday.
   final List<String>? weekdayLabels;
 
+  final EdgeInsetsGeometry? weekdayLabelPadding;
+  final EdgeInsetsGeometry? monthPickerPadding;
+  final EdgeInsetsGeometry? yearPickerPadding;
+
   final BoxDecoration? weekdayLabelDecoration;
 
   /// Custom text style for weekday labels
@@ -292,6 +302,7 @@ class DatePickerWidgetConfig {
 
   /// The highlight color for selected day(s)
   final Color? selectedDayHighlightColor;
+  final Color? isTodayHighlightColor;
 
   /// The highlight color for day(s) included in the selected range
   /// Only applicable when [calendarType] is [DatePickerWidgetType.range]
@@ -307,6 +318,7 @@ class DatePickerWidgetConfig {
   final TextStyle? yearTextStyle;
 
   /// Custom text style for selected year(s)
+  final TextStyle? currentYearTextStyle;
   final TextStyle? selectedYearTextStyle;
 
   /// Custom text style for disabled year(s)
@@ -317,6 +329,7 @@ class DatePickerWidgetConfig {
 
   /// Custom text style for selected month(s)
   final TextStyle? selectedMonthTextStyle;
+  final TextStyle? currentMonthTextStyle;
 
   /// Custom text style for disabled month(s)
   final TextStyle? disabledMonthTextStyle;
@@ -466,6 +479,9 @@ class DatePickerWidgetConfig {
       DateTime? currentDate,
       DatePickerWidgetMode? calendarViewMode,
       List<String>? weekdayLabels,
+      EdgeInsets? weekdayLabelPadding,
+      EdgeInsets? monthPickerPadding,
+      EdgeInsets? yearPickerPadding,
       BoxDecoration? weekdayLabelDecoration,
       TextStyle? weekdayLabelTextStyle,
       WeekdayLabelBuilder? weekdayLabelBuilder,
@@ -483,15 +499,18 @@ class DatePickerWidgetConfig {
       TextStyle? dayTextStyle,
       TextStyle? selectedDayTextStyle,
       Color? selectedDayHighlightColor,
+      Color? isTodayHighlightColor,
       Color? selectedRangeHighlightColor,
       TextStyle? disabledDayTextStyle,
       TextStyle? todayTextStyle,
       TextStyle? yearTextStyle,
       TextStyle? selectedYearTextStyle,
+      TextStyle? currentYearTextStyle,
       TextStyle? disabledYearTextStyle,
       TextStyle? selectedRangeDayTextStyle,
       TextStyle? monthTextStyle,
       TextStyle? selectedMonthTextStyle,
+      TextStyle? currentMonthTextStyle,
       TextStyle? disabledMonthTextStyle,
       BorderRadius? dayBorderRadius,
       BorderRadius? yearBorderRadius,
@@ -545,6 +564,9 @@ class DatePickerWidgetConfig {
         currentDate: currentDate ?? this.currentDate,
         calendarViewMode: calendarViewMode ?? this.calendarViewMode,
         weekdayLabels: weekdayLabels ?? this.weekdayLabels,
+        weekdayLabelPadding: weekdayLabelPadding ?? this.weekdayLabelPadding,
+        monthPickerPadding: monthPickerPadding ?? this.monthPickerPadding,
+        yearPickerPadding: yearPickerPadding ?? this.yearPickerPadding,
         weekdayLabelDecoration:
             weekdayLabelDecoration ?? this.weekdayLabelDecoration,
         weekdayLabelTextStyle:
@@ -567,6 +589,8 @@ class DatePickerWidgetConfig {
         selectedDayTextStyle: selectedDayTextStyle ?? this.selectedDayTextStyle,
         selectedDayHighlightColor:
             selectedDayHighlightColor ?? this.selectedDayHighlightColor,
+        isTodayHighlightColor:
+            isTodayHighlightColor ?? this.isTodayHighlightColor,
         selectedRangeHighlightColor:
             selectedRangeHighlightColor ?? this.selectedRangeHighlightColor,
         disabledDayTextStyle: disabledDayTextStyle ?? this.disabledDayTextStyle,
@@ -574,6 +598,7 @@ class DatePickerWidgetConfig {
         yearTextStyle: yearTextStyle ?? this.yearTextStyle,
         selectedYearTextStyle:
             selectedYearTextStyle ?? this.selectedYearTextStyle,
+        currentYearTextStyle: currentYearTextStyle ?? this.currentYearTextStyle,
         disabledYearTextStyle:
             disabledYearTextStyle ?? this.disabledYearTextStyle,
         selectedRangeDayTextStyle:
@@ -581,6 +606,8 @@ class DatePickerWidgetConfig {
         monthTextStyle: monthTextStyle ?? this.monthTextStyle,
         selectedMonthTextStyle:
             selectedMonthTextStyle ?? this.selectedMonthTextStyle,
+        currentMonthTextStyle:
+            currentMonthTextStyle ?? this.currentMonthTextStyle,
         disabledMonthTextStyle:
             disabledMonthTextStyle ?? this.disabledMonthTextStyle,
         dayBorderRadius: dayBorderRadius ?? this.dayBorderRadius,
@@ -660,6 +687,9 @@ class DatePickerWidgetWithActionButtonsConfig extends DatePickerWidgetConfig {
     DateTime? currentDate,
     DatePickerWidgetMode? calendarViewMode,
     List<String>? weekdayLabels,
+    EdgeInsetsGeometry? weekdayLabelPadding,
+    EdgeInsetsGeometry? monthPickerPadding,
+    EdgeInsetsGeometry? yearPickerPadding,
     BoxDecoration? weekdayLabelDecoration,
     TextStyle? weekdayLabelTextStyle,
     WeekdayLabelBuilder? weekdayLabelBuilder,
@@ -678,14 +708,17 @@ class DatePickerWidgetWithActionButtonsConfig extends DatePickerWidgetConfig {
     TextStyle? selectedDayTextStyle,
     TextStyle? selectedRangeDayTextStyle,
     Color? selectedDayHighlightColor,
+    Color? isTodayHighlightColor,
     Color? selectedRangeHighlightColor,
     TextStyle? disabledDayTextStyle,
     TextStyle? todayTextStyle,
     TextStyle? yearTextStyle,
     TextStyle? selectedYearTextStyle,
+    TextStyle? currentYearTextStyle,
     TextStyle? disabledYearTextStyle,
     TextStyle? monthTextStyle,
     TextStyle? selectedMonthTextStyle,
+    TextStyle? currentMonthTextStyle,
     TextStyle? disabledMonthTextStyle,
     BorderRadius? dayBorderRadius,
     BorderRadius? yearBorderRadius,
@@ -762,14 +795,17 @@ class DatePickerWidgetWithActionButtonsConfig extends DatePickerWidgetConfig {
           selectedDayTextStyle: selectedDayTextStyle,
           selectedRangeDayTextStyle: selectedRangeDayTextStyle,
           selectedDayHighlightColor: selectedDayHighlightColor,
+          isTodayHighlightColor: isTodayHighlightColor,
           selectedRangeHighlightColor: selectedRangeHighlightColor,
           disabledDayTextStyle: disabledDayTextStyle,
           todayTextStyle: todayTextStyle,
           yearTextStyle: yearTextStyle,
           selectedYearTextStyle: selectedYearTextStyle,
+          currentYearTextStyle: currentYearTextStyle,
           disabledYearTextStyle: disabledYearTextStyle,
           monthTextStyle: monthTextStyle,
           selectedMonthTextStyle: selectedMonthTextStyle,
+          currentMonthTextStyle: currentMonthTextStyle,
           disabledMonthTextStyle: disabledMonthTextStyle,
           dayBorderRadius: dayBorderRadius,
           yearBorderRadius: yearBorderRadius,
@@ -853,6 +889,9 @@ class DatePickerWidgetWithActionButtonsConfig extends DatePickerWidgetConfig {
       DateTime? currentDate,
       DatePickerWidgetMode? calendarViewMode,
       List<String>? weekdayLabels,
+      EdgeInsetsGeometry? weekdayLabelPadding,
+      EdgeInsetsGeometry? monthPickerPadding,
+      EdgeInsetsGeometry? yearPickerPadding,
       BoxDecoration? weekdayLabelDecoration,
       TextStyle? weekdayLabelTextStyle,
       WeekdayLabelBuilder? weekdayLabelBuilder,
@@ -871,14 +910,17 @@ class DatePickerWidgetWithActionButtonsConfig extends DatePickerWidgetConfig {
       TextStyle? selectedDayTextStyle,
       TextStyle? selectedRangeDayTextStyle,
       Color? selectedDayHighlightColor,
+      Color? isTodayHighlightColor,
       Color? selectedRangeHighlightColor,
       TextStyle? disabledDayTextStyle,
       TextStyle? todayTextStyle,
       TextStyle? yearTextStyle,
       TextStyle? selectedYearTextStyle,
+      TextStyle? currentYearTextStyle,
       TextStyle? disabledYearTextStyle,
       TextStyle? monthTextStyle,
       TextStyle? selectedMonthTextStyle,
+      TextStyle? currentMonthTextStyle,
       TextStyle? disabledMonthTextStyle,
       BorderRadius? dayBorderRadius,
       BorderRadius? yearBorderRadius,
@@ -941,7 +983,11 @@ class DatePickerWidgetWithActionButtonsConfig extends DatePickerWidgetConfig {
         currentDate: currentDate ?? this.currentDate,
         calendarViewMode: calendarViewMode ?? this.calendarViewMode,
         weekdayLabels: weekdayLabels ?? this.weekdayLabels,
-        weekdayLabelDecoration: weekdayLabelDecoration ?? this.weekdayLabelDecoration,
+        weekdayLabelPadding: weekdayLabelPadding ?? this.weekdayLabelPadding,
+        monthPickerPadding: monthPickerPadding ?? this.monthPickerPadding,
+        yearPickerPadding: yearPickerPadding ?? this.yearPickerPadding,
+        weekdayLabelDecoration:
+            weekdayLabelDecoration ?? this.weekdayLabelDecoration,
         weekdayLabelTextStyle:
             weekdayLabelTextStyle ?? this.weekdayLabelTextStyle,
         weekdayLabelBuilder: weekdayLabelBuilder ?? this.weekdayLabelBuilder,
@@ -962,6 +1008,8 @@ class DatePickerWidgetWithActionButtonsConfig extends DatePickerWidgetConfig {
             selectedRangeDayTextStyle ?? this.selectedRangeDayTextStyle,
         selectedDayHighlightColor:
             selectedDayHighlightColor ?? this.selectedDayHighlightColor,
+        isTodayHighlightColor:
+            isTodayHighlightColor ?? this.isTodayHighlightColor,
         selectedRangeHighlightColor:
             selectedRangeHighlightColor ?? this.selectedRangeHighlightColor,
         disabledDayTextStyle: disabledDayTextStyle ?? this.disabledDayTextStyle,
@@ -969,11 +1017,14 @@ class DatePickerWidgetWithActionButtonsConfig extends DatePickerWidgetConfig {
         yearTextStyle: yearTextStyle ?? this.yearTextStyle,
         selectedYearTextStyle:
             selectedYearTextStyle ?? this.selectedYearTextStyle,
+        currentYearTextStyle: currentYearTextStyle ?? this.currentYearTextStyle,
         disabledYearTextStyle:
             disabledYearTextStyle ?? this.disabledYearTextStyle,
         monthTextStyle: monthTextStyle ?? this.monthTextStyle,
         selectedMonthTextStyle:
             selectedMonthTextStyle ?? this.selectedMonthTextStyle,
+        currentMonthTextStyle:
+            currentMonthTextStyle ?? this.currentMonthTextStyle,
         disabledMonthTextStyle:
             disabledMonthTextStyle ?? this.disabledMonthTextStyle,
         dayBorderRadius: dayBorderRadius ?? this.dayBorderRadius,

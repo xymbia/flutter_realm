@@ -171,6 +171,10 @@ class _YearPickerState extends State<YearPicker> {
       );
     }
 
+    if (isCurrentYear) {
+      itemStyle = widget.config.currentYearTextStyle ?? itemStyle;
+    }
+
     Widget yearItem = widget.config.yearBuilder?.call(
           year: year,
           textStyle: itemStyle,

@@ -92,15 +92,24 @@ class _DatePickerPageState extends State<DatePickerPage> {
                               DateTime.now().month, DateTime.now().day),
                           lastDate: DateTime(DateTime.now().year + 50,
                               DateTime.now().month + 6, DateTime.now().day),
-                          selectedDayHighlightColor: Colors.black87,
-                          selectedDayTextStyle: Font.apply(
+                          selectedRangeDayTextStyle: Font.apply(
                               FontStyle.regular, FontSize.h6,
-                              color: Colors.black87),
+                              color: Colors.black),
+                          selectedDayHighlightColor: Colors.black87,
+                          isTodayHighlightColor: Colors.black,
+                          selectedDayTextStyle: Font.apply(FontStyle.regular, FontSize.h6,
+                              color: Colors.black),
                           selectedMonthTextStyle: const TextStyle(
                               color: Colors.black87,
                               fontWeight: FontWeight.bold),
+                          currentMonthTextStyle: const TextStyle(
+                              color: Colors.blue,
+                              fontWeight: FontWeight.bold),
                           selectedYearTextStyle: const TextStyle(
                               color: Colors.black87,
+                              fontWeight: FontWeight.bold),
+                          currentYearTextStyle: const TextStyle(
+                              color: Colors.blue,
                               fontWeight: FontWeight.bold),
                           weekdayLabelTextStyle: Font.apply(
                               FontStyle.regular, FontSize.h6,
@@ -159,55 +168,54 @@ class _DatePickerPageState extends State<DatePickerPage> {
                           saveButtonLabel: 'Apply',
                           refreshTooltip: 'Reset to Today',
                           iconColor: Colors.deepPurple,
-                          cardMargin: const EdgeInsets.symmetric(
-                              horizontal: 24, vertical: 12),
-                          cardPadding:
-                              const EdgeInsets.only(top: 18, bottom: 18),
-                          calendarPadding: const EdgeInsets.symmetric(
-                              horizontal: 24, vertical: 8),
-                          customWeekdayLabels: const [
-                            'S',
-                            'M',
-                            'T',
-                            'W',
-                            'T',
-                            'F',
-                            'S'
-                          ],
+                          cardMargin: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          cardPadding: const EdgeInsets.only(top: 18, bottom: 18),
+                          calendarPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                          customWeekdayLabels: const ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
+                          weekdayLabelPadding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+                          monthPickerPadding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+                          yearPickerPadding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
                           weekdayLabelDecoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(50),
-                            color: const Color(0xFFBBFBBA),
+                            color: Colors.grey,
                             // Black background for today's date
-                            border: Border.all(
-                                width: 1, color: const Color(0xFFBBFBBA)),
+                            border: Border.all(width: 1, color: Colors.grey),
                           ),
                           titleDayMode: 'Pick a Day',
                           titleMonthMode: 'Pick a Month',
                           titleYearMode: 'Pick a Year',
                           titleRangeMode: 'Pick a Date Range',
-                          showSaveButton: true,
+                          showSaveButton: false,
                           showCancelButton: true,
                           showRefreshButton: true,
                           showTitleDay: true,
                           showTitleMonth: true,
                           showTitleYear: true,
                           showTitleRange: true,
+                          monthPickerDecoration: BoxDecoration(
+                            color: Colors.grey,
+                            border: Border.all(width: 1, color: Colors.white),
+                            shape: BoxShape.rectangle,
+                          ),
+                          yearPickerDecoration: BoxDecoration(
+                            color: Colors.grey,
+                            border: Border.all(width: 1, color: Colors.white),
+                            shape: BoxShape.rectangle,
+                          ),
                           isTodayDecoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(50),
-                            color: Colors.redAccent,
-                            border: Border.all(width: 1, color: Colors.pink),
+                            color: Colors.grey,
+                            border: Border.all(width: 1, color: Colors.grey),
                             shape: BoxShape.circle,
                           ),
                           isSelectedDecoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(50),
-                            color: const Color(0xFFCFCFCF),
+                            color: Colors.grey,
                             border: Border.all(
                                 width: 1, color: const Color(0xFF393B40)),
                             shape: BoxShape.circle,
                           ),
                           isDisabledDecoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(50),
-                            color: const Color(0xFFCFCFCF),
+                            color: Colors.grey,
+                            shape: BoxShape.circle,
                             border: Border.all(
                                 width: 1, color: const Color(0xFF393B40)),
                           )))),
