@@ -81,144 +81,190 @@ class _DatePickerPageState extends State<DatePickerPage> {
                   child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: CustomDatePickerWidget(
-                          selectionMode: _selectionMode,
-                          initialSelectedDate:
-                              DateTime.now().add(const Duration(days: 1)),
-                          initialSelectedRange: [
+                        selectionMode: _selectionMode,
+                        initialSelectedDate:
                             DateTime.now().add(const Duration(days: 1)),
-                            DateTime.now().add(const Duration(days: 15)),
-                          ],
-                          firstDate: DateTime(DateTime.now().year,
-                              DateTime.now().month, DateTime.now().day),
-                          lastDate: DateTime(DateTime.now().year + 50,
-                              DateTime.now().month + 6, DateTime.now().day),
-                          selectedRangeDayTextStyle: Font.apply(
-                              FontStyle.regular, FontSize.h6,
-                              color: Colors.black),
-                          selectedDayHighlightColor: Colors.black87,
-                          isTodayHighlightColor: Colors.black,
-                          selectedDayTextStyle: Font.apply(FontStyle.regular, FontSize.h6,
-                              color: Colors.black),
-                          selectedMonthTextStyle: const TextStyle(
-                              color: Colors.black87,
-                              fontWeight: FontWeight.bold),
-                          currentMonthTextStyle: const TextStyle(
-                              color: Colors.blue,
-                              fontWeight: FontWeight.bold),
-                          selectedYearTextStyle: const TextStyle(
-                              color: Colors.black87,
-                              fontWeight: FontWeight.bold),
-                          currentYearTextStyle: const TextStyle(
-                              color: Colors.blue,
-                              fontWeight: FontWeight.bold),
-                          weekdayLabelTextStyle: Font.apply(
-                              FontStyle.regular, FontSize.h6,
-                              color: Colors.black87),
-                          dayTextStyle: const TextStyle(
-                              color: Colors.black, fontWeight: FontWeight.w500),
-                          disabledDayTextStyle:
-                              const TextStyle(color: Colors.black),
-                          controlsTextStyle: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16),
-                          dayBorderRadius: BorderRadius.circular(18),
-                          dayMaxWidth: 55,
-                          controlsHeight: 55,
-                          showMonthNavButtons: true,
-                          show2Months: false,
-                          showMonthYearLabel: false,
-                          onSingleDateSelected: (date) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                  duration: const Duration(milliseconds: 2500),
-                                  content: Text(
-                                      'Selected: \t\t${formatDate(date)}')),
-                            );
-                          },
-                          onRangeSelected: (start, end) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                  duration: const Duration(milliseconds: 2500),
-                                  content: Text('Range: \t${formatDateRange([
-                                        start,
-                                        end
-                                      ])}')),
-                            );
-                          },
-                          onMultiDatesSelected: (dates) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
+                        initialSelectedRange: [
+                          DateTime.now().add(const Duration(days: 1)),
+                          DateTime.now().add(const Duration(days: 15)),
+                        ],
+                        firstDate: DateTime(DateTime.now().year,
+                            DateTime.now().month, DateTime.now().day),
+                        lastDate: DateTime(DateTime.now().year + 50,
+                            DateTime.now().month + 6, DateTime.now().day),
+                        selectedRangeDayTextStyle: Font.apply(
+                            FontStyle.regular, FontSize.h6,
+                            color: Colors.black),
+                        selectedDayHighlightColor: Colors.black87,
+                        isTodayHighlightColor: Colors.black,
+                        selectedDayTextStyle: Font.apply(
+                            FontStyle.regular, FontSize.h6,
+                            color: Colors.black),
+                        selectedMonthTextStyle: const TextStyle(
+                            color: Colors.black87, fontWeight: FontWeight.bold),
+                        currentMonthTextStyle: const TextStyle(
+                            color: Colors.blue, fontWeight: FontWeight.bold),
+                        selectedYearTextStyle: const TextStyle(
+                            color: Colors.black87, fontWeight: FontWeight.bold),
+                        currentYearTextStyle: const TextStyle(
+                            color: Colors.blue, fontWeight: FontWeight.bold),
+                        weekdayLabelTextStyle: Font.apply(
+                            FontStyle.regular, FontSize.h6,
+                            color: Colors.black87),
+                        dayTextStyle: const TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.w500),
+                        disabledDayTextStyle:
+                            const TextStyle(color: Colors.black),
+                        controlsTextStyle: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16),
+                        dayBorderRadius: BorderRadius.circular(18),
+                        dayMaxWidth: 55,
+                        controlsHeight: 55,
+                        showMonthNavButtons: true,
+                        show2Months: false,
+                        showMonthYearLabel: false,
+                        onSingleDateSelected: (date) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
                                 duration: const Duration(milliseconds: 2500),
-                                content: Text(
-                                    'Multi: \t${dates.map(formatDate).join(", ")}'),
-                              ),
-                            );
-                          },
-                          selectableDayPredicate: (day) {
-                            return !day
-                                .difference(DateTime.now()
-                                    .add(const Duration(days: -1)))
-                                .isNegative;
-                          },
-                          cardElevation: 2,
-                          cardColor: Colors.grey[50],
-                          dividerColor: Colors.blueGrey[100],
-                          cancelButtonLabel: 'Dismiss',
-                          saveButtonLabel: 'Apply',
-                          refreshTooltip: 'Reset to Today',
-                          iconColor: Colors.deepPurple,
-                          cardMargin: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                          cardPadding: const EdgeInsets.only(top: 18, bottom: 18),
-                          calendarPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                          customWeekdayLabels: const ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
-                          weekdayLabelPadding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
-                          monthPickerPadding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
-                          yearPickerPadding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
-                          weekdayLabelDecoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(50),
-                            color: Colors.grey,
-                            // Black background for today's date
-                            border: Border.all(width: 1, color: Colors.grey),
-                          ),
-                          titleDayMode: 'Pick a Day',
-                          titleMonthMode: 'Pick a Month',
-                          titleYearMode: 'Pick a Year',
-                          titleRangeMode: 'Pick a Date Range',
-                          showSaveButton: false,
-                          showCancelButton: true,
-                          showRefreshButton: true,
-                          showTitleDay: true,
-                          showTitleMonth: true,
-                          showTitleYear: true,
-                          showTitleRange: true,
-                          monthPickerDecoration: BoxDecoration(
-                            color: Colors.grey,
-                            border: Border.all(width: 1, color: Colors.white),
-                            shape: BoxShape.rectangle,
-                          ),
-                          yearPickerDecoration: BoxDecoration(
-                            color: Colors.grey,
-                            border: Border.all(width: 1, color: Colors.white),
-                            shape: BoxShape.rectangle,
-                          ),
-                          isTodayDecoration: BoxDecoration(
-                            color: Colors.grey,
-                            border: Border.all(width: 1, color: Colors.grey),
-                            shape: BoxShape.circle,
-                          ),
-                          isSelectedDecoration: BoxDecoration(
-                            color: Colors.grey,
-                            border: Border.all(
-                                width: 1, color: const Color(0xFF393B40)),
-                            shape: BoxShape.circle,
-                          ),
-                          isDisabledDecoration: BoxDecoration(
-                            color: Colors.grey,
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                                width: 1, color: const Color(0xFF393B40)),
-                          )))),
+                                content:
+                                    Text('Selected: \t\t${formatDate(date)}')),
+                          );
+                        },
+                        onRangeSelected: (start, end) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                duration: const Duration(milliseconds: 2500),
+                                content: Text('Range: \t${formatDateRange([
+                                      start,
+                                      end
+                                    ])}')),
+                          );
+                        },
+                        onMultiDatesSelected: (dates) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              duration: const Duration(milliseconds: 2500),
+                              content: Text(
+                                  'Multi: \t${dates.map(formatDate).join(", ")}'),
+                            ),
+                          );
+                        },
+                        selectableDayPredicate: (day) {
+                          return !day
+                              .difference(
+                                  DateTime.now().add(const Duration(days: -1)))
+                              .isNegative;
+                        },
+                        cardElevation: 2,
+                        cardColor: Colors.grey[50],
+                        dividerColor: Colors.blueGrey[100],
+                        cancelButtonLabel: 'Dismiss',
+                        saveButtonLabel: 'Apply',
+                        refreshTooltip: 'Reset to Today',
+                        iconColor: Colors.deepPurple,
+                        cardMargin: const EdgeInsets.symmetric(
+                            horizontal: 24, vertical: 12),
+                        cardPadding: const EdgeInsets.only(top: 18, bottom: 18),
+                        calendarPadding: const EdgeInsets.symmetric(
+                            horizontal: 24, vertical: 8),
+                        customWeekdayLabels: const [
+                          'S',
+                          'M',
+                          'T',
+                          'W',
+                          'T',
+                          'F',
+                          'S'
+                        ],
+                        weekdayLabelPadding: EdgeInsets.symmetric(
+                            horizontal: 6.w, vertical: 2.h),
+                        monthPickerPadding: EdgeInsets.symmetric(
+                            horizontal: 10.w, vertical: 8.h),
+                        yearPickerPadding: EdgeInsets.symmetric(
+                            horizontal: 10.w, vertical: 6.h),
+                        weekdayLabelDecoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(50),
+                          color: Colors.grey,
+                          // Black background for today's date
+                          border: Border.all(width: 1, color: Colors.grey),
+                        ),
+                        titleDayMode: 'Pick a Day',
+                        titleMonthMode: 'Pick a Month',
+                        titleYearMode: 'Pick a Year',
+                        titleRangeMode: 'Pick a Date Range',
+                        showSaveButton: false,
+                        showCancelButton: true,
+                        showRefreshButton: true,
+                        showTitleDay: true,
+                        showTitleMonth: true,
+                        showTitleYear: true,
+                        showTitleRange: true,
+                        monthPickerDecoration: BoxDecoration(
+                          color: Colors.grey,
+                          border: Border.all(width: 1, color: Colors.white),
+                          shape: BoxShape.rectangle,
+                        ),
+                        yearPickerDecoration: BoxDecoration(
+                          color: Colors.grey,
+                          border: Border.all(width: 1, color: Colors.white),
+                          shape: BoxShape.rectangle,
+                        ),
+                        isTodayDecoration: BoxDecoration(
+                          color: Colors.grey,
+                          border: Border.all(width: 1, color: Colors.grey),
+                          shape: BoxShape.circle,
+                        ),
+                        isSelectedDecoration: BoxDecoration(
+                          color: Colors.grey,
+                          border: Border.all(
+                              width: 1, color: const Color(0xFF393B40)),
+                          shape: BoxShape.circle,
+                        ),
+                        isDisabledDecoration: BoxDecoration(
+                          color: Colors.grey,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                              width: 1, color: const Color(0xFF393B40)),
+                        ),
+                        onDisplayedMonthChanged: (date) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              duration: const Duration(milliseconds: 2000),
+                              content: Text(
+                                  'Displayed Month Changed: ${formatDate(date)}'),
+                            ),
+                          );
+                        },
+                        onDisplayedYearChanged: (date) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              duration: const Duration(milliseconds: 2000),
+                              content:
+                                  Text('Displayed Year Changed: ${date.year}'),
+                            ),
+                          );
+                        },
+                        onMonthSelected: (date) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              duration: const Duration(milliseconds: 2000),
+                              content:
+                                  Text('Month Selected: ${formatDate(date)}'),
+                            ),
+                          );
+                        },
+                        onYearSelected: (date) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              duration: const Duration(milliseconds: 2000),
+                              content: Text('Year Selected: ${date.year}'),
+                            ),
+                          );
+                        },
+                      )))
             ],
           ),
         );
