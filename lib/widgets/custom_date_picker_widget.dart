@@ -75,6 +75,12 @@ class CustomDatePickerWidget extends StatefulWidget {
   final DatePickerWidgetConfig? config;
   final ScrollController? monthViewController;
 
+  // Callbacks for month/year changes
+  final ValueChanged<DateTime>? onDisplayedMonthChanged;
+  final ValueChanged<DateTime>? onDisplayedYearChanged;
+  final ValueChanged<DateTime>? onMonthSelected;
+  final ValueChanged<DateTime>? onYearSelected;
+
   const CustomDatePickerWidget({
     Key? key,
     required this.selectionMode,
@@ -138,6 +144,10 @@ class CustomDatePickerWidget extends StatefulWidget {
     this.config,
     this.onMultiDatesSelected,
     this.monthViewController,
+    this.onDisplayedMonthChanged,
+    this.onDisplayedYearChanged,
+    this.onMonthSelected,
+    this.onYearSelected,
     this.showMonthNavButtons = false,
     this.show2Months = true,
     this.showMonthYearLabel = true,
@@ -263,6 +273,9 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
       selectedYear = date.year;
       _currentDisplayedMonthDate = date;
     });
+    if (widget.onDisplayedMonthChanged != null) {
+      widget.onDisplayedMonthChanged!(date);
+    }
   }
 
   void _handleDisplayedMYearChanged(DateTime date) {
@@ -275,21 +288,23 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
       selectedYear = date.year;
       _currentDisplayedMonthDate = date;
     });
+    if (widget.onDisplayedYearChanged != null) {
+      widget.onDisplayedYearChanged!(date);
+    }
   }
 
   void _handleMonthSelected(DateTime date) {
     _userSelectedMonthDate = date;
-
     setState(() {
       _currentDisplayedMonthDate = date;
       _updateMonthLabel(date);
       _updateYearLabel(date);
       selectedYear = date.year;
-
-      // Check if there are changes
       _hasMonthYearChanges = true;
     });
-
+    if (widget.onMonthSelected != null) {
+      widget.onMonthSelected!(date);
+    }
     if (widget.showSaveButton == false) {
       _saveMonthYearSelection();
     }
@@ -297,7 +312,6 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
 
   void _handleYearSelected(DateTime date) {
     _userSelectedMonthDate = date;
-
     setState(() {
       _currentDisplayedMonthDate = date;
       selectedYear = date.year;
@@ -307,6 +321,10 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
       // Check if there are changes
       _hasMonthYearChanges = true;
     });
+
+    if (widget.onYearSelected != null) {
+      widget.onYearSelected!(date);
+    }
 
     if (widget.showSaveButton == false) {
       _saveMonthYearSelection();
