@@ -544,7 +544,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                   padding: widget.calendarPadding ??
                       const EdgeInsets.only(left: 20, right: 8, top: 8),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
                         child: InkWell(
@@ -576,7 +576,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                               )),
                         ),
                       ),
-                      const Spacer(flex: 3),
+                      const Spacer(flex: 2),
                       Expanded(
                         child: InkWell(
                           onTap: () {
@@ -590,6 +590,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                                       horizontal: 12.w, vertical: 6.h),
                               decoration: widget.yearPickerDecoration,
                               child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   Flexible(
                                       child: Text(
