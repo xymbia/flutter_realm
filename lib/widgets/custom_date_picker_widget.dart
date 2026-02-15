@@ -516,7 +516,18 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
   Widget _buildCalendarLayout(Widget calendarWidget) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        return SizedBox(
+        return TapRegion(
+          onTapOutside: (event) {
+            if (mode == DatePickerWidgetMode.month ||
+                mode == DatePickerWidgetMode.year) {
+              if (widget.onCancel != null) {
+                widget.onCancel!();
+              } else {
+                _cancelMonthYearSelection();
+              }
+            }
+          },
+          child: SizedBox(
           height: constraints.maxHeight * 0.9,
           child: Card(
             elevation: widget.cardElevation ?? 4,
@@ -550,7 +561,19 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                         child: InkWell(
                           onTap: () {
                             setState(() {
-                              mode = DatePickerWidgetMode.month;
+                              if (mode == DatePickerWidgetMode.month) {
+                                // Toggle off
+                                if (selectionMode ==
+                                        DatePickerSelectionMode.single ||
+                                    selectionMode ==
+                                        DatePickerSelectionMode.multi) {
+                                  mode = DatePickerWidgetMode.day;
+                                } else {
+                                  mode = DatePickerWidgetMode.scroll;
+                                }
+                              } else {
+                                mode = DatePickerWidgetMode.month;
+                              }
                             });
                           },
                           child: Container(
@@ -581,7 +604,19 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                         child: InkWell(
                           onTap: () {
                             setState(() {
-                              mode = DatePickerWidgetMode.year;
+                              if (mode == DatePickerWidgetMode.year) {
+                                // Toggle off
+                                if (selectionMode ==
+                                        DatePickerSelectionMode.single ||
+                                    selectionMode ==
+                                        DatePickerSelectionMode.multi) {
+                                  mode = DatePickerWidgetMode.day;
+                                } else {
+                                  mode = DatePickerWidgetMode.scroll;
+                                }
+                              } else {
+                                mode = DatePickerWidgetMode.year;
+                              }
                             });
                           },
                           child: Container(
@@ -706,6 +741,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                   ),
                 ),
               ],
+            ),
             ),
           ),
         );
