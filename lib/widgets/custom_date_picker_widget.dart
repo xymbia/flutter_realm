@@ -4,6 +4,7 @@ import '../models/date_picker_widget_config.dart';
 import '../screens/date_picker_example.dart';
 import '../utils/date_util.dart';
 import '../utils/font_helper.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'date_picker_widget.dart';
 
 class CustomDatePickerWidget extends StatefulWidget {
@@ -219,6 +220,8 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
     // Initialize temp values
     _tempSelectedMonth = selectedMonth;
     _tempSelectedYear = selectedYear;
+    
+    initializeDateFormatting();
   }
 
   @override
