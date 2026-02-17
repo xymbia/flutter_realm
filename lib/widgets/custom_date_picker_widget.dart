@@ -220,8 +220,6 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
     // Initialize temp values
     _tempSelectedMonth = selectedMonth;
     _tempSelectedYear = selectedYear;
-    
-    initializeDateFormatting();
   }
 
   @override
