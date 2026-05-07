@@ -4,6 +4,7 @@ import '../models/date_picker_widget_config.dart';
 import '../screens/date_picker_example.dart';
 import '../utils/date_util.dart';
 import '../utils/font_helper.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'date_picker_widget.dart';
 
 class CustomDatePickerWidget extends StatefulWidget {
@@ -516,7 +517,18 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
   Widget _buildCalendarLayout(Widget calendarWidget) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        return SizedBox(
+        return TapRegion(
+          onTapOutside: (event) {
+            if (mode == DatePickerWidgetMode.month ||
+                mode == DatePickerWidgetMode.year) {
+              if (widget.onCancel != null) {
+                widget.onCancel!();
+              } else {
+                _cancelMonthYearSelection();
+              }
+            }
+          },
+          child: SizedBox(
           height: constraints.maxHeight * 0.9,
           child: Card(
             elevation: widget.cardElevation ?? 4,
@@ -544,13 +556,25 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                   padding: widget.calendarPadding ??
                       const EdgeInsets.only(left: 20, right: 8, top: 8),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
                         child: InkWell(
                           onTap: () {
                             setState(() {
-                              mode = DatePickerWidgetMode.month;
+                              if (mode == DatePickerWidgetMode.month) {
+                                // Toggle off
+                                if (selectionMode ==
+                                        DatePickerSelectionMode.single ||
+                                    selectionMode ==
+                                        DatePickerSelectionMode.multi) {
+                                  mode = DatePickerWidgetMode.day;
+                                } else {
+                                  mode = DatePickerWidgetMode.scroll;
+                                }
+                              } else {
+                                mode = DatePickerWidgetMode.month;
+                              }
                             });
                           },
                           child: Container(
@@ -576,12 +600,24 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                               )),
                         ),
                       ),
-                      const Spacer(flex: 3),
+                      const Spacer(flex: 2),
                       Expanded(
                         child: InkWell(
                           onTap: () {
                             setState(() {
-                              mode = DatePickerWidgetMode.year;
+                              if (mode == DatePickerWidgetMode.year) {
+                                // Toggle off
+                                if (selectionMode ==
+                                        DatePickerSelectionMode.single ||
+                                    selectionMode ==
+                                        DatePickerSelectionMode.multi) {
+                                  mode = DatePickerWidgetMode.day;
+                                } else {
+                                  mode = DatePickerWidgetMode.scroll;
+                                }
+                              } else {
+                                mode = DatePickerWidgetMode.year;
+                              }
                             });
                           },
                           child: Container(
@@ -590,6 +626,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                                       horizontal: 12.w, vertical: 6.h),
                               decoration: widget.yearPickerDecoration,
                               child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   Flexible(
                                       child: Text(
@@ -705,6 +742,7 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
                   ),
                 ),
               ],
+            ),
             ),
           ),
         );
