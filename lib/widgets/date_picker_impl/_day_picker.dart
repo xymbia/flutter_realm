@@ -219,7 +219,7 @@ class _DayPickerState extends State<_DayPicker> {
           if (widget.config.calendarType != DatePickerWidgetType.range) {
             dayColor = selectedDayColor;
           } else {
-            if(widget.config.isTodayHighlightColor != null) {
+            if (widget.config.isTodayHighlightColor != null) {
               dayColor = widget.config.isTodayHighlightColor!;
             } else {
               dayColor = todayColor;
@@ -239,7 +239,7 @@ class _DayPickerState extends State<_DayPicker> {
             customDayTextStyle ?? dayStyle.apply(color: dayColor);
 
         if (isToday) {
-          if(widget.config.isTodayHighlightColor!=null){
+          if (widget.config.isTodayHighlightColor != null) {
             dayTextStyle = dayStyle.apply(
               color: widget.config.isTodayHighlightColor,
             );
@@ -503,5 +503,6 @@ class _DayPickerGridDelegate extends SliverGridDelegate {
   }
 
   @override
-  bool shouldRelayout(_DayPickerGridDelegate oldDelegate) => false;
+  bool shouldRelayout(_DayPickerGridDelegate oldDelegate) =>
+      oldDelegate.dayRowsCount != dayRowsCount;
 }

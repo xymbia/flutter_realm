@@ -344,15 +344,14 @@ class _CalendarViewState extends State<_CalendarView> {
     final shouldShowNextMonth = nextMonth.isBefore(widget.config.lastDate) ||
         DateUtils.isSameMonth(nextMonth, widget.config.lastDate);
 
-    final firstMonthRows = widget.config.dynamicCalendarRows == true
-        ? getDayRowsCount(month.year, month.month,
-            widget.config.firstDayOfWeek ?? localizations.firstDayOfWeekIndex)
-        : _maxDayPickerRowCount;
+    final firstDayOfWeek =
+        widget.config.firstDayOfWeek ?? localizations.firstDayOfWeekIndex;
 
-    final secondMonthRows = widget.config.dynamicCalendarRows == true
-        ? getDayRowsCount(nextMonth.year, nextMonth.month,
-            widget.config.firstDayOfWeek ?? localizations.firstDayOfWeekIndex)
-        : _maxDayPickerRowCount;
+    final firstMonthRows =
+        getDayRowsCount(month.year, month.month, firstDayOfWeek);
+
+    final secondMonthRows =
+        getDayRowsCount(nextMonth.year, nextMonth.month, firstDayOfWeek);
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -365,13 +364,10 @@ class _CalendarViewState extends State<_CalendarView> {
         final bool show2months =
             widget.config.show2months == true && shouldShowNextMonth;
 
-        final double firstMonthHeight = show2months
-            ? (remainingHeight / 2) * (firstMonthRows / _maxDayPickerRowCount)
-            : remainingHeight * (firstMonthRows / _maxDayPickerRowCount);
+        final double firstMonthHeight =
+            show2months ? remainingHeight / 2 : remainingHeight;
 
-        final double secondMonthHeight = show2months
-            ? (remainingHeight / 2) * (secondMonthRows / _maxDayPickerRowCount)
-            : 0;
+        final double secondMonthHeight = show2months ? remainingHeight / 2 : 0;
 
         return SingleChildScrollView(
           child: Column(
