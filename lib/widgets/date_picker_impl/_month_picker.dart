@@ -40,7 +40,7 @@ class _MonthPicker extends StatefulWidget {
 
 class _MonthPickerState extends State<_MonthPicker> {
   late ScrollController _scrollController;
-  late Locale _locale;
+  Locale _locale = const Locale('en');
 
   @override
   void initState() {
@@ -69,7 +69,11 @@ class _MonthPickerState extends State<_MonthPicker> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     assert(debugCheckHasMaterialLocalizations(context));
-    _locale = Localizations.localeOf(context);
+    try {
+      _locale = Localizations.localeOf(context);
+    } on FlutterError {
+      // No Localizations ancestor found; keep the default 'en' locale.
+    }
   }
 
   double _scrollOffsetForMonth(DateTime date) {

@@ -100,16 +100,20 @@ class _DatePickerPageState extends State<DatePickerPage> {
                         selectedDayTextStyle: Font.apply(
                             FontStyle.regular, FontSize.h6,
                             color: Colors.black),
-                        selectedMonthTextStyle: const TextStyle(
-                            color: Colors.black87, fontWeight: FontWeight.bold),
-                        currentMonthTextStyle: const TextStyle(
-                            color: Colors.blue, fontWeight: FontWeight.bold),
-                        selectedYearTextStyle: const TextStyle(
-                            color: Colors.black87, fontWeight: FontWeight.bold),
-                        currentYearTextStyle: const TextStyle(
-                            color: Colors.blue, fontWeight: FontWeight.bold),
+                        selectedMonthTextStyle: Font.apply(
+                            FontStyle.regular, FontSize.h2,
+                            color: Colors.black),
+                        currentMonthTextStyle: Font.apply(
+                            FontStyle.regular, FontSize.h2,
+                            color: Colors.black),
+                        selectedYearTextStyle: Font.apply(
+                            FontStyle.regular, FontSize.h2,
+                            color: Colors.black),
+                        currentYearTextStyle: Font.apply(
+                            FontStyle.regular, FontSize.h2,
+                            color: Colors.black),
                         weekdayLabelTextStyle: Font.apply(
-                            FontStyle.regular, FontSize.h6,
+                            FontStyle.regular, FontSize.h2,
                             color: Colors.black87),
                         dayTextStyle: const TextStyle(
                             color: Colors.black, fontWeight: FontWeight.w500),
@@ -182,7 +186,7 @@ class _DatePickerPageState extends State<DatePickerPage> {
                         weekdayLabelPadding: EdgeInsets.symmetric(
                             horizontal: 6.w, vertical: 2.h),
                         monthPickerPadding: EdgeInsets.symmetric(
-                            horizontal: 10.w, vertical: 8.h),
+                            horizontal: 10.w, vertical: 6.h),
                         yearPickerPadding: EdgeInsets.symmetric(
                             horizontal: 10.w, vertical: 6.h),
                         weekdayLabelDecoration: BoxDecoration(

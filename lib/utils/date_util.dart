@@ -17,12 +17,13 @@ int getMonthFirstDayOffset(int year, int month, int firstDayOfWeekIndex) {
   return (weekdayFromMonday - firstDayOfWeekIndex) % 7;
 }
 
+const validLocale = 'en';
+
 /// Get short month format for the given locale.
 DateFormat getLocaleShortMonthFormat(Locale locale) {
-  final String localeName = Platform.localeName;
-  var monthFormat = DateFormat.MMM();
-  if (DateFormat.localeExists(localeName)) {
-    monthFormat = DateFormat.MMM(localeName);
+  var monthFormat = DateFormat.MMM(validLocale);
+  if (DateFormat.localeExists(locale.toString())) {
+    monthFormat = DateFormat.MMM(locale.toString());
   } else if (DateFormat.localeExists(locale.languageCode)) {
     monthFormat = DateFormat.MMM(locale.languageCode);
   }
@@ -32,10 +33,9 @@ DateFormat getLocaleShortMonthFormat(Locale locale) {
 
 /// Get full month format for the given locale.
 DateFormat getLocaleFullMonthFormat(Locale locale) {
-  final String localeName = Intl.canonicalizedLocale(locale.toString());
-  var monthFormat = DateFormat.MMMM();
-  if (DateFormat.localeExists(localeName)) {
-    monthFormat = DateFormat.MMMM(localeName);
+  var monthFormat = DateFormat.MMMM(validLocale);
+  if (DateFormat.localeExists(locale.toString())) {
+    monthFormat = DateFormat.MMMM(locale.toString());
   } else if (DateFormat.localeExists(locale.languageCode)) {
     monthFormat = DateFormat.MMMM(locale.languageCode);
   }
